@@ -46,7 +46,7 @@ endif
 all: $(DYLIBNAME)
 
 # Deps (use make dep to generate this)
-xRedisClient_Connection.o:xRedisClient_Connection.cpp
+xRedisClient_Connection.o:xRedisClient_connection.cpp
 xRedisClient.o:           xRedisClient.cpp
 xRedisClient_hashs.o:     xRedisClient_hashs.cpp
 xRedisClient_keys.o:      xRedisClient_keys.cpp
