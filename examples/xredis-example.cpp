@@ -30,18 +30,18 @@ unsigned int APHash(const char *str) {
 
 RedisNode RedisList1[3]=
 {
-    {0,"127.0.0.1", 6379, "", 2, 5},
-    {1,"127.0.0.1", 6379, "", 2, 5},
-    {2,"127.0.0.1", 6379, "", 2, 5}
+    {0,"127.0.0.1", 7000, "", 2, 5},
+    {1,"127.0.0.1", 7000, "", 2, 5},
+    {2,"127.0.0.1", 7000, "", 2, 5}
 };
 
 RedisNode RedisList2[5]=
 {
-    {0,"127.0.0.1", 6379, "", 2, 5},
-    {1,"127.0.0.1", 6379, "", 2, 5},
-    {2,"127.0.0.1", 6379, "", 2, 5},
-    {3,"127.0.0.1", 6379, "", 2, 5},
-    {4,"127.0.0.1", 6379, "", 2, 5},
+    {0,"127.0.0.1", 7000, "", 2, 5},
+    {1,"127.0.0.1", 7000, "", 2, 5},
+    {2,"127.0.0.1", 7000, "", 2, 5},
+    {3,"127.0.0.1", 7000, "", 2, 5},
+    {4,"127.0.0.1", 7000, "", 2, 5},
 };
 
 int main(int argc, char **argv) {
@@ -54,8 +54,8 @@ int main(int argc, char **argv) {
     for (int n = 0; n<1000; n++) {
         char szKey[256] = {0};
         sprintf(szKey, "test_%d", n);
-        RedisDBIdx dbi;
-        dbi = xRedis.GetDBIndex(szKey, APHash, CACHE_TYPE_1);
+        RedisDBIdx dbi(&xRedis);
+        dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
         bool bRet = xRedis.set(dbi, szKey, "hello redis!");
         if (!bRet){
             printf(" %s %s \n", szKey, dbi.GetErrInfo());
@@ -65,8 +65,8 @@ int main(int argc, char **argv) {
     for (int n = 0; n<1000; n++) {
         char szKey[256] = {0};
         sprintf(szKey, "test_%d", n);
-        RedisDBIdx dbi;
-        dbi = xRedis.GetDBIndex(szKey, APHash, CACHE_TYPE_1);
+        RedisDBIdx dbi(&xRedis);
+        dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
         string strValue;
         xRedis.get(dbi, szKey, strValue);
         printf("%s \r\n", strValue.c_str());
