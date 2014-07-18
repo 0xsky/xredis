@@ -71,23 +71,17 @@ typedef struct REDISCONN{
         mCtx = redisConnectWithTimeout(mHost, mPort, timeoutVal);
         if (NULL == mCtx || mCtx->err) {
             if (NULL!=mCtx) {
-                printf("Connect to Redis: type:%u dbindex:%u %s:%u pass:%s poolsize:%u error:%s \n",
-                    mType, mDbindex, mHost, mPort, mPass, mPoolsize, mCtx->errstr);
                 redisFree(mCtx);
             } else {
-                printf("Connection error: can't allocate redis context \n");
+
             }
         } else {
-            printf("Connect to Redis: type:%u dbindex:%u %s:%u pass:%s poolsize:%u success \n",
-                mType, mDbindex, mHost, mPort, mPass, mPoolsize);
             if (0==strlen(mPass)) {
                 bRet = true;
             } else {
                 redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx,"AUTH %s", mPass));
                 if((NULL==reply)||(strcasecmp(reply->str,"OK") != 0)) {
                     bRet = false;
-                    printf("auth error: type:%u dbindex:%u %s:%u pass:%s poolsize:%u \n",
-                        mType, mDbindex, mHost, mPort, mPass, mPoolsize);
                 }
                 freeReplyObject(reply);
             }
@@ -147,8 +141,6 @@ typedef struct _REDIS_DATE_SLICE_{
             ||(cahcetype>MAX_REDIS_CACHE_TYPE)
             ||(dbindex>MAX_REDIS_DB_HASHBASE)
             ||(poolsize>MAX_REDIS_CONN_POOLSIZE)){
-                printf("error argv: cahcetype:%u dbindex:%u host:%s port:%u poolsize:%u timeout:%u \r\n", 
-                    cahcetype, dbindex, host, port, poolsize, timeout);
                 return false;
         }
 
@@ -156,7 +148,6 @@ typedef struct _REDIS_DATE_SLICE_{
             for (unsigned int i = 0; i < poolsize; ++i) {
                 RedisConn *pRedisconn = new RedisConn;
                 if(NULL==pRedisconn) {
-                    printf("error pRedisconn is null, %s %u %u \r\n", host, port, cahcetype);
                     continue;
                 }
 
@@ -169,10 +160,8 @@ typedef struct _REDIS_DATE_SLICE_{
                 }
             }
         } catch( ...) {
-            printf("connect error  poolsize=%u \n", poolsize);
             return false;
         }
-        printf("\n");
         return !mConnlist.empty();
     }
 
@@ -183,7 +172,6 @@ typedef struct _REDIS_DATE_SLICE_{
             pRedisConn = mConnlist.front();
             mConnlist.pop_front();
         } else {
-            printf("GetConn  error pthread_id=%u \n", (unsigned int)pthread_self());
             mStatus = REDISDB_DEAD;
         }
         return pRedisConn;
@@ -200,7 +188,6 @@ typedef struct _REDIS_DATE_SLICE_{
         XLOCK(mConnlock);
         RedisConnIter iter = mConnlist.begin();
         for (; iter != mConnlist.end(); ++iter){
-            printf("close dbindex:%u \r\n", mDbindex);
             redisFree((*iter)->getCtx());
             delete *iter;
         }
@@ -215,7 +202,7 @@ typedef struct _REDIS_DATE_SLICE_{
             if (!bRet) {
                 (*iter)->RedisConnect();
             } else {
-                printf("ping dbindex:%u sucess \n", mDbindex);
+            
             }
         }
     }
@@ -243,15 +230,11 @@ typedef struct _REDIS_CACHE_{
     }
 
     bool InitDB(const unsigned int cachetype, const unsigned int hashbase) {
-
-        printf("cachetype:%u  hashbase:%u \r\n", cachetype, hashbase);
-
         mCachetype = cachetype;
         mHashbase  = hashbase;
         if(NULL==mDBList) {
             mDBList    = new RedisDBSlice[hashbase];
         }
-
         return true;
     }
 
