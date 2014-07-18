@@ -1,3 +1,10 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
 
 #include "xRedisClient.h"
 #include <sstream>
@@ -34,25 +41,43 @@ bool xRedisClient::getset(const RedisDBIdx& dbi, const string& key,  const strin
     return command_string(dbi, oldValue, "GETSET %s %s", key.c_str(), newValue.c_str());
 }
 
-bool xRedisClient::mget(const RedisDBIdx& dbi,   const KEYS &  keys, ReplyData& vDdata) {
-    VDATA vCmdData;
-    vCmdData.push_back("MGET");
-    addparam(vCmdData, keys);
-    return commandargv_array(dbi, vCmdData, vDdata);
+bool xRedisClient::mget(const DBIArray &vdbi,   const KEYS &  keys, ReplyData& vDdata) {
+    bool bRet = false;
+    size_t n = vdbi.size();
+    if (n!=keys.size()) {
+        return bRet;
+    }
+    
+    DataItem item;
+    DBIArray::const_iterator iter_dbi = vdbi.begin();
+    KEYS::const_iterator iter_key = keys.begin();
+    for (;iter_key!=keys.end();++iter_key, ++iter_dbi) {
+        const string &key = *iter_key;
+        if (key.length()>0) {
+            bool ret = command_string(*iter_dbi, item.str, "GET %s", key.c_str());
+            if (ret) {
+                item.type = REDIS_REPLY_NIL;
+                item.str  = "";
+            } else {
+                item.type = REDIS_REPLY_STRING;
+                bRet = true;
+            }
+            vDdata.push_back(item);
+        }
+    }
+
+    return bRet;
 }
 
-bool xRedisClient::mset(const RedisDBIdx& dbi, const VDATA& vData) {
-    VDATA vCmdData;
-    vCmdData.push_back("MSET");
-    addparam(vCmdData, vData);
-    return commandargv_bool(dbi, vCmdData);
-}
-
-bool xRedisClient::msetnx(const RedisDBIdx& dbi, const VDATA& vData) {
-    VDATA vCmdData;
-    vCmdData.push_back("MSETNX");
-    addparam(vCmdData, vData);
-    return commandargv_bool(dbi, vCmdData);
+bool xRedisClient::mset(const DBIArray& vdbi, const VDATA& vData) {
+    DBIArray::const_iterator iter_dbi = vdbi.begin();
+    VDATA::const_iterator iter_data = vData.begin();
+    for (;iter_data!=vData.end();) {
+        const string &key = (*iter_data++);
+        const string &value = (*iter_data++);
+        command_status(*iter_dbi++, "SET %s", key.c_str(), value.c_str());
+    }
+    return true;
 }
 
 bool xRedisClient::setex(const RedisDBIdx& dbi,    const string& key,  const int seconds, const string& value) {

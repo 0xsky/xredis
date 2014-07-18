@@ -1,3 +1,11 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+
 #ifndef _XREDIS_CLIENT_H_
 #define _XREDIS_CLIENT_H_
 
@@ -6,7 +14,7 @@
 #include <vector>
 #include <set>
 #include <map>
-#include <sstream>
+#include <algorithm>
 #include "xRedisPool.h"
 
 using namespace std;
@@ -19,6 +27,8 @@ typedef std::vector<KEY>        KEYS;
 typedef std::vector<VALUE>      VALUES;
 typedef std::vector<string>     VDATA;
 
+typedef std::set<string>        SETDATA;
+
 typedef struct _REDIS_NODE_{
     unsigned int dbindex;
     const char  *host;
@@ -30,51 +40,56 @@ typedef struct _REDIS_NODE_{
 
 typedef unsigned int (*HASHFUN)(const char *);
 
-typedef struct _REDIS_DB_INDEX_{
-    _REDIS_DB_INDEX_() {
-        type    = 0;
-        index   = 0;
-        isvalid = false;
-        strerr = NULL;
+class xRedisClient;
+
+class RedisDBIdx {
+public:
+    RedisDBIdx(xRedisClient *xredisclient) {
+        mType    = 0;
+        mIndex   = 0;
+        mStrerr = NULL;
+        mXclient = xredisclient;
     }
-    ~_REDIS_DB_INDEX_() {
-        if (NULL!=strerr){
-            delete [] strerr;
-            strerr = NULL;
+    virtual ~RedisDBIdx() {
+        if (NULL!=mStrerr){
+            delete [] mStrerr;
+            mStrerr = NULL;
         }
     }
 
-    unsigned int type;
-    unsigned int index;
-    bool         isvalid;
-    char         *strerr;
-    bool IsValid() {return isvalid;}
-    char *GetErrInfo() {return strerr;}
+    unsigned int mType;
+    unsigned int mIndex;
+    char        *mStrerr;
+    xRedisClient *mXclient;
+    
+    bool CreateDBIndex(const char *key,  HASHFUN fun, const unsigned int type);
+    bool CreateDBIndex(const int64_t id, const unsigned int type);
+
+    char *GetErrInfo() {return mStrerr;}
     bool SetErrInfo(const char *info) {
         if (NULL==info) {
             return false;
         }
-        if (NULL==strerr){
-            strerr = new char[MAX_ERR_STR_LEN];
+        if (NULL==mStrerr){
+            mStrerr = new char[MAX_ERR_STR_LEN];
         }
-        if (NULL!=strerr) {
-            memset(strerr,0, MAX_ERR_STR_LEN);
-            strncpy(strerr, info, MAX_ERR_STR_LEN);
+        if (NULL!=mStrerr) {
+            memset(mStrerr,0, MAX_ERR_STR_LEN);
+            strncpy(mStrerr, info, MAX_ERR_STR_LEN);
             return true;
         }
         return false;
     }
-
-}RedisDBIdx;
+};
 
 typedef struct _DATA_ITEM_{
     int    type;
     string str;
 }DataItem;
-typedef std::vector<DataItem>      ReplyData;
-typedef ReplyData                  ArrayReply;
+typedef std::vector<DataItem>       ReplyData;
+typedef ReplyData                   ArrayReply;
 typedef std::map<string, double>    ZSETDATA;
-
+typedef std::vector<RedisDBIdx>     DBIArray;
 
 
 typedef enum _BIT_OP_{
@@ -99,8 +114,8 @@ public:
     bool Init(unsigned int maxtype=MAX_REDIS_CACHE_TYPE);
     void release();
     void KeepAlive();
-    RedisDBIdx GetDBIndex(const char *key,  HASHFUN fun, const unsigned int type);
-    RedisDBIdx GetDBIndex(const int64_t uid, const unsigned int type);
+    //RedisDBIdx GetDBIndex(const char *key,  HASHFUN fun, const unsigned int type);
+    //RedisDBIdx GetDBIndex(const int64_t uid, const unsigned int type);
     inline RedisPool *GetRedisPool();
     bool ConnectRedisCache( const RedisNode *redisnodelist, unsigned int hashbase, unsigned int cachetype);
 
@@ -127,9 +142,9 @@ public:
     /* INCR        */  bool incr(const RedisDBIdx& dbi,    const string& key, int& result);
     /* INCRBY      */  bool incrby(const RedisDBIdx& dbi,  const string& key, const int by, int& result);
     /* INCRBYFLOAT */  
-    /* MGET        */  bool mget(const RedisDBIdx& dbi,    const KEYS &  keys, ReplyData& vDdata);
-    /* MSET        */  bool mset(const RedisDBIdx& dbi,    const VDATA& data);
-    /* MSETNX      */  bool msetnx(const RedisDBIdx& dbi,  const VDATA& data);
+    /* MGET        */  bool mget(const DBIArray& dbi,    const KEYS &  keys, ReplyData& vDdata);
+    /* MSET        */  bool mset(const DBIArray& dbi,    const VDATA& data);
+    /* MSETNX      */  
     /* PSETEX      */  bool psetex(const RedisDBIdx& dbi,  const string& key,  const int milliseconds, const string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const string& key,  const string& value);
     /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const string& key,  const int offset, const int64_t newbitValue, int64_t oldbitValue);
@@ -139,8 +154,8 @@ public:
     /* STRLEN      */  bool strlen(const RedisDBIdx& dbi,  const string& key, int& length);
 
 
-    /* DEL          */  int  del(const RedisDBIdx& dbi,    const string& key);
-                        int  del(const RedisDBIdx& dbi,    const KEYS &  vkey, int64_t& count);
+    /* DEL          */  bool  del(const RedisDBIdx& dbi,    const string& key);
+                        bool  del(const DBIArray& dbi,    const KEYS &  vkey, int64_t& count);
     /* DUMP         */
     /* EXISTS       */  bool exists(const RedisDBIdx& dbi, const string& key);
     /* EXPIRE       */  bool expire(const RedisDBIdx& dbi, const string& key, const unsigned int second);
@@ -201,10 +216,10 @@ public:
 
     /* SADD         */  bool sadd(const RedisDBIdx& dbi,        const KEY& key, const VALUES& vValue, int64_t& count);
     /* SCARD        */  bool scrad(const RedisDBIdx& dbi,       const KEY& key, int64_t& count);
-    /* SDIFF        */  bool sdiff(const RedisDBIdx& dbi,       const KEYS& vKkey, VALUES& vValue);
-    /* SDIFFSTORE   */  bool sdiffstore(const RedisDBIdx& dbi,  const KEY& destinationkey,   const KEYS& vkey, int64_t& count);
-    /* SINTER       */  bool sinter(const RedisDBIdx& dbi,      const KEYS& vkey, VALUES& vValue);
-    /* SINTERSTORE  */  bool sinterstore(const RedisDBIdx& dbi, const KEY& destinationkey, const KEYS& vkey, int64_t& count);
+    /* SDIFF        */  bool sdiff(const DBIArray& dbi,       const KEYS& vKkey, VALUES& vValue);
+    /* SDIFFSTORE   */  bool sdiffstore(const RedisDBIdx& dbi,  const KEY& destinationkey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count);
+    /* SINTER       */  bool sinter(const DBIArray& dbi,      const KEYS& vkey, VALUES& vValue);
+    /* SINTERSTORE  */  bool sinterstore(const RedisDBIdx& dbi, const KEY& destinationkey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count);
     /* SISMEMBER    */  bool sismember(const RedisDBIdx& dbi,   const KEY& key,   const VALUE& member);
     /* SMEMBERS     */  bool smember(const RedisDBIdx& dbi,     const KEY& key,  VALUES& vValue);
     /* SMOVE        */  bool smove(const RedisDBIdx& dbi,       const KEY& srckey, const KEY& deskey,  const VALUE& member);
@@ -212,8 +227,8 @@ public:
     /* SRANDMEMBER  */  bool srandmember(const RedisDBIdx& dbi, const KEY& key, VALUES& vmember, int num=0);
     /* SREM         */  bool srem(const RedisDBIdx& dbi,        const KEY& key, const VALUES& vmembers, int64_t& count);
     /* SSCAN        */  
-    /* SUNION       */  bool sunion(const RedisDBIdx& dbi,      const KEYS& vkey, VALUES& vValue);
-    /* SUNIONSTORE  */  bool sunionstore(const RedisDBIdx& dbi, const KEY& deskey,   const KEYS& vkey, int64_t& count);
+    /* SUNION       */  bool sunion(const DBIArray& dbi,      const KEYS& vkey, VALUES& vValue);
+    /* SUNIONSTORE  */  bool sunionstore(const RedisDBIdx& dbi, const KEY& deskey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count);
 
     /* ZADD             */  bool zadd(const RedisDBIdx& dbi,    const KEY& deskey,   const VALUES& vValues, int64_t& count);
     /* ZCARD            */  bool zscrad(const RedisDBIdx& dbi,  const string& key, int64_t& num);
@@ -262,7 +277,7 @@ private:
     bool command_string(const RedisDBIdx& dbi,  string &data,      const char* cmd, ...);
     bool command_list(const RedisDBIdx& dbi,    VALUES &vValue,    const char* cmd, ...);
     bool command_array(const RedisDBIdx& dbi,   ArrayReply& array, const char* cmd, ...);
-    
+
     bool commandargv_bool(const RedisDBIdx& dbi,   const VDATA& vData);
     bool commandargv_status(const RedisDBIdx& dbi, const VDATA& vData);
     bool commandargv_array(const RedisDBIdx& dbi,  const VDATA& vDataIn, ArrayReply& array);

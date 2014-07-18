@@ -1,7 +1,13 @@
-
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+ 
 #include "xRedisClient.h"
 #include <sstream>
-
 
 bool xRedisClient::lindex(const RedisDBIdx& dbi,    const string& key, const int64_t index, VALUE& value){
     return command_string(dbi, value, "LINDEX %s %lld", key.c_str(), index);

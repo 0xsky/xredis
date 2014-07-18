@@ -1,16 +1,33 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
 
 #include "xRedisClient.h"
 #include <sstream>
 
-int  xRedisClient::del(const RedisDBIdx& dbi,    const string& key) {
+bool  xRedisClient::del(const RedisDBIdx& dbi,    const string& key) {
     return command_bool(dbi, "DEL %s", key.c_str());
 }
 
-int  xRedisClient::del(const RedisDBIdx& dbi,    const KEYS &  vkey, int64_t& count) {
-    VDATA vCmdData;
-    vCmdData.push_back("DEL");
-    addparam(vCmdData, vkey);
-    return commandargv_integer(dbi, vCmdData, count);
+bool  xRedisClient::del(const DBIArray& vdbi,    const KEYS &  vkey, int64_t& count) {
+    count = 0;
+    if (vdbi.size()!=vkey.size()) {
+        return false;
+    }
+    DBIArray::const_iterator iter_dbi = vdbi.begin();
+    KEYS::const_iterator iter_key = vkey.begin();
+    for(;iter_key!=vkey.end();++iter_key, ++iter_dbi) {
+        const RedisDBIdx &dbi = (*iter_dbi);
+        const string &key = (*iter_key);
+        if (del(dbi, key)) {
+            count++;
+        }
+    }
+    return true;
 }
 
 bool xRedisClient::exists(const RedisDBIdx& dbi, const string& key) {

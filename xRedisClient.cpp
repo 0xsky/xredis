@@ -1,6 +1,34 @@
-
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+ 
 #include "xRedisClient.h"
 #include <sstream>
+
+bool RedisDBIdx::CreateDBIndex(const char *key,  HASHFUN fun, const unsigned int type) {
+    unsigned int hashbase = mXclient->GetRedisPool()->getHashBase(type);
+    mXclient->GetRedisPool()->getHashBase(type);
+    if (hashbase>0) {
+        mIndex = fun(key)%hashbase;
+        mType  = type;
+        return true;
+    }
+    return false;
+}
+
+bool RedisDBIdx::CreateDBIndex(const int64_t id, const unsigned int type) {
+
+    unsigned int hashbase = mXclient->GetRedisPool()->getHashBase(type);
+    if (hashbase>0) {
+        mType  = type;
+        mIndex = id%hashbase;
+    }
+    return true;
+}
 
 bool xRedisClient::Init(unsigned int maxtype) {
     if(NULL==mRedisPool) {
@@ -25,6 +53,7 @@ void xRedisClient::KeepAlive() {
     }
 }
 
+/*
 RedisDBIdx xRedisClient::GetDBIndex(const char *key,  HASHFUN fun, const unsigned int type) {
     RedisDBIdx dbi;
     dbi.type  = type;
@@ -32,6 +61,7 @@ RedisDBIdx xRedisClient::GetDBIndex(const char *key,  HASHFUN fun, const unsigne
     if (hashbase>0&& hashbase<MAX_REDIS_DB_HASHBASE) {
         dbi.isvalid = true;
         dbi.index   = fun(key)%hashbase;
+        dbi.fun     = fun;
     }
     return dbi;
 }
@@ -46,6 +76,7 @@ RedisDBIdx xRedisClient::GetDBIndex(const int64_t uid, const unsigned int type) 
     }
     return dbi;
 }
+*/
 
 inline RedisPool *xRedisClient::GetRedisPool() { 
     return mRedisPool;
@@ -62,8 +93,11 @@ bool xRedisClient::ConnectRedisCache( const RedisNode *redisnodelist, unsigned i
             return false;
         }
 
-        mRedisPool->ConnectRedisDB(cachetype, pNode->dbindex, pNode->host, pNode->port, 
+        bool bRet = mRedisPool->ConnectRedisDB(cachetype, pNode->dbindex, pNode->host, pNode->port, 
             pNode->passwd, pNode->poolsize, pNode->timeout);
+        if (!bRet) {
+            return false;
+        }
     }
 
     return true;
@@ -72,7 +106,7 @@ bool xRedisClient::ConnectRedisCache( const RedisNode *redisnodelist, unsigned i
 
 bool xRedisClient::command_bool(const RedisDBIdx& dbi, const char *cmd, ...) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -83,7 +117,7 @@ bool xRedisClient::command_bool(const RedisDBIdx& dbi, const char *cmd, ...) {
     va_end(args);
 
     if (RedisPool::CheckReply(reply)) {
-        bRet = (reply->integer)==1?true:false;
+        bRet = (reply->integer==1)?true:false;
     } else {
         RedisDBIdx &dbindex = const_cast<RedisDBIdx&>(dbi);
         dbindex.SetErrInfo(reply->str);
@@ -97,7 +131,7 @@ bool xRedisClient::command_bool(const RedisDBIdx& dbi, const char *cmd, ...) {
 
 bool xRedisClient::command_status(const RedisDBIdx& dbi, const char* cmd, ...) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -122,7 +156,7 @@ bool xRedisClient::command_status(const RedisDBIdx& dbi, const char* cmd, ...) {
 
 bool xRedisClient::command_integer(const RedisDBIdx& dbi, int64_t &retval, const char* cmd, ...) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -147,7 +181,7 @@ bool xRedisClient::command_integer(const RedisDBIdx& dbi, int64_t &retval, const
 
 bool xRedisClient::command_string(const RedisDBIdx& dbi, string &data, const char* cmd, ...) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -172,7 +206,7 @@ bool xRedisClient::command_string(const RedisDBIdx& dbi, string &data, const cha
 
 bool xRedisClient::command_list(const RedisDBIdx& dbi, VALUES &vValue, const char* cmd, ...) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -199,7 +233,7 @@ bool xRedisClient::command_list(const RedisDBIdx& dbi, VALUES &vValue, const cha
 
 bool xRedisClient::command_array(const RedisDBIdx& dbi,  ArrayReply& array,  const char* cmd, ...){
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -228,7 +262,7 @@ bool xRedisClient::command_array(const RedisDBIdx& dbi,  ArrayReply& array,  con
 
 bool xRedisClient::commandargv_bool(const RedisDBIdx& dbi, const VDATA& vData) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return bRet;
     }
@@ -242,7 +276,7 @@ bool xRedisClient::commandargv_bool(const RedisDBIdx& dbi, const VDATA& vData) {
 
     redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
-        bRet = (reply->integer)==1?true:false;
+        bRet = (reply->integer==1)?true:false;
     }
 
     RedisPool::FreeReply(reply);
@@ -253,7 +287,7 @@ bool xRedisClient::commandargv_bool(const RedisDBIdx& dbi, const VDATA& vData) {
 
 bool xRedisClient::commandargv_status(const RedisDBIdx& dbi, const VDATA& vData) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return bRet;
     }
@@ -278,7 +312,7 @@ bool xRedisClient::commandargv_status(const RedisDBIdx& dbi, const VDATA& vData)
 
 bool xRedisClient::commandargv_array(const RedisDBIdx& dbi, const VDATA& vDataIn, ArrayReply& array){
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -311,7 +345,7 @@ bool xRedisClient::commandargv_array(const RedisDBIdx& dbi, const VDATA& vDataIn
 
 bool xRedisClient::commandargv_array(const RedisDBIdx& dbi, const VDATA& vDataIn, VALUES& array){
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }
@@ -341,7 +375,7 @@ bool xRedisClient::commandargv_array(const RedisDBIdx& dbi, const VDATA& vDataIn
 
 bool xRedisClient::commandargv_integer(const RedisDBIdx& dbi, const VDATA& vDataIn, int64_t& retval){
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }

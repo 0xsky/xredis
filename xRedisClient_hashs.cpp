@@ -1,3 +1,10 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
 
 #include "xRedisClient.h"
 #include <sstream>
@@ -33,7 +40,7 @@ bool xRedisClient::hincrby(const RedisDBIdx& dbi,  const string& key, const stri
 
 bool xRedisClient::hincrbyfloat(const RedisDBIdx& dbi,  const string& key, const string& filed, const float increment, float& value ) {
     bool bRet = false;
-    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.type, dbi.index);
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex);
     if (NULL==pRedisConn) {
         return false;
     }

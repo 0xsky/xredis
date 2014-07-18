@@ -1,3 +1,11 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+
 #ifndef _XREDIS_POOL_H_
 #define _XREDIS_POOL_H_
 
@@ -90,7 +98,9 @@ typedef struct REDISCONN{
 
     bool Ping() const {
         redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx,"PING"));
-        return (NULL!=reply);
+        bool bRet = (NULL!=reply);
+        freeReplyObject(reply);
+        return bRet;
     }
 
     redisContext  *getCtx() const     { return mCtx; }

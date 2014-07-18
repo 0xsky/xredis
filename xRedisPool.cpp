@@ -1,3 +1,10 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
 
 #include "xRedisPool.h"
 #include "hiredis.h"
@@ -65,7 +72,7 @@ bool RedisPool::CheckReply(const redisReply *reply){
         return false;
     }
 
-    printf("DEBBUG %d:%s %lld %lu \r\n", reply->type, reply->str, reply->integer, reply->elements);
+    //printf("DEBBUG %d:%s %lld %zu \r\n", reply->type, reply->str, reply->integer, reply->elements);
 
     switch(reply->type){
     case REDIS_REPLY_STRING:{
@@ -157,9 +164,9 @@ RedisConn *RedisPool::GetConnection(const unsigned int cahcetype, const unsigned
     return pRedisConn;
 }
 
-void RedisPool::FreeConnection(RedisConn *_redisconn){
-    if (NULL!=_redisconn) {
-        mRedisCacheList[_redisconn->GetType()].FreeConn(_redisconn);
+void RedisPool::FreeConnection(RedisConn *redisconn){
+    if (NULL!=redisconn) {
+        mRedisCacheList[redisconn->GetType()].FreeConn(redisconn);
     }
 }
 
