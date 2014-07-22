@@ -154,8 +154,8 @@ public:
     /* STRLEN      */  bool strlen(const RedisDBIdx& dbi,  const string& key, int& length);
 
 
-    /* DEL          */  bool  del(const RedisDBIdx& dbi,    const string& key);
-                        bool  del(const DBIArray& dbi,    const KEYS &  vkey, int64_t& count);
+    /* DEL          */  bool del(const RedisDBIdx& dbi,    const string& key);
+                        bool del(const DBIArray& dbi,      const KEYS &  vkey, int64_t& count);
     /* DUMP         */
     /* EXISTS       */  bool exists(const RedisDBIdx& dbi, const string& key);
     /* EXPIRE       */  bool expire(const RedisDBIdx& dbi, const string& key, const unsigned int second);

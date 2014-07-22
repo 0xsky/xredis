@@ -55,7 +55,7 @@ bool xRedisClient::mget(const DBIArray &vdbi,   const KEYS &  keys, ReplyData& v
         const string &key = *iter_key;
         if (key.length()>0) {
             bool ret = command_string(*iter_dbi, item.str, "GET %s", key.c_str());
-            if (ret) {
+            if (!ret) {
                 item.type = REDIS_REPLY_NIL;
                 item.str  = "";
             } else {
@@ -75,7 +75,7 @@ bool xRedisClient::mset(const DBIArray& vdbi, const VDATA& vData) {
     for (;iter_data!=vData.end();) {
         const string &key = (*iter_data++);
         const string &value = (*iter_data++);
-        command_status(*iter_dbi++, "SET %s", key.c_str(), value.c_str());
+        command_status(*iter_dbi++, "SET %s %s", key.c_str(), value.c_str());
     }
     return true;
 }
