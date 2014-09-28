@@ -2,21 +2,27 @@ xRedis
 ======
 
 Redis C++ client, support the data slice storage, support the connection pool
-xRedis ÊÇÒ»¸öC++¿ª·¢µÄRedis¿Í»§¶Ë£¬Ö§³ÖRedis¶à½Úµã·ÖÆ¬£¬Ö§³ÖÁ¬½Ó³Ø¡£
+
+xRedis æ˜¯ä¸€ä¸ªC++å¼€å‘çš„rediså®¢æˆ·ç«¯ï¼Œæ˜¯å¯¹hiredisçš„C++å°è£…ï¼Œæä¾›REDISæ˜“ç”¨çš„å‘½ä»¤æ“ä½œæ¥å£.
+æ”¯æŒæ•°æ®å¤šèŠ‚ç‚¹åˆ†å¸ƒå­˜å‚¨;
+æ”¯æŒè¿æ¥æ± ;
+èƒ½åŒæ—¶è¿æ¥å¤šä¸ªé›†ç¾¤;
+å·²å®ç°å¤§å¤šæ•°REDISå‘½ä»¤;
+åªä¾èµ–hiredisåº“;
 
 ### Dependencies
 
-xredis ÒÀÀµ hiredis ,  ÔÚÊ¹ÓÃxRedisÇ°ĞèÒª°²×°hiredis¿â
+xredis ä¾èµ– hiredis ,  åœ¨ä½¿ç”¨xRediså‰éœ€è¦å®‰è£…hiredisåº“
 
 ### Install
 
-µÚÒ»²½ °²×°libhiredis
- ÔÚDebianÏµÍ³ÉÏ:
+ç¬¬ä¸€æ­¥ å®‰è£…libhiredis
+ åœ¨Debianç³»ç»Ÿä¸Š:
 ```bash
 sudo apt-get install libhiredis-dev
 ```
 
-xRedisÔ´Âë°²×°
+xRedisæºç å®‰è£…
 ```bash
 git clone https://github.com/0xsky/xredis
 cd xredis
@@ -24,7 +30,7 @@ make
 sudo make install
 ```
 
-### Ïà¹ØÎÄµµ
+### ç›¸å…³æ–‡æ¡£
 
 See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 
