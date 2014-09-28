@@ -7,18 +7,15 @@
 xRedisClient xClient;
 
 // AP Hash Function
-unsigned int APHash(const char *str) {
+unsigned int APHash(const char *str)
+{
     unsigned int hash = 0;
     int i;
 
-    for (i=0; *str; i++)
-    {
-        if ((i & 1) == 0)
-        {
+    for (i = 0; *str; i++) {
+        if ((i & 1) == 0) {
             hash ^= ((hash << 7) ^ (*str++) ^ (hash >> 3));
-        }
-        else
-        {
+        } else {
             hash ^= (~((hash << 11) ^ (*str++) ^ (hash >> 5)));
         }
     }
@@ -29,13 +26,14 @@ unsigned int APHash(const char *str) {
 #define CACHE_TYPE_1 1
 
 
-void test_set() {
-    char szKey[256] = {0};
-    strcpy(szKey, "test");
+
+
+void test_set(const char *strkey, const char *strValue)
+{
     RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.CreateDBIndex(strkey, APHash, CACHE_TYPE_1);
     if (bRet) {
-        if (xClient.set(dbi, szKey, "testwwwwww")) {
+        if (xClient.set(dbi, strkey, strValue)) {
             printf("%s success \r\n", __PRETTY_FUNCTION__);
         } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
@@ -43,7 +41,108 @@ void test_set() {
     }
 }
 
-void test_get() {
+void test_append()
+{
+    test_set("test", "hello");
+    char szKey[256] = {0};
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        if (xClient.append(dbi, szKey, " xsky")) {
+            printf("%s success \r\n", __PRETTY_FUNCTION__);
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_decr()
+{
+    test_set("test", "100");
+    char szKey[256] = {0};
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        int64_t res = 0;
+        if (xClient.decr(dbi, szKey, res)) {
+            if (res == 99) {
+                printf("%s success %d \r\n", __PRETTY_FUNCTION__, res);
+            } else {
+                printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+            }
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_decrby()
+{
+    test_set("test", "100");
+    char szKey[256] = {0};
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        int64_t res = 0;
+        if (xClient.decrby(dbi, szKey, 11, res)) {
+            if (res == 89) {
+                printf("%s success %d \r\n", __PRETTY_FUNCTION__, res);
+            } else {
+                printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+            }
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_incr()
+{
+    test_set("test", "100");
+    char szKey[256] = {0};
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        int64_t res = 0;
+        if (xClient.incr(dbi, szKey, res)) {
+            if (res == 101) {
+                printf("%s success %d \r\n", __PRETTY_FUNCTION__, res);
+            } else {
+                printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+            }
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_incrby()
+{
+    test_set("test", "100");
+    char szKey[256] = {0};
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        int64_t res = 0;
+        if (xClient.incrby(dbi, szKey, 11, res)) {
+            if (res == 111) {
+                printf("%s success %d \r\n", __PRETTY_FUNCTION__, res);
+            } else {
+                printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+            }
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_get()
+{
 
     char szKey[256] = {0};
     {
@@ -76,7 +175,26 @@ void test_get() {
     }
 }
 
-void test_exists() {
+void test_getrange()
+{
+    test_set("test", "01234567890123456789");
+    char szKey[256] = {0};
+
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        string strData;
+        if (xClient.getrange(dbi, szKey, 2, 6, strData)) {
+            printf("%s success data:%s \r\n", __PRETTY_FUNCTION__, strData.c_str());
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_exists()
+{
     char szKey[256] = {0};
     strcpy(szKey, "test");
     RedisDBIdx dbi(&xClient);
@@ -90,7 +208,8 @@ void test_exists() {
     }
 }
 
-void test_del() {
+void test_del()
+{
     char szKey[256] = {0};
     strcpy(szKey, "test");
     RedisDBIdx dbi(&xClient);
@@ -104,18 +223,19 @@ void test_del() {
     }
 }
 
-void test_mset() {
+void test_mset()
+{
     char szKey[256] = {0};
     DBIArray vdbi;
     VDATA    kvData;
 
-    for (int i=0; i<10; i++)
-    {
+    for (int i = 0; i < 10; i++) {
         RedisDBIdx dbi(&xClient);
         sprintf(szKey, "mset_key_%d", i);
         dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
         vdbi.push_back(dbi);
         kvData.push_back(szKey);
+        sprintf(szKey, "mset_value_%d", i);
         kvData.push_back(szKey);
     }
 
@@ -126,13 +246,13 @@ void test_mset() {
     }
 }
 
-void test_mget() {
+void test_mget()
+{
     char szKey[256] = {0};
     DBIArray vdbi;
     KEYS     kData;
     ReplyData Reply;
-    for (int i=0; i<15; i++)
-    {
+    for (int i = 0; i < 15; i++) {
         RedisDBIdx dbi(&xClient);
         sprintf(szKey, "mset_key_%d", i);
         dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
@@ -142,8 +262,8 @@ void test_mget() {
 
     if (xClient.mget(vdbi, kData, Reply)) {
         printf("%s success %d \r\n", __PRETTY_FUNCTION__, Reply.size());
-        ReplyData::iterator iter=Reply.begin();
-        for (; iter!=Reply.end(); iter++) {
+        ReplyData::iterator iter = Reply.begin();
+        for (; iter != Reply.end(); iter++) {
             printf("%d\t%s\r\n", (*iter).type, (*iter).str.c_str());
         }
     } else {
@@ -151,7 +271,8 @@ void test_mget() {
     }
 }
 
-void test_hset() {
+void test_hset()
+{
     char szHKey[256] = {0};
     strcpy(szHKey, "hashtest");
     RedisDBIdx dbi(&xClient);
@@ -167,27 +288,33 @@ void test_hset() {
 }
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
-    xClient.Init();
+    xClient.Init(3);
 
-    RedisNode RedisList1[3]=
-    {
-        {0,"127.0.0.1", 7000, "", 2, 5},
-        {1,"127.0.0.1", 7000, "", 2, 5},
-        {2,"127.0.0.1", 7000, "", 2, 5}
+    RedisNode RedisList1[3] = {
+        {0, "127.0.0.1", 6379, "", 2, 5},
+        {1, "127.0.0.1", 6379, "", 2, 5},
+        {2, "127.0.0.1", 6379, "", 2, 5}
     };
 
     xClient.ConnectRedisCache(RedisList1, 3, CACHE_TYPE_1);
-        
-    test_set();
+
+    test_set("test", "wwww");
     test_get();
+    test_getrange();
     test_exists();
     test_del();
     test_hset();
     test_mset();
     test_mget();
+    test_append();
 
+    test_decr();
+    test_decrby();
+    test_incr();
+    test_incrby();
 
     //int n = 10;
     //while (n--) {

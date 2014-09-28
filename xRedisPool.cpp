@@ -26,9 +26,7 @@ RedisPool *RedisPool::GetInstance() {
 
 bool RedisPool::Init(const unsigned int typesize) {
     mTypeSize = typesize;
-
-    if (mTypeSize>MAX_REDIS_CACHE_TYPE)
-    {
+    if (mTypeSize>MAX_REDIS_CACHE_TYPE){
         return false;
     }
 
@@ -37,7 +35,7 @@ bool RedisPool::Init(const unsigned int typesize) {
 }
 
 bool RedisPool::setHashBase(const unsigned int cachetype, const unsigned int hashbase) {
-    if ( hashbase>MAX_REDIS_DB_HASHBASE) {
+    if ( (hashbase>MAX_REDIS_DB_HASHBASE)||(cachetype>mTypeSize-1)) {
         return false;
     }
 
@@ -70,7 +68,7 @@ bool RedisPool::CheckReply(const redisReply *reply){
             return true;
         }
     case REDIS_REPLY_ARRAY:{
-            return (strcasecmp(reply->str,"OK") == 0)?true:false;
+        return true;
         }
     case REDIS_REPLY_INTEGER:{
             return true;
@@ -106,6 +104,7 @@ bool RedisPool::ConnectRedisDB( unsigned int cahcetype,  unsigned int dbindex,
     if((NULL==host)
         ||(cahcetype>MAX_REDIS_CACHE_TYPE)
         ||(dbindex>MAX_REDIS_DB_HASHBASE)
+        || (cahcetype>mTypeSize - 1)
         ||(poolsize>MAX_REDIS_CONN_POOLSIZE)){
             return false;
     }

@@ -19,14 +19,23 @@ bool xRedisClient::zadd(const RedisDBIdx& dbi, const KEY& key,   const VALUES& v
 }
 
 bool xRedisClient::zscrad(const RedisDBIdx& dbi,     const string& key, int64_t& count){
+    if (0==key.length()) {
+        return false;
+    }
     return command_integer(dbi, count, "ZSCRAD %s", key.c_str());
 }
 
 bool xRedisClient::zincrby(const RedisDBIdx& dbi,  const string& key, const double &increment, const string& member, string& value ) {
+    if (0==key.length()) {
+        return false;
+    }
     return command_string(dbi, value, "ZINCRBY %s %f %s", key.c_str(), increment, member.c_str());
 }
 
 bool xRedisClient::zrange(const RedisDBIdx& dbi,  const string& key, int start, int end, VALUES& vValues, bool withscore) {
+    if (0==key.length()) {
+        return false;
+    }
     if (withscore) {
         return command_list(dbi, vValues, "ZRANGE %s %d %d %s", key.c_str(), start, end, "WITHSCORES");
     }
@@ -34,6 +43,9 @@ bool xRedisClient::zrange(const RedisDBIdx& dbi,  const string& key, int start, 
 }
 
 bool xRedisClient::zrank(const RedisDBIdx& dbi,  const string& key, const string& member, int64_t &rank) {
+    if (0==key.length()) {
+        return false;
+    }
     return command_integer(dbi, rank, "ZRANK %s %s", key.c_str(), member.c_str());
 }
 
@@ -46,10 +58,16 @@ bool xRedisClient::zrem(const RedisDBIdx& dbi,        const KEY& key, const VALU
 }
 
 bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi,  const string& key, const int start, const int stop, int64_t& count) {
+    if (0==key.length()) {
+        return false;
+    }
     return command_integer(dbi, count, "ZREMRANGEBYRANK %s %d %d", key.c_str(), start, stop);
 }
 
 bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int start, int end, VALUES& vValues, bool withscore) {
+    if (0==key.length()) {
+        return false;
+    }
     if (withscore) {
         return command_list(dbi, vValues, "ZREVRANGE %s %d %d %s", key.c_str(), start, end, "WITHSCORES");
     }
@@ -57,10 +75,16 @@ bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int star
 }
 
  bool xRedisClient::zrevrank(const RedisDBIdx& dbi,  const string& key, const string &member, int64_t& rank){
+     if (0==key.length()) {
+         return false;
+     }
      return command_integer(dbi, rank, "ZREVRANK %s %s", key.c_str(), member.c_str());
  }
 
  bool xRedisClient::zscore(const RedisDBIdx& dbi,  const string& key, const string &member, string& score ){
+     if (0==key.length()) {
+         return false;
+     }
      return command_string(dbi, score, "ZSCORE %s %s", key.c_str(), member.c_str());
  }
 

@@ -6,11 +6,20 @@
  * ----------------------------------------------------------------------------
  */
 
+#include "hiredis.h"
 #include "xRedisClient.h"
 #include <sstream>
 
 bool xRedisClient::psetex(const RedisDBIdx& dbi,    const string& key,  const int milliseconds, const string& value) {
     return command_bool(dbi, "PSETEX %s %d %s", key.c_str(), milliseconds, value.c_str());
+}
+
+bool xRedisClient::append(const RedisDBIdx& dbi,    const string& key,  const string& value) {
+    VDATA vCmdData;
+    vCmdData.push_back("APPEND");
+    vCmdData.push_back(key);
+    vCmdData.push_back(value);
+    return commandargv_status(dbi, vCmdData);
 }
 
 bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const string& value) {
@@ -21,6 +30,15 @@ bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const strin
     return commandargv_status(dbi, vCmdData);
 }
 
+bool xRedisClient::set(const RedisDBIdx& dbi, const string& key, const char *value, int len, const int second) {
+    if (0==second) {
+        return command_bool(dbi, "set %s %b", key.c_str(), value, len);
+    } else {
+        return command_bool(dbi, "set %s %b EX %d", key.c_str(), value, len, second);
+    }
+}
+
+
 bool xRedisClient::setbit(const RedisDBIdx& dbi,    const string& key,  const int offset, const int64_t newbitValue, int64_t oldbitValue) {
     return command_integer(dbi, oldbitValue, "SETBIT %s %d %lld", key.c_str(), offset, newbitValue);
 }
@@ -29,8 +47,13 @@ bool xRedisClient::get(const RedisDBIdx& dbi,    const string& key,  string& val
     return command_string(dbi, value, "GET %s", key.c_str());
 }
 
+
+
 bool xRedisClient::getbit( const RedisDBIdx& dbi, const string& key, const int& offset, int& bit ) {
-    return command_integer(dbi, (int64_t&)bit, "GETBIT %s %d", key.c_str(), offset);
+    int64_t intval = 0;
+    bool bRet = command_integer(dbi, intval, "GETBIT %s %d", key.c_str(), offset);
+    bit = (int)intval;
+    return bRet;
 }
 
 bool xRedisClient::getrange(const RedisDBIdx& dbi,const string& key,  const int start, const int end, string& out) {
@@ -65,7 +88,6 @@ bool xRedisClient::mget(const DBIArray &vdbi,   const KEYS &  keys, ReplyData& v
             vDdata.push_back(item);
         }
     }
-
     return bRet;
 }
 
@@ -101,51 +123,65 @@ bool xRedisClient::setnx(const RedisDBIdx& dbi,  const string& key,  const strin
 }
 
 bool xRedisClient::setrange(const RedisDBIdx& dbi,const string& key,  const int offset, const string& value, int& length) {
-    return command_integer(dbi, (int64_t&)length, "setrange %s %d %s", key.c_str(), offset, value.c_str());
+    int64_t intval = 0;
+    bool bRet = command_integer(dbi, intval, "setrange %s %d %s", key.c_str(), offset, value.c_str());
+    length = (int)intval;
+    return bRet;
 }
 
 bool xRedisClient::strlen(const RedisDBIdx& dbi,const string& key, int& length) {
-    return command_integer(dbi, (int64_t&)length, "STRLEN %s", key.c_str());
+    int64_t intval = 0;
+    bool bRet = command_integer(dbi, intval, "STRLEN %s", key.c_str());
+    length = (int)intval;
+    return bRet;
 }
 
-bool xRedisClient::incr(const RedisDBIdx& dbi,   const string& key, int& result) {
-    return command_integer(dbi, (int64_t&)result, "INCR %s", key.c_str());
+bool xRedisClient::incr(const RedisDBIdx& dbi,   const string& key, int64_t& result) {
+    return command_integer(dbi, result, "INCR %s", key.c_str());
 }
 
-bool xRedisClient::incrby(const RedisDBIdx& dbi, const string& key, const int by, int& result) {
-    return command_integer(dbi, (int64_t&)result, "INCR %s %d", key.c_str(), by);
+bool xRedisClient::incrby(const RedisDBIdx& dbi, const string& key, const int by, int64_t& result) {
+    return command_integer(dbi, result, "INCRBY %s %d", key.c_str(), by);
 }
 
 bool xRedisClient::bitcount(const RedisDBIdx& dbi,  const string& key, int& count, const int start, const int end) {
+    int64_t intval = 0;
+    bool bRet = false;
     if ( (start!=0)||(end!=0) ) {
-        return command_integer(dbi, (int64_t&)count, "bitcount %s %d %d", key.c_str(), start, end);
-    } 
-    return command_integer(dbi, (int64_t&)count, "bitcount %s", key.c_str());
+        bRet = command_integer(dbi, intval, "bitcount %s %d %d", key.c_str(), start, end);
+    } else {
+        bRet =  command_integer(dbi, intval, "bitcount %s", key.c_str());
+    }
+    count = (int)intval;
+    return bRet;
 }
 
 bool xRedisClient::bitop(const RedisDBIdx& dbi, const BITOP operation, const string& destkey, const KEYS& keys, int& lenght) {
     static const char *op_cmd[4]= {"AND","OR","XOR","NOT"};
     VDATA vCmdData;
+    int64_t intval = 0;
     vCmdData.push_back("bitop");
     vCmdData.push_back(op_cmd[operation]);
     vCmdData.push_back(destkey);
     addparam(vCmdData, keys);
-    return commandargv_integer(dbi, vCmdData, (int64_t&)lenght);
+    bool bRet = commandargv_integer(dbi, vCmdData, intval);
+    lenght = (int)intval;
+    return bRet;
 }
 
-bool xRedisClient::bitpos(const RedisDBIdx& dbi, const string& key, const int bit, int& pos, const int start, const int end) {
-    if ( (start!=0)||(end!=0) ) {
-        return command_integer(dbi, (int64_t&)pos, "BITPOS %s %d %d %d", key.c_str(), bit, start, end);
+bool xRedisClient::bitpos(const RedisDBIdx& dbi, const string& key, const int bit, int64_t& pos, const int start, const int end) {
+	if ( (start!=0)||(end!=0) ) {
+        return command_integer(dbi, pos, "BITPOS %s %d %d %d", key.c_str(), bit, start, end);
     } 
-    return command_integer(dbi, (int64_t&)pos, "BITPOS %s %d", key.c_str(), bit);
+    return command_integer(dbi, pos, "BITPOS %s %d", key.c_str(), bit);
 }
 
-bool xRedisClient::decr(const RedisDBIdx& dbi,   const string& key, int& result) {
-    return command_integer(dbi,(int64_t&)result,"decr %s", key.c_str());
+bool xRedisClient::decr(const RedisDBIdx& dbi,   const string& key, int64_t& result) {
+    return command_integer(dbi,result,"decr %s", key.c_str());
 }
 
-bool xRedisClient::decrby(const RedisDBIdx& dbi, const string& key, const int by, int& result) {
-    return command_integer(dbi, (int64_t&)result, "decrby %s %d", key.c_str(), by);
+bool xRedisClient::decrby(const RedisDBIdx& dbi, const string& key, const int by, int64_t& result) {
+    return command_integer(dbi, result, "decrby %s %d", key.c_str(), by);
 }
 
 

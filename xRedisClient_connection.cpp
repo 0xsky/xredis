@@ -10,6 +10,9 @@
 #include <sstream>
 
 bool xRedisClient::auth(const RedisDBIdx& dbi, const string& pass){
+    if (0==pass.length()) {
+        return false;
+    }
     return command_bool(dbi, "AUTH %s", pass.c_str());
 }
 

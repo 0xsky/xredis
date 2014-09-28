@@ -4,7 +4,7 @@
 # This file is released under the BSD license, see the COPYING file
 
 OBJ=xRedisClient.o xRedisClient_keys.o xRedisClient_sets.o xRedisClient_strings.o \
-xRedisClient_connection.o xRedisClient_hashs.o xRedisClient_lists.o xRedisClient_sortedsets.o xRedisPool.o
+xRedisClient_Connection.o xRedisClient_hashs.o xRedisClient_lists.o xRedisClient_sortedsets.o xRedisPool.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
 LIBNAME=libxredis
@@ -43,10 +43,10 @@ ifeq ($(uname_S),Darwin)
   DYLIB_MAKE_CMD=$(CC) -shared -Wl,-install_name,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
 endif
 
-all: $(DYLIBNAME)
+all: $(DYLIBNAME) $(STLIBNAME)
 
 # Deps (use make dep to generate this)
-xRedisClient_connection.o:xRedisClient_connection.cpp
+xRedisClient_Connection.o:xRedisClient_Connection.cpp
 xRedisClient.o:           xRedisClient.cpp
 xRedisClient_hashs.o:     xRedisClient_hashs.cpp
 xRedisClient_keys.o:      xRedisClient_keys.cpp

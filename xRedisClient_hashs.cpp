@@ -7,6 +7,7 @@
  */
 
 #include "xRedisClient.h"
+#include "xRedisPool.h"
 #include <sstream>
 #include <stdlib.h>
 
@@ -27,7 +28,7 @@ bool xRedisClient::hexist(const RedisDBIdx& dbi,   const string& key, const stri
 }
 
 bool xRedisClient::hget(const RedisDBIdx& dbi,    const string& key, const string& filed, string& value) {
-    return command_string(dbi, value, "HGET %s %s %s", key.c_str(), filed.c_str());
+    return command_string(dbi, value, "HGET %s %s", key.c_str(), filed.c_str());
 }
 
 bool  xRedisClient::hgetall(const RedisDBIdx& dbi,    const string& key, ArrayReply& array){
@@ -45,7 +46,7 @@ bool xRedisClient::hincrbyfloat(const RedisDBIdx& dbi,  const string& key, const
         return false;
     }
 
-    redisReply *reply = static_cast<redisReply *>(redisCommand(pRedisConn->getCtx(), "HINCRBY %s %s %f", key.c_str(), filed.c_str(), increment));
+    redisReply *reply = static_cast<redisReply *>(redisCommand(pRedisConn->getCtx(), "HINCRBYFLOAT %s %s %f", key.c_str(), filed.c_str(), increment));
     if (RedisPool::CheckReply(reply)) {
         value = atof(reply->str);
         bRet = true;
@@ -74,10 +75,10 @@ bool xRedisClient::hmget(const RedisDBIdx& dbi,    const string& key, const KEYS
 
 bool xRedisClient::hmset(const RedisDBIdx& dbi,    const string& key, const VDATA& vData){
     VDATA vCmdData;
-    vCmdData.push_back("HMGET");
+    vCmdData.push_back("HMSET");
     vCmdData.push_back(key);
     addparam(vCmdData, vData);
-    return commandargv_bool(dbi, vCmdData);
+    return commandargv_status(dbi, vCmdData);
 }
 
 bool xRedisClient::hset(const RedisDBIdx& dbi,    const string& key, const string& filed, const string& value, int64_t& retval){

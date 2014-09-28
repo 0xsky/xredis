@@ -14,11 +14,15 @@
 #include <list>
 #include "xLock.h"
 #include "hiredis.h"
+#include "xRedisClient.h"
 using namespace std;
 
 #define MAX_REDIS_CONN_POOLSIZE     32      // 每个DB最大连接数
 #define MAX_REDIS_CACHE_TYPE        32      // 最大支持的CACHE种类数
 #define MAX_REDIS_DB_HASHBASE       32      // 最大HASH分库基数
+
+#define GET_CONNECT_ERROR       "GetConnection ERROR"
+#define CONNECT_CLOSED_ERROR    "redis connection be closed"
 
 enum {
     REDISDB_UNCONN,
@@ -26,8 +30,9 @@ enum {
     REDISDB_DEAD
 };
 
-typedef struct REDISCONN{
-    REDISCONN(){
+class RedisConn{
+public:
+    RedisConn(){
         mCtx      = NULL;
         mHost     = NULL;
         mPass     = NULL;
@@ -37,7 +42,7 @@ typedef struct REDISCONN{
         mType     = 0;
         mDbindex  = 0;
     }
-    ~REDISCONN(){
+    ~RedisConn(){
 
     }
 
@@ -72,6 +77,7 @@ typedef struct REDISCONN{
         if (NULL == mCtx || mCtx->err) {
             if (NULL!=mCtx) {
                 redisFree(mCtx);
+                mCtx = NULL;
             } else {
 
             }
@@ -111,19 +117,19 @@ private:
     unsigned int  mPoolsize;      // connect pool size for each redis DB
     unsigned int  mType;          // redis cache pool type 
     unsigned int  mDbindex;       // redis DB index
-}RedisConn;
+};
 
-// 连接链表
 typedef std::list<RedisConn *> RedisConnList;
 typedef std::list<RedisConn *>::iterator RedisConnIter;
 
-typedef struct _REDIS_DATE_SLICE_{
-    _REDIS_DATE_SLICE_(){
+class RedisDBSlice{
+public:
+    RedisDBSlice(){
         mType     = 0;
         mDbindex  = 0;
         mStatus   = 0;
     }
-    ~_REDIS_DATE_SLICE_(){
+    ~RedisDBSlice(){
 
     }
 
@@ -217,15 +223,16 @@ private:
     unsigned int  mType;          // redis cache pool type 
     unsigned int  mDbindex;       // redis DB index
     unsigned int  mStatus;        // redis DB status
-}RedisDBSlice;
+};
 
-typedef struct _REDIS_CACHE_{
-    _REDIS_CACHE_(){
+class RedisCache{
+public:
+    RedisCache(){
         mCachetype = 0;
         mHashbase  = 0;
         mDBList    = NULL;
     }
-    virtual ~_REDIS_CACHE_(){
+    virtual ~RedisCache(){
 
     }
 
@@ -269,7 +276,11 @@ typedef struct _REDIS_CACHE_{
     }
 
     unsigned int GetDBStatus(unsigned int dbindex) {
-        return mDBList[dbindex].GetStatus();
+        RedisDBSlice *pdbSclice = &mDBList[dbindex];
+        if (NULL==pdbSclice) {
+            return REDISDB_UNCONN;
+        }
+        return pdbSclice->GetStatus();
     }
 
     unsigned int GetHashBase() const {
@@ -280,7 +291,7 @@ private:
     RedisDBSlice *mDBList;
     unsigned int  mCachetype;
     unsigned int  mHashbase;
-}RedisCache;
+};
 
 
 class RedisPool{
