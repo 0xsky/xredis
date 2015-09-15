@@ -24,8 +24,8 @@ sudo make install
 ```
 
 ### Documentation
+<p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 <p>xRedis开源社区QQ群: 190107312
-See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 
 
 <p><p>作者: xSky        
