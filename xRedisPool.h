@@ -34,8 +34,6 @@ class RedisConn{
 public:
     RedisConn(){
         mCtx      = NULL;
-        mHost     = NULL;
-        mPass     = NULL;
         mPort     = 0;
         mTimeout  = 0;
         mPoolsize = 0;
@@ -48,9 +46,9 @@ public:
 
     void Init(const unsigned int  cahcetype, 
         const unsigned int  dbindex,
-        const char         *host,
+        const std::string&  host,
         const unsigned int  port,
-        const char         *pass,
+        const std::string&  pass,
         const unsigned int  poolsize,
         const unsigned int  timeout) {
             mType     = cahcetype;
@@ -73,7 +71,7 @@ public:
         timeoutVal.tv_sec  = mTimeout;
         timeoutVal.tv_usec = 0;
 
-        mCtx = redisConnectWithTimeout(mHost, mPort, timeoutVal);
+        mCtx = redisConnectWithTimeout(mHost.c_str(), mPort, timeoutVal);
         if (NULL == mCtx || mCtx->err) {
             if (NULL!=mCtx) {
                 redisFree(mCtx);
@@ -82,10 +80,10 @@ public:
 
             }
         } else {
-            if (0==strlen(mPass)) {
+            if (0==mPass.length()) {
                 bRet = true;
             } else {
-                redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx,"AUTH %s", mPass));
+                redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx,"AUTH %s", mPass.c_str()));
                 if((NULL==reply)||(strcasecmp(reply->str,"OK") != 0)) {
                     bRet = false;
                 }
@@ -110,9 +108,9 @@ public:
 private:
     // redis connector context
     redisContext *mCtx;
-    const char   *mHost;         // redis host
+    string        mHost;         // redis host
     unsigned int  mPort;          // redis sever port
-    const char   *mPass;         // redis server password
+    string        mPass;         // redis server password
     unsigned int  mTimeout;       // connect timeout second
     unsigned int  mPoolsize;      // connect pool size for each redis DB
     unsigned int  mType;          // redis cache pool type 
@@ -140,10 +138,10 @@ public:
     }
 
     bool ConnectRedisNodes(const unsigned int cahcetype, const unsigned int dbindex,
-        const char *host, const unsigned int port, const char *passwd,
+        const std::string& host, const unsigned int port, const std::string& passwd,
         const unsigned int poolsize, const unsigned int timeout)
     {
-        if((NULL==host)
+        if( (host.empty())
             ||(cahcetype>MAX_REDIS_CACHE_TYPE)
             ||(dbindex>MAX_REDIS_DB_HASHBASE)
             ||(poolsize>MAX_REDIS_CONN_POOLSIZE)){
@@ -157,7 +155,7 @@ public:
                     continue;
                 }
 
-                pRedisconn->Init(cahcetype, dbindex, host, port, passwd, poolsize, timeout);
+                pRedisconn->Init(cahcetype, dbindex, host.c_str(), port, passwd.c_str(), poolsize, timeout);
                 if (pRedisconn->RedisConnect()) {
                     mConnlist.push_back(pRedisconn);
                     mStatus = REDISDB_WORKING;

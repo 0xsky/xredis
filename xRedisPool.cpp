@@ -44,7 +44,7 @@ bool RedisPool::setHashBase(const unsigned int cachetype, const unsigned int has
 }
 
 unsigned int RedisPool::getHashBase(const unsigned int cachetype) {
-    if ( cachetype>MAX_REDIS_CACHE_TYPE) {
+    if ((cachetype > mTypeSize) || (cachetype > MAX_REDIS_CACHE_TYPE)) {
         return 0;
     }
     return mRedisCacheList[cachetype].GetHashBase();
@@ -93,8 +93,6 @@ bool RedisPool::CheckReply(const redisReply *reply){
 void RedisPool::FreeReply(const redisReply *reply){
     if (NULL!=reply) {
         freeReplyObject((void*)reply);
-    } else {
-
     }
 }
 
