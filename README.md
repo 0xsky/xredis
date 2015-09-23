@@ -2,6 +2,7 @@ xRedis
 ======
 
 Redis C++ client, support the data slice storage, support the connection pool
+
 **Features:**
 * data slice storage
 * connection pool
