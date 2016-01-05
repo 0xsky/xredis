@@ -3,6 +3,13 @@ xRedis
 
 Redis C++ client, support the data slice storage, support the connection pool
 
+**Features:**
+* data slice storage
+* connection pool
+* connection to multiple clusters
+* most REDIS commands have been implemented
+* multi thread safety
+
 ### Dependencies
 
 xredis requires hiredis only
@@ -24,6 +31,7 @@ sudo make install
 ```
 
 ### Documentation
+<p>[xRedis API Site](http://xredis.0xsky.com/) 
 <p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 <p>xRedis开源社区QQ群: 190107312
 
