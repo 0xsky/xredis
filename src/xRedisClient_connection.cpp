@@ -9,11 +9,18 @@
 #include "xRedisClient.h"
 #include <sstream>
 
-bool xRedisClient::auth(const RedisDBIdx& dbi, const string& pass){
-    if (0==pass.length()) {
+void xRedisClient::quit(){
+	Release();
+}
+
+
+bool xRedisClient::echo(const RedisDBIdx& dbi, const string& str, std::string &value)
+{
+	if (0==str.length()) {
         return false;
     }
-    return command_bool(dbi, "AUTH %s", pass.c_str());
+    SETDEFAULTIOTYPE(MASTER);
+    return command_string(dbi, value, "echo %s", str.c_str());
 }
 
 

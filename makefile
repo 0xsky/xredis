@@ -3,8 +3,8 @@
 # Copyright (C) 2010-2011 Pieter Noordhuis <pcnoordhuis at gmail dot com>
 # This file is released under the BSD license, see the COPYING file
 
-OBJ=xRedisClient.o xRedisClient_keys.o xRedisClient_sets.o xRedisClient_strings.o \
-xRedisClient_connection.o xRedisClient_hashs.o xRedisClient_lists.o xRedisClient_sortedsets.o xRedisPool.o
+OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o \
+src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
 LIBNAME=libxredis
@@ -46,15 +46,15 @@ endif
 all: $(DYLIBNAME) $(STLIBNAME)
 
 # Deps (use make dep to generate this)
-xRedisClient_Connection.o:xRedisClient_connection.cpp
-xRedisClient.o:           xRedisClient.cpp
-xRedisClient_hashs.o:     xRedisClient_hashs.cpp
-xRedisClient_keys.o:      xRedisClient_keys.cpp
-xRedisClient_lists.o:     xRedisClient_lists.cpp
-xRedisClient_sets.o:      xRedisClient_sets.cpp
-xRedisClient_sortedsets.o:xRedisClient_sortedsets.cpp
-xRedisClient_strings.o:   xRedisClient_strings.cpp
-xRedisPool.o:             xRedisPool.cpp
+xRedisClient_Connection.o: xRedisClient_connection.cpp
+xRedisClient.o:            xRedisClient.cpp
+xRedisClient_hashs.o:      xRedisClient_hashs.cpp
+xRedisClient_keys.o:       xRedisClient_keys.cpp
+xRedisClient_lists.o:      xRedisClient_lists.cpp
+xRedisClient_sets.o:       xRedisClient_sets.cpp
+xRedisClient_sortedsets.o: xRedisClient_sortedsets.cpp
+xRedisClient_strings.o:    xRedisClient_strings.cpp
+xRedisPool.o:              xRedisPool.cpp
 
 $(DYLIBNAME): $(OBJ)
 	$(DYLIB_MAKE_CMD) $(OBJ)
@@ -67,21 +67,21 @@ static: $(STLIBNAME)
 
 # Binaries:
 xredis-example: examples/xredis-example.cpp $(STLIBNAME)
-	$(CC) -o examples/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -I. -L./ $< $(STLIBNAME) -lhiredis -lpthread
+	$(CC) -o examples/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -lhiredis -lpthread
 
 examples: $(EXAMPLES)
 
 xredis-test: test/xredis-test.cpp $(STLIBNAME)
-	$(CC) -o test/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS)  -I. -L./ $< $(STLIBNAME) -lhiredis -lpthread
+	$(CC) -o test/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS)  -I./src -L. $< $(STLIBNAME) -lhiredis -lpthread
 
 test: xredis-test
 	./test/xredis-test
 
-.cpp.o:
-	$(CC)  -c $(REAL_CFLAGS) $<
+%.o: %.cpp
+	$(CC) $(REAL_CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(DYLIBNAME) $(STLIBNAME) $(TESTS) examples/example* *.o
+	rm -rf $(DYLIBNAME) $(STLIBNAME) $(TESTS) src/*.o examples/example* *.o
 
 dep:
 	$(CC) -MM *.cpp
