@@ -13,6 +13,7 @@ bool xRedisClient::lindex(const RedisDBIdx& dbi,    const string& key, int64_t i
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     return command_string(dbi, value, "LINDEX %s %lld", key.c_str(), index);
 }
 
@@ -21,6 +22,7 @@ bool xRedisClient::linsert(const RedisDBIdx& dbi,    const string& key, const LM
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, retval, "LINSERT %s %s %s %s", key.c_str(), lmodel[mod], pivot.c_str(), value.c_str());
 }
 
@@ -28,6 +30,7 @@ bool xRedisClient::llen(const RedisDBIdx& dbi,    const string& key, int64_t& re
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     return command_integer(dbi, retval, "LLEN %s", key.c_str());
 }
 
@@ -35,6 +38,7 @@ bool xRedisClient::lpop(const RedisDBIdx& dbi,    const string& key, string& val
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_string(dbi, value, "LPOP %s", key.c_str());
 }
 
@@ -46,6 +50,7 @@ bool xRedisClient::lpush(const RedisDBIdx& dbi,    const string& key, const VALU
     vCmdData.push_back("LPUSH");
     vCmdData.push_back(key);
     addparam(vCmdData, vValue);
+    SETDEFAULTIOTYPE(MASTER);
     return commandargv_integer(dbi, vCmdData, length);
 }
 
@@ -53,6 +58,7 @@ bool xRedisClient::lrange(const RedisDBIdx& dbi,    const string& key, int64_t s
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
 	return command_array(dbi, array, "LRANGE %s %lld %lld", key.c_str(), start, end);
 }
 
@@ -60,6 +66,7 @@ bool xRedisClient::lrem(const RedisDBIdx& dbi, const string& key, int count, con
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, num, "LREM %s %d %s", key.c_str(), count, value.c_str());
 }
 
@@ -67,6 +74,7 @@ bool xRedisClient::lset(const RedisDBIdx& dbi, const string& key, int index, con
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_status(dbi, "LSET %s %d %s", key.c_str(), index, value.c_str());
 }
 
@@ -74,6 +82,7 @@ bool xRedisClient::ltrim(const RedisDBIdx& dbi, const string& key, int start, in
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_status(dbi, "LTRIM %s %d %d", key.c_str(), start, end);
 }
 
@@ -81,6 +90,7 @@ bool xRedisClient::rpop(const RedisDBIdx& dbi,    const string& key, string& val
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_string(dbi, value, "RPOP %s", key.c_str());
 }
 
@@ -88,6 +98,7 @@ bool xRedisClient::rpoplpush(const RedisDBIdx& dbi,    const string& key_src, co
     if ((0 == key_src.length()) || (0==key_dest.length())) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_string(dbi, value, "RPOPLPUSH %s %s", key_src.c_str(), key_dest.c_str());
 }
 
@@ -99,6 +110,7 @@ bool xRedisClient::rpush(const RedisDBIdx& dbi,    const string& key, const VALU
     vCmdData.push_back("RPUSH");
     vCmdData.push_back(key);
     addparam(vCmdData, vValue);
+    SETDEFAULTIOTYPE(MASTER);
     return commandargv_integer(dbi, vCmdData, length);
 }
 
@@ -106,6 +118,7 @@ bool xRedisClient::rpushx(const RedisDBIdx& dbi,   const string& key, const stri
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, length, "RPUSHX %s %s", key.c_str(), value.c_str());
 }
 

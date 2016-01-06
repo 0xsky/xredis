@@ -13,6 +13,8 @@ bool  xRedisClient::del(const RedisDBIdx& dbi,    const string& key) {
     if (0==key.length()) {
         return false;
     }
+
+    SETDEFAULTIOTYPE(MASTER);
     return command_bool(dbi, "DEL %s", key.c_str());
 }
 
@@ -37,14 +39,15 @@ bool xRedisClient::exists(const RedisDBIdx& dbi, const string& key) {
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_bool(dbi, "EXISTS %s", key.c_str());
 }
 
-bool xRedisClient::expire(const RedisDBIdx& dbi, const string& key, const unsigned int second) {
+bool xRedisClient::expire(const RedisDBIdx& dbi, const string& key, unsigned int second) {
     if (0==key.length()) {
         return false;
     }
-
+    SETDEFAULTIOTYPE(MASTER);
     int64_t ret = -1;
     if (!command_integer(dbi, ret, "EXPIRE %s %u", key.c_str(), second)) {
         return false;
@@ -58,10 +61,11 @@ bool xRedisClient::expire(const RedisDBIdx& dbi, const string& key, const unsign
     }
 }
 
-bool xRedisClient::expireat(const RedisDBIdx& dbi, const string& key, const unsigned int timestamp) {
+bool xRedisClient::expireat(const RedisDBIdx& dbi, const string& key, unsigned int timestamp) {
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_bool(dbi, "EXPIREAT %s %u", key.c_str(), timestamp);
 }
 
@@ -69,20 +73,22 @@ bool xRedisClient::persist(const RedisDBIdx& dbi, const string& key) {
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_bool(dbi, "PERSIST %s %u", key.c_str());
 }
 
-bool xRedisClient::pexpire(const RedisDBIdx& dbi, const string& key, const unsigned int milliseconds) {
+bool xRedisClient::pexpire(const RedisDBIdx& dbi, const string& key, unsigned int milliseconds) {
     if (0==key.length()) {
         return false;
     }
     return command_bool(dbi, "PEXPIRE %s %u", key.c_str(), milliseconds);
 }
 
-bool xRedisClient::pexpireat(const RedisDBIdx& dbi, const string& key, const unsigned int millisecondstimestamp) {
+bool xRedisClient::pexpireat(const RedisDBIdx& dbi, const string& key, unsigned int millisecondstimestamp) {
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_bool(dbi, "PEXPIREAT %s %u", key.c_str(), millisecondstimestamp);
 }
 
@@ -90,6 +96,7 @@ bool xRedisClient::pttl(const RedisDBIdx& dbi, const string& key, int64_t &milli
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, milliseconds, "PTTL %s", key.c_str());
 }
 
@@ -97,10 +104,12 @@ bool xRedisClient::ttl(const RedisDBIdx& dbi, const string& key, int64_t &second
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     return command_integer(dbi, seconds, "TTL %s", key.c_str());
 }
 
 bool xRedisClient::randomkey(const RedisDBIdx& dbi, KEY& key){
+    SETDEFAULTIOTYPE(SLAVE);
     return command_string(dbi, key, "RANDOMKEY");
 }
 
@@ -115,7 +124,8 @@ bool xRedisClient::sort(const RedisDBIdx& dbi, ArrayReply& array, const string& 
     if (0 == key.length()) {
         return false;
     }
-   
+       
+
     VDATA vCmdData;
     vCmdData.push_back("sort");
     vCmdData.push_back(key);
@@ -144,7 +154,7 @@ bool xRedisClient::sort(const RedisDBIdx& dbi, ArrayReply& array, const string& 
     if (destination) {
         vCmdData.push_back(destination);
     }
-
+    SETDEFAULTIOTYPE(MASTER);
     return commandargv_array(dbi, vCmdData, array);
 }
 

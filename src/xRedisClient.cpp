@@ -58,9 +58,9 @@ void RedisDBIdx::IOtype(unsigned int type) {
     mIOtype = type;
 }
 
-void RedisDBIdx::SetIOType()
+void RedisDBIdx::SetIOMaster()
 {
-    mIOtype = SLAVE;
+    mIOtype = MASTER;
     mIOFlag = true;
 }
 
@@ -165,9 +165,10 @@ void xRedisClient::SetErrString(const RedisDBIdx& dbi, const char *str, int len)
     dbindex.SetErrInfo(str, len);
 }
 
-void xRedisClient::SetIOtype(const RedisDBIdx& dbi, unsigned int iotype) {
+void xRedisClient::SetIOtype(const RedisDBIdx& dbi, unsigned int iotype, bool ioflag) {
     RedisDBIdx &dbindex = const_cast<RedisDBIdx&>(dbi);
     dbindex.IOtype(iotype);
+    dbindex.mIOFlag = ioflag;
 }
 
 void xRedisClient::SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...)
@@ -180,7 +181,8 @@ void xRedisClient::SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...)
     SetErrString(dbi, szBuf, ::strlen(szBuf));
 }
 
-rReply *xRedisClient::command(const RedisDBIdx& dbi, const char* cmd){
+rReply *xRedisClient::command(const RedisDBIdx& dbi, const char* cmd)
+{
     RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex, dbi.mIOtype);
     if (NULL == pRedisConn) {
         SetErrString(dbi, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));

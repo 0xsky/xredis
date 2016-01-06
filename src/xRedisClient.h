@@ -73,7 +73,7 @@ public:
     bool CreateDBIndex(const char *key,  HASHFUN fun, unsigned int type);
     bool CreateDBIndex(int64_t id, unsigned int type);
     char *GetErrInfo() {return mStrerr;}
-    void SetIOType();
+    void SetIOMaster();
 
 private:
     bool SetErrInfo(const char *info, int len);
@@ -314,7 +314,7 @@ private:
     void SetErrInfo(const RedisDBIdx& dbi, void *p);
     void SetErrString(const RedisDBIdx& dbi, const char *str, int len);
     void SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...);
-    void SetIOtype(const RedisDBIdx& dbi, unsigned int iotype);
+    void SetIOtype(const RedisDBIdx& dbi, unsigned int iotype, bool ioflag = false);
 public:
 
     bool command_bool(const RedisDBIdx& dbi,                       const char* cmd, ...);

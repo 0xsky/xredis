@@ -13,6 +13,7 @@ bool xRedisClient::sadd(const RedisDBIdx& dbi,     const string& key, const VALU
     vCmdData.push_back("SADD");
     vCmdData.push_back(key);
     addparam(vCmdData, vValue);
+    SETDEFAULTIOTYPE(MASTER);
     return commandargv_integer(dbi, vCmdData, count);
 }
 
@@ -20,6 +21,7 @@ bool xRedisClient::scard(const RedisDBIdx& dbi,     const string& key, int64_t& 
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     return command_integer(dbi, count, "SCARD %s", key.c_str());
 }
 
@@ -106,6 +108,7 @@ bool xRedisClient::smembers(const RedisDBIdx& dbi,  const KEY& key, VALUES& vVal
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     return command_list(dbi, vValue, "SMEMBERS %s", key.c_str());
 }
 
@@ -113,6 +116,7 @@ bool xRedisClient::smove(const RedisDBIdx& dbi,  const KEY& srckey, const KEY& d
     if (0==srckey.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_bool(dbi, "SMOVE %s", srckey.c_str(), deskey.c_str(), member.c_str());
 }
 
@@ -120,6 +124,7 @@ bool xRedisClient::spop(const RedisDBIdx& dbi,  const KEY& key, VALUE& member){
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_string(dbi, member, "SPOP %s", key.c_str());
 }
 
@@ -127,6 +132,7 @@ bool xRedisClient::srandmember(const RedisDBIdx& dbi,  const KEY& key, VALUES& m
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     if (0==count) {
         return command_list(dbi, members, "SRANDMEMBER %s", key.c_str());
     }
@@ -137,6 +143,7 @@ bool xRedisClient::srem(const RedisDBIdx& dbi,  const KEY& key, const VALUES& vm
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
     vCmdData.push_back("SREM");
     vCmdData.push_back(key);
@@ -172,6 +179,7 @@ bool xRedisClient::sunion(const DBIArray& vdbi,     const KEYS& vkey, VALUES& sV
 
 bool xRedisClient::sunionstore(const RedisDBIdx& dbi,  const KEY& deskey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count){
     VALUES sValue;
+    if (!dbi.mIOFlag) { SetIOtype(dbi, MASTER, true); }
     if (!sunion(vdbi, vkey, sValue)) {
         return false;
     }

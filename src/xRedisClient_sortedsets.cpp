@@ -15,6 +15,7 @@ bool xRedisClient::zadd(const RedisDBIdx& dbi, const KEY& key,   const VALUES& v
     vCmdData.push_back("ZADD");
     vCmdData.push_back(key);
     addparam(vCmdData, vValues);
+    SETDEFAULTIOTYPE(MASTER);
     return commandargv_integer(dbi, vCmdData, count);
 }
 
@@ -22,6 +23,7 @@ bool xRedisClient::zscrad(const RedisDBIdx& dbi,     const string& key, int64_t&
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     return command_integer(dbi, count, "ZSCRAD %s", key.c_str());
 }
 
@@ -29,6 +31,7 @@ bool xRedisClient::zincrby(const RedisDBIdx& dbi,  const string& key, const doub
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_string(dbi, value, "ZINCRBY %s %f %s", key.c_str(), increment, member.c_str());
 }
 
@@ -36,6 +39,7 @@ bool xRedisClient::zrange(const RedisDBIdx& dbi,  const string& key, int start, 
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(SLAVE);
     if (withscore) {
         return command_list(dbi, vValues, "ZRANGE %s %d %d %s", key.c_str(), start, end, "WITHSCORES");
     }
@@ -46,6 +50,7 @@ bool xRedisClient::zrank(const RedisDBIdx& dbi,  const string& key, const string
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, rank, "ZRANK %s %s", key.c_str(), member.c_str());
 }
 
@@ -54,6 +59,7 @@ bool xRedisClient::zrem(const RedisDBIdx& dbi,        const KEY& key, const VALU
     vCmdData.push_back("ZREM");
     vCmdData.push_back(key);
     addparam(vCmdData, vmembers);
+    SETDEFAULTIOTYPE(MASTER);
     return commandargv_integer(dbi, vCmdData, count);
 }
 
@@ -61,6 +67,7 @@ bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi,  const string& key, in
     if (0==key.length()) {
         return false;
     }
+    SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, count, "ZREMRANGEBYRANK %s %d %d", key.c_str(), start, stop);
 }
 
@@ -78,6 +85,7 @@ bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int star
      if (0==key.length()) {
          return false;
      }
+     SETDEFAULTIOTYPE(SLAVE);
      return command_integer(dbi, rank, "ZREVRANK %s %s", key.c_str(), member.c_str());
  }
 
@@ -85,6 +93,7 @@ bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int star
      if (0==key.length()) {
          return false;
      }
+     SETDEFAULTIOTYPE(SLAVE);
      return command_string(dbi, score, "ZSCORE %s %s", key.c_str(), member.c_str());
  }
 
