@@ -5,11 +5,13 @@ Redis C++ client, support the data slice storage, support the connection pool
 
 xRedis 是一个C++开发的redis客户端，是对hiredis的C++封装，提供REDIS易用的命令操作接口.
 支持数据多节点分布存储;
+支持同时连接到Redis主从节点，支持各命令操作读写分离;
 支持连接池;
 能同时连接多个集群;
 已实现大多数REDIS命令;
 只依赖hiredis库;
 多线程安全;
+
 
 ### Dependencies
 
