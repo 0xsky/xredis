@@ -7,7 +7,7 @@ Redis C++ client, support the data slice storage, support the connection pool
 * data slice storage
 * support Redis master slave connection, Support read/write separation
 * connection pool
-* connection to multiple clusters
+* simultaneously connected multiple data slice clusters  
 * most REDIS commands have been implemented
 * multi thread safety
 
