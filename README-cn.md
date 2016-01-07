@@ -4,6 +4,7 @@ xRedis
 Redis C++ client, support the data slice storage, support the connection pool
 
 xRedis 是一个C++开发的redis客户端，是对hiredis的C++封装，提供易用的redis命令操作接口.
+
 ***功能与特点：***
 * 支持数据多节点分布存储，可自定义分片规则;
 * 支持同时连接到每个分片的主从节点，支持主从读写分离;
