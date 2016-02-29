@@ -393,9 +393,9 @@ int main(int argc, char **argv)
     xClient.Init(3);
 
     RedisNode RedisList1[3] = {
-        {0, "127.0.0.1", 6379, "", 2, 5},
-        {1, "127.0.0.1", 6379, "", 2, 5},
-        {2, "127.0.0.1", 6379, "", 2, 5}
+        {0, "127.0.0.1", 6379, "", 2, 5, 0},
+        {1, "127.0.0.1", 6379, "", 2, 5, 0},
+        {2, "127.0.0.1", 6379, "", 2, 5, 0}
     };
 
     xClient.ConnectRedisCache(RedisList1, 3, CACHE_TYPE_1);
@@ -428,7 +428,7 @@ int main(int argc, char **argv)
     //    usleep(1000*1000*10);
     //}
 
-    xClient.release();
+    xClient.Release();
 
     return 0;
 }

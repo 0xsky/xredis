@@ -154,40 +154,60 @@ RedisConn::~RedisConn()
 
 }
 
+redisContext * RedisConn::ConnectWithTimeout()
+{
+    struct timeval timeoutVal;
+    timeoutVal.tv_sec = mTimeout;
+    timeoutVal.tv_usec = 0;
+
+    redisContext *ctx = NULL;
+    ctx = redisConnectWithTimeout(mHost.c_str(), mPort, timeoutVal);
+    if (NULL == ctx || ctx->err) {
+        if (NULL != ctx) {
+            redisFree(ctx);
+            ctx = NULL;
+        } else {
+            
+        }
+    } 
+
+    return ctx;
+}
+
+bool RedisConn::auth()
+{
+    bool bRet = false;
+    if (0 == mPass.length()) {
+        bRet = true;
+    } else {
+        redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "AUTH %s", mPass.c_str()));
+        if ((NULL == reply) || (strcasecmp(reply->str, "OK") != 0)) {
+            bRet = false;
+        } else {
+            bRet = true;    
+        }
+        freeReplyObject(reply);
+    }
+
+    return bRet;
+}
+
 bool RedisConn::RedisConnect()
 {
+    bool bRet = false;
     if (NULL != mCtx) {
         redisFree(mCtx);
         mCtx = NULL;
     }
 
-    bool bRet = false;
-    struct timeval timeoutVal;
-    timeoutVal.tv_sec = mTimeout;
-    timeoutVal.tv_usec = 0;
-
-    mCtx = redisConnectWithTimeout(mHost.c_str(), mPort, timeoutVal);
-    if (NULL == mCtx || mCtx->err) {
-        if (NULL != mCtx) {
-            redisFree(mCtx);
-            mCtx = NULL;
-        } else {
-
-        }
+    mCtx = ConnectWithTimeout();
+    if (NULL==mCtx) {
+        bRet = false;
     } else {
-
-        if (0 == mPass.length()) {
-            bRet = true;
-        } else {
-            redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "AUTH %s", mPass.c_str()));
-            if ((NULL == reply) || (strcasecmp(reply->str, "OK") != 0)) {
-                bRet = false;
-            }
-            bRet = true;
-            freeReplyObject(reply);
-        }
+        bRet = auth();
+        mConnStatus = bRet;
     }
-    mConnStatus = bRet;
+
     return bRet;
 }
 
@@ -198,35 +218,17 @@ bool RedisConn::RedisReConnect()
     }
 
     bool bRet = false;
-    struct timeval timeoutVal;
-    timeoutVal.tv_sec = mTimeout;
-    timeoutVal.tv_usec = 0;
-
-    redisContext *tmp_ctx = NULL;
-    tmp_ctx = redisConnectWithTimeout(mHost.c_str(), mPort, timeoutVal);
-    if (NULL == tmp_ctx || tmp_ctx->err) {
-        if (NULL != tmp_ctx) {
-            redisFree(tmp_ctx);
-            tmp_ctx = NULL;
-        } else {
-
-        }
+    redisContext *tmp_ctx = ConnectWithTimeout();
+    if (NULL == tmp_ctx) {
+        bRet = false;
     } else {
-        if (0 == mPass.length()) {
-            bRet = true;
-        } else {
-            redisReply *reply = static_cast<redisReply *>(redisCommand(tmp_ctx, "AUTH %s", mPass.c_str()));
-            if ((NULL == reply) || (strcasecmp(reply->str, "OK") != 0)) {
-                bRet = false;
-            }
-            bRet = true;
-            freeReplyObject(reply);
+        bRet = auth();
+        if (bRet) {
+            redisFree(mCtx);
+            mCtx = tmp_ctx;
         }
     }
-    if (bRet) {
-        redisFree(mCtx);
-        mCtx = tmp_ctx;
-    }
+
     mConnStatus = bRet;
     return bRet;
 }

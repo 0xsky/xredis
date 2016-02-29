@@ -58,6 +58,10 @@ public:
     unsigned int    GetRole() const   { return  mRole; }
     unsigned int    GetSlaveIdx() const   { return  mSlaveIdx; }
     bool            GetConnstatus() const   { return  mConnStatus; }
+    
+private:
+    bool auth();
+    redisContext * ConnectWithTimeout();
 
 private:
     // redis connector context
