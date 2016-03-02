@@ -25,7 +25,6 @@ unsigned int APHash(const char *str) {
     return (hash&  0x7FFFFFFF);
 }
 
-
 enum {
  CACHE_TYPE_1, 
  CACHE_TYPE_2,

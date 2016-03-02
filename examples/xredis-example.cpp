@@ -71,13 +71,14 @@ int main(int argc, char **argv) {
         printf("%s \r\n", strValue.c_str());
     }
     
+
     int n = 10;
     while (n--) {
-        xRedis.KeepAlive();
+        xRedis.Keepalive();
         usleep(1000*1000*10);
     }
 
-    xRedis.release();
+    xRedis.Release();
 
     return 0;
 }

@@ -81,7 +81,7 @@ test: xredis-test
 	$(CC) $(REAL_CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(DYLIBNAME) $(STLIBNAME) $(TESTS) src/*.o examples/example* *.o
+	rm -rf $(DYLIBNAME) $(STLIBNAME) $(TESTS) src/*.o examples/example* *.o test/*.o 
 
 dep:
 	$(CC) -MM *.cpp
