@@ -22,20 +22,23 @@ unsigned int APHash(const char *str) {
     return (hash&  0x7FFFFFFF);
 }
 
-#define CACHE_TYPE_1 1
-#define CACHE_TYPE_2 2
 
+enum {
+ CACHE_TYPE_1, 
+ CACHE_TYPE_2,
+ CACHE_TYPE_MAX,
+}
 
 RedisNode RedisList1[1]=
 {
-    {0,"127.0.0.1", 7000, "", 8, 5}
+    {0,"127.0.0.1", 7000, "", 8, 5, 0}
 };
 
 
 int main(int argc, char **argv) {
 
     xRedisClient xRedis;
-    xRedis.Init(1);
+    xRedis.Init(CACHE_TYPE_MAX);
     xRedis.ConnectRedisCache(RedisList1, 1, CACHE_TYPE_1);
         
     const char *key = "test";
