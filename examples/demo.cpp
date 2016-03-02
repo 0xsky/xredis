@@ -35,7 +35,7 @@ RedisNode RedisList1[1]=
 int main(int argc, char **argv) {
 
     xRedisClient xRedis;
-    xRedis.Init();
+    xRedis.Init(1);
     xRedis.ConnectRedisCache(RedisList1, 1, CACHE_TYPE_1);
         
     const char *key = "test";
