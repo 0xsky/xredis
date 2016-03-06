@@ -32,6 +32,7 @@ sudo make install
 ```
 
 ### Documentation
+![xredis](http://xredis.0xsky.com/pic/xredis_0.png)
 <p>[xRedis API Site](http://xredis.0xsky.com/) 
 <p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 <p>xRedis开源社区QQ群: 190107312
