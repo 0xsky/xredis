@@ -9,11 +9,11 @@
 #ifndef _XREDIS_POOL_H_
 #define _XREDIS_POOL_H_
 
+#include "hiredis.h"
+#include "xLock.h"
 #include <string.h>
 #include <string>
 #include <list>
-#include "xLock.h"
-#include "hiredis.h"
 #include "xRedisClient.h"
 using namespace std;
 
