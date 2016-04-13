@@ -24,6 +24,10 @@ using namespace std;
 #define GET_CONNECT_ERROR       "get connection error"
 #define CONNECT_CLOSED_ERROR    "redis connection be closed"
 
+#ifdef WIN32
+    #define   strcasecmp   stricmp
+    #define   strncasecmp  strnicmp
+#endif
 
 enum {
     REDISDB_UNCONN,
