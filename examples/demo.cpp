@@ -6,6 +6,7 @@
  * <br>More details about this example.
  */
 
+#include <stdio.h>
 #include "xRedisClient.h"
 
 // AP Hash Function
@@ -26,7 +27,7 @@ enum {
  CACHE_TYPE_1, 
  CACHE_TYPE_2,
  CACHE_TYPE_MAX,
-}
+};
 
 RedisNode RedisList1[1]=
 {
@@ -42,10 +43,10 @@ int main(int argc, char **argv) {
         
     const char *key = "test";
     const char *value = "test value";
-    RedisDBIdx dbi(&xClient);
+    RedisDBIdx dbi(&xRedis);
     dbi.CreateDBIndex(key, APHash, CACHE_TYPE_1);
 
-    bool bRet = xClient.set(dbi, key, value) 
+    bool bRet = xRedis.set(dbi, key, value); 
     if(bRet){
         printf("success \r\n");
     } else {
