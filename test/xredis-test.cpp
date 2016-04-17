@@ -409,14 +409,14 @@ int main(int argc, char **argv)
     xClient.Init(3);
 
     RedisNode RedisList1[3] = {
-        {0, "127.0.0.1", 6379, "c98359d7fa7d45595662c3255d1e8493", 2, 5, 0},
-        {1, "127.0.0.1", 6379, "c98359d7fa7d45595662c3255d1e8493", 2, 5, 0},
-        {2, "127.0.0.1", 6379, "c98359d7fa7d45595662c3255d1e8493", 2, 5, 0}
+        {0, "127.0.0.1", 6379, "", 2, 5, 0},
+        {1, "127.0.0.1", 6379, "", 2, 5, 0},
+        {2, "127.0.0.1", 6379, "", 2, 5, 0}
     };
 
     xClient.ConnectRedisCache(RedisList1, 3, CACHE_TYPE_1);
 
-    test_zadd("sort_test_key", "wwww for sorted nginx value");
+    test_zadd("test:sorted:key", "sorted value hello xredis");
     test_set("test", "wwww");
     test_get();
     test_getrange();
