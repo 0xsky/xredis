@@ -238,7 +238,10 @@ bool RedisConn::Ping()
     redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "PING"));
     bool bRet = (NULL != reply);
     mConnStatus = bRet;
-    freeReplyObject(reply);
+    if(bRet)
+    {
+        freeReplyObject(reply);
+    }
     return bRet;
 }
 
