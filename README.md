@@ -23,6 +23,11 @@ First step install libhiredis, on a Debian system you can use:
 sudo apt-get install libhiredis-dev
 ```
 
+on centos/redhat/fedora system you can use:
+```bash
+sudo yum install hiredis-devel
+```
+
 Then checkout the code and compile it
 ```bash
 git clone https://github.com/0xsky/xredis
