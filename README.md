@@ -40,10 +40,7 @@ sudo make install
 ![xredis](http://xredis.0xsky.com/pic/xredis_0.png)
 <p>[xRedis API Site](http://xredis.0xsky.com/) 
 <p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
+
+<p>blog: <a href="http://www.0xsky.com/">xSky's Blog</a>
 <p>xRedis开源社区QQ群: 190107312
-
-
-<p><p>作者: xSky        
-<p>博客: <a href="http://www.0xsky.com/">xSky's Blog</a>
-<p>捐赠作者:[支付宝账号] guozhw@gmail.com
 
