@@ -1,7 +1,7 @@
 xRedis
 ======
 
-Redis C++ client, support the data slice storage, connection pool, read/write separation.
+C++ Redis client, support the data slice storage, connection pool, read/write separation.
 
 **Features:**
 * data slice storage
