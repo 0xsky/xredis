@@ -13,7 +13,7 @@
 
 bool xRedisClient::hdel(const RedisDBIdx& dbi,    const string& key, const string& field, int64_t& count) {
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, count, "HDEL %s %s %s", key.c_str(), field.c_str());
+    return command_integer(dbi, count, "HDEL %s %s", key.c_str(), field.c_str());
 }
 
 bool xRedisClient::hdel(const RedisDBIdx& dbi,    const string& key, const KEYS& vfiled, int64_t& count) {
@@ -27,7 +27,7 @@ bool xRedisClient::hdel(const RedisDBIdx& dbi,    const string& key, const KEYS&
 
 bool xRedisClient::hexist(const RedisDBIdx& dbi,   const string& key, const string& field){
     SETDEFAULTIOTYPE(SLAVE);
-    return command_bool(dbi,"HEXIST %s %s %s", key.c_str(), field.c_str());
+    return command_bool(dbi,"HEXIST %s %s", key.c_str(), field.c_str());
 }
 
 bool xRedisClient::hget(const RedisDBIdx& dbi,    const string& key, const string& field, string& value) {
