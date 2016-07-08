@@ -10,6 +10,7 @@ C++ Redis client, support the data slice storage, connection pool, read/write se
 * simultaneously connected multiple data slice groups  
 * most Redis commands have been implemented
 * multi thread safety
+* suport linux and windows
 
 ### Dependencies
 
