@@ -222,11 +222,9 @@ bool RedisConn::RedisReConnect()
     if (NULL == tmp_ctx) {
         bRet = false;
     } else {
+        redisFree(mCtx);
+        mCtx = tmp_ctx;
         bRet = auth();
-        if (bRet) {
-            redisFree(mCtx);
-            mCtx = tmp_ctx;
-        }
     }
 
     mConnStatus = bRet;
@@ -238,7 +236,10 @@ bool RedisConn::Ping()
     redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "PING"));
     bool bRet = (NULL != reply);
     mConnStatus = bRet;
-    freeReplyObject(reply);
+    if(bRet)
+    {
+        freeReplyObject(reply);
+    }
     return bRet;
 }
 

@@ -29,7 +29,7 @@ enum {
  CACHE_TYPE_1, 
  CACHE_TYPE_2,
  CACHE_TYPE_MAX,
-}
+};
 
 
 RedisNode RedisList1[3]=
@@ -58,13 +58,13 @@ int main(int argc, char **argv) {
     const char *key = "test";
     const char *value = "test value";
 
-    RedisDBIdx dbi(&xClient);
+    RedisDBIdx dbi(&xRedis);
     bool bRet = dbi.CreateDBIndex(key, APHash, CACHE_TYPE_1);
     if (!bRet) {
         return 0;
     }
 
-    bool bRet = xClient.set(dbi, key, value)) \
+    bool bRet = xRedis.set(dbi, key, value)) \
     if (bRet){
            printf("success \r\n");
      } else {

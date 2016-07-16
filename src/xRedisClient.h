@@ -83,14 +83,14 @@ private:
 private:
     unsigned int mType;
     unsigned int mIndex;
-    char        *mStrerr;
+    char         *mStrerr;
     xRedisClient *mClient;
     unsigned int mIOtype;
     bool         mIOFlag;
 };
 
 typedef struct _DATA_ITEM_{
-    int    type;
+    int         type;
     std::string str;
     
     _DATA_ITEM_ & operator=(const _DATA_ITEM_ &data) {
@@ -99,10 +99,10 @@ typedef struct _DATA_ITEM_{
         return *this;
     }
 }DataItem;
-typedef std::vector<DataItem>       ReplyData;
-typedef ReplyData                   ArrayReply;
+typedef std::vector<DataItem>            ReplyData;
+typedef ReplyData                        ArrayReply;
 typedef std::map<std::string, double>    ZSETDATA;
-typedef std::vector<RedisDBIdx>    DBIArray;
+typedef std::vector<RedisDBIdx>          DBIArray;
 
 
 typedef enum _BIT_OP_{
@@ -315,12 +315,13 @@ private:
     void SetErrString(const RedisDBIdx& dbi, const char *str, int len);
     void SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...);
     void SetIOtype(const RedisDBIdx& dbi, unsigned int iotype, bool ioflag = false);
+    
 public:
 
     bool command_bool(const RedisDBIdx& dbi,                       const char* cmd, ...);
     bool command_status(const RedisDBIdx& dbi,                     const char* cmd, ...);
     bool command_integer(const RedisDBIdx& dbi, int64_t &intval,   const char* cmd, ...);
-    bool command_string(const RedisDBIdx& dbi,  std::string &data,      const char* cmd, ...);
+    bool command_string(const RedisDBIdx& dbi,  std::string &data, const char* cmd, ...);
     bool command_list(const RedisDBIdx& dbi,    VALUES &vValue,    const char* cmd, ...);
     bool command_array(const RedisDBIdx& dbi,   ArrayReply& array, const char* cmd, ...);
     rReply *command(const RedisDBIdx& dbi, const char* cmd);

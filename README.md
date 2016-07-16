@@ -1,15 +1,16 @@
 xRedis
 ======
 
-Redis C++ client, support the data slice storage, support the connection pool
+C++ Redis client, support the data slice storage, connection pool, read/write separation.
 
 **Features:**
 * data slice storage
 * support Redis master slave connection, Support read/write separation
 * connection pool
 * simultaneously connected multiple data slice groups  
-* most REDIS commands have been implemented
+* most Redis commands have been implemented
 * multi thread safety
+* suport linux and windows
 
 ### Dependencies
 
@@ -21,6 +22,11 @@ First step install libhiredis, on a Debian system you can use:
 
 ```bash
 sudo apt-get install libhiredis-dev
+```
+
+on centos/redhat/fedora system you can use:
+```bash
+sudo yum install hiredis-devel
 ```
 
 Then checkout the code and compile it
@@ -35,10 +41,6 @@ sudo make install
 ![xredis](http://xredis.0xsky.com/pic/xredis_0.png)
 <p>[xRedis API Site](http://xredis.0xsky.com/) 
 <p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
-<p>xRedis开源社区QQ群: 190107312
 
-
-<p><p>作者: xSky        
-<p>博客: <a href="http://www.0xsky.com/">xSky's Blog</a>
-<p>捐赠作者:[支付宝账号] guozhw@gmail.com
-
+<p>blog: <a href="http://www.0xsky.com/">xSky's Blog</a>
+<p>xRedis QQ Group: 190107312

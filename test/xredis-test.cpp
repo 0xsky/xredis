@@ -4,6 +4,7 @@
 
 #include "xRedisClient.h"
 
+#define CACHE_TYPE_1 1
 xRedisClient xClient;
 
 // AP Hash Function
@@ -23,10 +24,25 @@ unsigned int APHash(const char *str)
     return (hash & 0x7FFFFFFF);
 }
 
-#define CACHE_TYPE_1 1
 
-
-
+void test_zadd(const char *charkey, const std::string& strValue)
+{
+    std::string strkey=charkey;
+    VALUES vVal;
+    int64_t retVal=0;
+    int64_t scores = 168;
+    vVal.push_back(toString(scores));
+    vVal.push_back(strValue);
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(charkey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        if (xClient.zadd(dbi, strkey, vVal, retVal)) {
+            printf("%s success \r\n", __PRETTY_FUNCTION__);
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
 
 void test_set(const char *strkey, const char *strValue)
 {
@@ -400,6 +416,7 @@ int main(int argc, char **argv)
 
     xClient.ConnectRedisCache(RedisList1, 3, CACHE_TYPE_1);
 
+    test_zadd("test:sorted:key", "sorted value hello xredis");
     test_set("test", "wwww");
     test_get();
     test_getrange();
