@@ -37,7 +37,7 @@ public:
         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
         int ret = pthread_mutex_init(&mMutex, &attr);
         if(ret != 0 ){
-            printf(stderr,"pthread_mutex_init error %d \n\r",ret);
+            printf("pthread_mutex_init error %d \n\r",ret);
         }
 #endif
     };
