@@ -99,7 +99,7 @@ bool xRedisClient::hset(const RedisDBIdx& dbi,    const string& key, const strin
     vCmdData.push_back(key);
     vCmdData.push_back(field);
     vCmdData.push_back(value);
-    return commandargv_integer(dbi, vCmdData);
+    return commandargv_integer(dbi, vCmdData, retval);
     //return command_integer(dbi, retval, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
 }
 

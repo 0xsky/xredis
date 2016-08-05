@@ -354,6 +354,57 @@ bool xRedisClient::command_array(const RedisDBIdx& dbi,  ArrayReply& array,  con
     return bRet;
 }
 
+bool xRedisClient::commandargv_array_ex(const RedisDBIdx& dbi, const VDATA& vDataIn, xRedisContext& ctx){
+    bool bRet = false;
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex, dbi.mIOtype);
+    if (NULL == pRedisConn) {
+        SetErrString(dbi, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
+        return false;
+    }
+
+    vector<const char*> argv(vDataIn.size());
+    vector<size_t> argvlen(vDataIn.size());
+    unsigned int j = 0;
+    for (VDATA::const_iterator i = vDataIn.begin(); i != vDataIn.end(); ++i, ++j) {
+        argv[j] = i->c_str(), argvlen[j] = i->size();
+    }
+
+    redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+    if (RedisPool::CheckReply(reply)) {
+        bRet = true;
+    } else {
+        SetErrInfo(dbi, reply);
+    }
+
+    RedisPool::FreeReply(reply);
+    ctx.conn = pRedisConn;
+    return bRet;
+}
+
+int xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
+{
+    //vData.clear();
+    //ReplyData(vData).swap(vData);
+    redisReply *reply;
+    RedisConn *pRedisConn = static_cast<RedisConn *>(ctx->conn);
+    int ret = redisGetReply(pRedisConn->getCtx(), (void**)&reply);
+    if (0==ret) {
+        for (size_t i = 0; i < reply->elements; i++) {
+            DataItem item;
+            item.type = reply->element[i]->type;
+            item.str.assign(reply->element[i]->str, reply->element[i]->len);
+            vData.push_back(item);
+        }
+    }
+
+    return ret;
+}
+
+void xRedisClient::FreexRedisContext(xRedisContext* ctx)
+{
+    mRedisPool->FreeConnection((RedisConn*)ctx->conn);
+}
+
 bool xRedisClient::commandargv_bool(const RedisDBIdx& dbi, const VDATA& vData) {
     bool bRet = false;
     RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex, dbi.mIOtype);
@@ -501,6 +552,10 @@ bool xRedisClient::commandargv_integer(const RedisDBIdx& dbi, const VDATA& vData
     mRedisPool->FreeConnection(pRedisConn);
     return bRet;
 }
+
+
+
+
 
 
 

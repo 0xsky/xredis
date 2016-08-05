@@ -402,6 +402,54 @@ void test_rpop()
     }
 }
 
+
+void test_publish()
+{
+    char szHKey[256] = { 0 };
+    strcpy(szHKey, "pubsub_test");
+    RedisDBIdx dbi(&xClient);
+
+    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    if (bRet) {
+        int64_t count;
+        if (xClient.publish(dbi, szHKey, "test message", count)) {
+            printf("%s success \r\n", __PRETTY_FUNCTION__);
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    }
+}
+
+void test_subscribe()
+{
+    char szHKey[256] = { 0 };
+    strcpy(szHKey, "pubsub_test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    if (!bRet) {
+        return;
+    }
+    
+    VDATA channels;
+    channels.push_back(szHKey);
+    xRedisContext ctx;
+    if (xClient.subscribe(dbi, channels, ctx)) {
+        printf("%s success \r\n", __PRETTY_FUNCTION__);
+        ReplyData vReply;
+        while (0 == xRedisClient::GetReply(&ctx, vReply)) {
+            ReplyData::iterator iter = vReply.begin();
+            for (; iter != vReply.end(); iter++) {
+                printf("%d\t%s\r\n", (*iter).type, (*iter).str.c_str());
+            }
+        }
+        
+    } else {
+        printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+    }
+    xClient.unsubscribe(dbi, channels, ctx);
+    xClient.FreexRedisContext(&ctx);
+}
+
 int main(int argc, char **argv)
 {
     printf("%d %s\r\n", argc, argv[0]);

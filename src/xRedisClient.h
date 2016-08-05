@@ -59,6 +59,8 @@ typedef struct rReply {
     struct rReply **element; /* elements vector for REDIS_REPLY_ARRAY */
 } rReply;
 
+
+
 typedef unsigned int (*HASHFUN)(const char *);
 
 class RedisPool;
@@ -104,6 +106,9 @@ typedef ReplyData                        ArrayReply;
 typedef std::map<std::string, double>    ZSETDATA;
 typedef std::vector<RedisDBIdx>          DBIArray;
 
+typedef struct xRedisContext_{
+    void* conn;
+}xRedisContext;
 
 typedef enum _BIT_OP_{
     AND = 0,
@@ -153,6 +158,8 @@ public:
     void Keepalive();
     inline RedisPool *GetRedisPool();
     static void FreeReply(const rReply* reply);
+    static int GetReply(xRedisContext* ctx, ReplyData& vData);
+    void FreexRedisContext(xRedisContext* ctx);
     bool ConnectRedisCache( const RedisNode *redisnodelist, unsigned int hashbase, unsigned int cachetype);
 
 public:
@@ -213,8 +220,8 @@ public:
 
     
     /* SORT         */  bool sort(const RedisDBIdx& dbi, ArrayReply& array, const std::string& key, const char* by = NULL,
-        LIMIT *limit = NULL, bool alpha = false, const FILEDS* get = NULL, 
-        const SORTODER order = ASC, const char* destination = NULL);
+                                    LIMIT *limit = NULL, bool alpha = false, const FILEDS* get = NULL, 
+                                    const SORTODER order = ASC, const char* destination = NULL);
 
     /* TTL          */  bool ttl(const RedisDBIdx& dbi, const std::string& key, int64_t& seconds);
     /* TYPE         */  
@@ -284,18 +291,21 @@ public:
     /* ZREMRANGEBYRANK  */  bool zremrangebyrank(const RedisDBIdx& dbi,  const std::string& key, int start, int stop, int64_t& num);
     /* ZREMRANGEBYSCORE */  
     /* ZREVRANGE        */  bool zrevrange(const RedisDBIdx& dbi,  const std::string& key, int start, int end, VALUES& vValues, bool withscore=false);
+    /* ZREVRANGEBYLEX   */  bool zrevrangebylex(const RedisDBIdx& dbi, const string& key, string& start, string& end, VALUES& vValues, int offset = 0, int count = 0);
     /* ZREVRANGEBYSCORE */  
     /* ZREVRANK         */  bool zrevrank(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, int64_t& rank);
     /* ZSCAN            */  
     /* ZSCORE           */  bool zscore(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, std::string& score);
     /* ZUNIONSTORE      */  
 
-    /* PSUBSCRIBE   */
-    /* PUBLISH      */
-    /* PUBSUB       */
-    /* PUNSUBSCRIBE */
-    /* SUBSCRIBE    */
-    /* UNSUBSCRIBE  */
+    /* PSUBSCRIBE   */     bool psubscribe(const RedisDBIdx& dbi, const KEYS& patterns, xRedisContext& ctx);
+    /* PUBLISH      */     bool publish(const RedisDBIdx& dbi, const KEY& channel, const std::string& message, int64_t& count);
+    /* PUBSUB       */     bool pubsub_channels(const RedisDBIdx& dbi, const std::string &pattern, ArrayReply &reply);
+                           bool pubsub_numsub(const RedisDBIdx& dbi, const KEYS &keys, ArrayReply &reply);
+                           bool pubsub_numpat(const RedisDBIdx& dbi, int64_t& count);
+    /* PUNSUBSCRIBE */     bool punsubscribe(const RedisDBIdx& dbi, const KEYS& patterns, xRedisContext& ctx);
+    /* SUBSCRIBE    */     bool subscribe(const RedisDBIdx& dbi, const KEYS& channels, xRedisContext& ctx);
+    /* UNSUBSCRIBE  */     bool unsubscribe(const RedisDBIdx& dbi, const KEYS& channels, xRedisContext& ctx);
 
 
     /* DISCARD  */
@@ -331,7 +341,7 @@ private:
     bool commandargv_array(const RedisDBIdx& dbi,  const VDATA& vDataIn, ArrayReply& array);
     bool commandargv_array(const RedisDBIdx& dbi,  const VDATA& vDataIn, VALUES& array);
     bool commandargv_integer(const RedisDBIdx& dbi,const VDATA& vDataIn, int64_t& retval);
-
+    bool commandargv_array_ex(const RedisDBIdx& dbi, const VDATA& vDataIn, xRedisContext& ctx);
 private:
     RedisPool *mRedisPool;
 };
