@@ -402,6 +402,9 @@ int xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
 
 void xRedisClient::FreexRedisContext(xRedisContext* ctx)
 {
+    RedisConn *pRedisConn = static_cast<RedisConn *>(ctx->conn);
+    redisReply *reply = static_cast<redisReply *>(redisCommand(pRedisConn->getCtx(), "unsubscribe"));
+    RedisPool::FreeReply(reply);
     mRedisPool->FreeConnection((RedisConn*)ctx->conn);
 }
 
