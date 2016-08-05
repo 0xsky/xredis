@@ -94,7 +94,13 @@ bool xRedisClient::hmset(const RedisDBIdx& dbi,    const string& key, const VDAT
 
 bool xRedisClient::hset(const RedisDBIdx& dbi,    const string& key, const string& field, const string& value, int64_t& retval){
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, retval, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
+    VDATA vCmdData;
+    vCmdData.push_back("HSET");
+    vCmdData.push_back(key);
+    vCmdData.push_back(field);
+    vCmdData.push_back(value);
+    return commandargv_integer(dbi, vCmdData);
+    //return command_integer(dbi, retval, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
 }
 
 bool xRedisClient::hsetnx(const RedisDBIdx& dbi,    const string& key, const string& field, const string& value){
