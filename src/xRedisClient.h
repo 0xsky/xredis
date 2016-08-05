@@ -298,6 +298,7 @@ public:
     /* ZSCORE           */  bool zscore(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, std::string& score);
     /* ZUNIONSTORE      */  
 
+    /*  注意： 使用下面的 pub/sub 命令时，一定要保证数据都在同一个REDIS实例里，xredis目前的pub/sub命令实现不支持多节点数据分布的场景。  */
     /* PSUBSCRIBE   */     bool psubscribe(const RedisDBIdx& dbi, const KEYS& patterns, xRedisContext& ctx);
     /* PUBLISH      */     bool publish(const RedisDBIdx& dbi, const KEY& channel, const std::string& message, int64_t& count);
     /* PUBSUB       */     bool pubsub_channels(const RedisDBIdx& dbi, const std::string &pattern, ArrayReply &reply);
