@@ -76,7 +76,7 @@ bool xRedisClient::mget(const DBIArray &vdbi,   const KEYS &  keys, ReplyData& v
     if (n!=keys.size()) {
         return bRet;
     }
-    
+
     DataItem item;
     DBIArray::const_iterator iter_dbi = vdbi.begin();
     KEYS::const_iterator iter_key = keys.begin();
@@ -120,7 +120,7 @@ bool xRedisClient::setex(const RedisDBIdx& dbi,    const string& key,  int secon
     vCmdData.push_back(toString(seconds));
     vCmdData.push_back(value);
     SETDEFAULTIOTYPE(MASTER);
-    return commandargv_bool(dbi, vCmdData);
+    return commandargv_status(dbi, vCmdData);
 }
 
 bool xRedisClient::setnx(const RedisDBIdx& dbi,  const string& key,  const string& value) {
@@ -190,7 +190,7 @@ bool xRedisClient::bitpos(const RedisDBIdx& dbi, const string& key, int bit, int
     SETDEFAULTIOTYPE(SLAVE);
     if ( (start!=0)||(end!=0) ) {
         return command_integer(dbi, pos, "BITPOS %s %d %d %d", key.c_str(), bit, start, end);
-    } 
+    }
     return command_integer(dbi, pos, "BITPOS %s %d", key.c_str(), bit);
 }
 
