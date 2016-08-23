@@ -224,7 +224,7 @@ public:
                                     const SORTODER order = ASC, const char* destination = NULL);
 
     /* TTL          */  bool ttl(const RedisDBIdx& dbi, const std::string& key, int64_t& seconds);
-    /* TYPE         */  
+    /* TYPE         */  bool type(const RedisDBIdx& dbi, const std::string& key, std::string& value);
 
 
     /* HDEL         */  bool hdel(const RedisDBIdx& dbi,    const std::string& key, const std::string& field, int64_t& num);

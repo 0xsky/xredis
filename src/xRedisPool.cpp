@@ -72,7 +72,7 @@ bool RedisPool::CheckReply(const redisReply *reply){
             return false;
         }
     case REDIS_REPLY_STATUS:{
-            return (strcasecmp(reply->str,"OK") == 0)?true:false;
+            return true;
         }
     case REDIS_REPLY_ERROR:{
             return false;

@@ -191,6 +191,29 @@ void test_get()
     }
 }
 
+void test_type()
+{
+    char szKey[256] = {0};
+
+    strcpy(szKey, "test");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+
+
+    xClient.set(dbi, szKey, "wwwwwwwwwwwwwwwwwwwwwwwww");
+    string strData;
+    if (xClient.type(dbi, szKey, strData)) {
+        printf("%s success data:%s \r\n", __PRETTY_FUNCTION__, strData.c_str());
+    } else {
+        printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+    }
+    
+
+
+
+
+}
+
 void test_getrange()
 {
     test_set("test", "01234567890123456789");
@@ -486,6 +509,7 @@ int main(int argc, char **argv)
     test_lpop();
     test_rpop();
 
+    test_type();
 
     //int n = 10;
     //while (n--) {

@@ -236,7 +236,7 @@ bool xRedisClient::command_status(const RedisDBIdx& dbi, const char* cmd, ...) {
     redisReply *reply = static_cast<redisReply *>(redisvCommand(pRedisConn->getCtx(), cmd, args));
     va_end(args);
 
-    if (RedisPool::CheckReply(reply)) {
+    if (RedisPool::CheckReply(reply) && (strcasecmp(reply->str, "OK") == 0)) {
         bRet = true;
     } else {
         SetErrInfo(dbi, reply);
@@ -452,7 +452,7 @@ bool xRedisClient::commandargv_status(const RedisDBIdx& dbi, const VDATA& vData)
     }
 
     redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
-    if (RedisPool::CheckReply(reply)) {
+    if (RedisPool::CheckReply(reply) && (strcasecmp(reply->str, "OK") == 0)) {
         bRet = true;
     } else {
         SetErrInfo(dbi, reply);
