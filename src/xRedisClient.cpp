@@ -236,12 +236,19 @@ bool xRedisClient::command_status(const RedisDBIdx& dbi, const char* cmd, ...) {
     redisReply *reply = static_cast<redisReply *>(redisvCommand(pRedisConn->getCtx(), cmd, args));
     va_end(args);
 
-    if (RedisPool::CheckReply(reply) && (strcasecmp(reply->str, "OK") == 0)) {
+    if (RedisPool::CheckReply(reply)) {
+        // Assume good reply until further inspection
         bRet = true;
+        
+        if (REDIS_REPLY_STRING == reply->type) {
+            if (!reply->len || !reply->str || strcasecmp(reply->str, "OK") != 0) {
+                bRet = false;
+            }
+        }
     } else {
         SetErrInfo(dbi, reply);
     }
-
+ 
     RedisPool::FreeReply(reply);
     mRedisPool->FreeConnection(pRedisConn);
 
@@ -452,12 +459,19 @@ bool xRedisClient::commandargv_status(const RedisDBIdx& dbi, const VDATA& vData)
     }
 
     redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
-    if (RedisPool::CheckReply(reply) && (strcasecmp(reply->str, "OK") == 0)) {
+    if (RedisPool::CheckReply(reply)) {
+        // Assume good reply until further inspection
         bRet = true;
+        
+        if (REDIS_REPLY_STRING == reply->type) {
+            if (!reply->len || !reply->str || strcasecmp(reply->str, "OK") != 0) {
+                bRet = false;
+            }
+        }
     } else {
         SetErrInfo(dbi, reply);
     }
-
+    
     RedisPool::FreeReply(reply);
     mRedisPool->FreeConnection(pRedisConn);
 
