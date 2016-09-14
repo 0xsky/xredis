@@ -11,7 +11,7 @@ C++ Redis client, support the data slice storage, connection pool, read/write se
 * most Redis commands have been implemented
 * multi thread safety
 * suport linux and windows
-* 
+
 中文版说明文档点[这里](https://github.com/0xsky/xredis/blob/master/README-cn.md)
 
 ### Dependencies
