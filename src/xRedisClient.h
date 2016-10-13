@@ -40,13 +40,13 @@ typedef std::vector<std::string>     VDATA;
 typedef std::set<std::string>        SETDATA;
 
 typedef struct _REDIS_NODE_{
-    unsigned int dbindex;
-    const char  *host;
-    unsigned int port;
-    const char  *passwd;
-    unsigned int poolsize;
-    unsigned int timeout;
-    unsigned int role;
+    unsigned int dbindex;       //  节点编号索引，从0开始
+    const char  *host;          //  REDIS节点主机IP地址
+    unsigned int port;          //  redis服务端口
+    const char  *passwd;        //  redis认证密码
+    unsigned int poolsize;      //  此节点上的连接池大小
+    unsigned int timeout;       //  连接超时时间 秒
+    unsigned int role;          //  节点角色 
 }RedisNode;
 
 /* This is the reply object returned by redisCommand() */

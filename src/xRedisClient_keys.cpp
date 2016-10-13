@@ -7,6 +7,7 @@
  */
 
 #include "xRedisClient.h"
+#include "xRedisPool.h"
 #include <sstream>
 
 bool  xRedisClient::del(const RedisDBIdx& dbi,    const string& key) {
