@@ -22,7 +22,7 @@ enum {
  CACHE_TYPE_1, 
  CACHE_TYPE_2,
  CACHE_TYPE_MAX,
-}
+};
 
 
 RedisNode RedisList1[3]=
