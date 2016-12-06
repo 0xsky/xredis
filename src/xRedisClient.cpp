@@ -403,7 +403,7 @@ int xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
             vData.push_back(item);
         }
     }
-
+    RedisPool::FreeReply(reply);
     return ret;
 }
 
