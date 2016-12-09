@@ -41,9 +41,9 @@ typedef std::set<std::string>        SETDATA;
 
 typedef struct _REDIS_NODE_{
     unsigned int dbindex;       //  节点编号索引，从0开始
-    const char  *host;          //  REDIS节点主机IP地址
+    std::string  host;          //  REDIS节点主机IP地址
     unsigned int port;          //  redis服务端口
-    const char  *passwd;        //  redis认证密码
+    std::string  passwd;        //  redis认证密码
     unsigned int poolsize;      //  此节点上的连接池大小
     unsigned int timeout;       //  连接超时时间 秒
     unsigned int role;          //  节点角色 
@@ -191,7 +191,7 @@ public:
     /* PSETEX      */  bool psetex(const RedisDBIdx& dbi,  const std::string& key,  int milliseconds, const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key,  const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int len, int second=0);
-    /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const std::string& key,  int offset, int64_t newbitValue, int64_t oldbitValue);
+    /* SETBIT      */  bool setbitx(const RedisDBIdx& dbi,  const std::string& key,  int offset, int64_t newbitValue, int64_t oldbitValue);
     /* SETEX       */  bool setex(const RedisDBIdx& dbi,   const std::string& key,  int seconds, const std::string& value);
     /* SETNX       */  bool setnx(const RedisDBIdx& dbi,   const std::string& key,  const std::string& value);
     /* SETRANGE    */  bool setrange(const RedisDBIdx& dbi,const std::string& key,  int offset, const std::string& value, int& length);

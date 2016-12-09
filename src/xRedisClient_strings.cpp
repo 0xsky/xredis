@@ -42,7 +42,7 @@ bool xRedisClient::set(const RedisDBIdx& dbi, const string& key, const char *val
     }
 }
 
-bool xRedisClient::setbit(const RedisDBIdx& dbi, const string& key,  int offset, int64_t newbitValue, int64_t oldbitValue) {
+bool xRedisClient::setbitx(const RedisDBIdx& dbi, const string& key,  int offset, int64_t newbitValue, int64_t oldbitValue) {
     SETDEFAULTIOTYPE(MASTER);
     return command_integer(dbi, oldbitValue, "SETBIT %s %d %lld", key.c_str(), offset, newbitValue);
 }

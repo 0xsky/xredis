@@ -140,8 +140,8 @@ bool xRedisClient::ConnectRedisCache( const RedisNode *redisnodelist, unsigned i
             return false;
         }
 
-        bool bRet = mRedisPool->ConnectRedisDB(cachetype, pNode->dbindex, pNode->host, pNode->port, 
-            pNode->passwd, pNode->poolsize, pNode->timeout, pNode->role);
+        bool bRet = mRedisPool->ConnectRedisDB(cachetype, pNode->dbindex, pNode->host.c_str(), pNode->port, 
+            pNode->passwd.c_str(), pNode->poolsize, pNode->timeout, pNode->role);
         if (!bRet) {
             return false;
         }

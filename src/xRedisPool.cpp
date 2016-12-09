@@ -356,8 +356,10 @@ RedisConn * RedisDBSlice::GetSlaveConn()
         size_t slave_cnt = mSliceConn.RedisSlaveConn.size();
         unsigned int idx = rand() % slave_cnt;
         RedisConnPool *pSlave = mSliceConn.RedisSlaveConn[idx];
-        pRedisConn = pSlave->front();
-        pSlave->pop_front();
+        if (!pSlave->empty()) {
+            pRedisConn = pSlave->front();
+            pSlave->pop_front();
+        }
         //if (idx != pRedisConn->GetSlaveIdx()) {
         //}
     }
