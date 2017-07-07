@@ -4,7 +4,7 @@
 # Copyright (C) 2013-2016 xsky <guozhw at gmail dot com>
 # This file is released under the BSD license, see the COPYING file
 
-OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o \
+OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.cpp \
 src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
@@ -26,7 +26,7 @@ STLIBSUFFIX=a
 DYLIB_MINOR_NAME=$(LIBNAME).$(DYLIBSUFFIX).$(XREDIS_MAJOR).$(XREDIS_MINOR)
 DYLIB_MAJOR_NAME=$(LIBNAME).$(DYLIBSUFFIX).$(XREDIS_MAJOR)
 DYLIBNAME=$(LIBNAME).$(DYLIBSUFFIX)
-DYLIB_MAKE_CMD=$(CC) -shared -Wl,-soname,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
+DYLIB_MAKE_CMD=$(CC) -shared -fPIC -Wl,-soname,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
 STLIBNAME=$(LIBNAME).$(STLIBSUFFIX)
 STLIB_MAKE_CMD=ar rcs $(STLIBNAME)
 
@@ -47,7 +47,7 @@ endif
 all: $(DYLIBNAME) $(STLIBNAME)
 
 # Deps (use make dep to generate this)
-xRedisClient_Connection.o: xRedisClient_connection.cpp
+xRedisClient_connection.o: xRedisClient_connection.cpp
 xRedisClient.o:            xRedisClient.cpp
 xRedisClient_hashs.o:      xRedisClient_hashs.cpp
 xRedisClient_keys.o:       xRedisClient_keys.cpp
@@ -55,8 +55,9 @@ xRedisClient_lists.o:      xRedisClient_lists.cpp
 xRedisClient_sets.o:       xRedisClient_sets.cpp
 xRedisClient_sortedsets.o: xRedisClient_sortedsets.cpp
 xRedisClient_strings.o:    xRedisClient_strings.cpp
-xRedisClient_pubsub.o:    xRedisClient_pubsub.cpp
+xRedisClient_pubsub.o:     xRedisClient_pubsub.cpp
 xRedisPool.o:              xRedisPool.cpp
+xRedisClusterClient.o:     xRedisClusterClient.cpp
 
 $(DYLIBNAME): $(OBJ)
 	$(DYLIB_MAKE_CMD) $(OBJ)
