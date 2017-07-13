@@ -123,6 +123,43 @@ xRedisClusterClient::~xRedisClusterClient()
     Release();
 }
 
+bool xRedisClusterClient::GetClusterNodes(redisContext *redis_ctx)
+{
+    vector<string> vlines;
+    redisReply *redis_reply = (redisReply*)redisCommand(redis_ctx, "CLUSTER NODES");
+    if ((NULL == redis_reply) || (NULL == redis_reply->str)) {
+        if (redis_reply) {
+            freeReplyObject(redis_reply);
+        }
+        redisFree(redis_ctx);
+        return false;
+    }
+
+    str2Vect(redis_reply->str, vlines, "\n");
+    printf("vlines:%lu\r\n", vlines.size());
+
+    for (size_t i = 0; i < vlines.size(); ++i) {
+        NodeInfo node;
+        node.strinfo = vlines[i];
+
+        vector<string> nodeinfo;
+        str2Vect(node.strinfo.c_str(), nodeinfo, " ");
+        for (size_t k = 0; k < nodeinfo.size(); ++k) {
+            printf("%lu : %s \r\n", k, nodeinfo[k].c_str());
+        }
+        if (NULL == strstr(nodeinfo[2].c_str(), "master")) {
+            printf("%s \r\n", nodeinfo[2].c_str());
+            continue;
+        }
+        node.id = nodeinfo[0];
+        node.ParseNodeString(nodeinfo[1]);
+        node.ParseSlotString(nodeinfo[8]);
+        printf("------------------------\r\n");
+    }
+
+    freeReplyObject(redis_reply);
+}
+
 void xRedisClusterClient::Keepalive()
 {
     //RedisConnIter iter = mRedisConnList.begin();

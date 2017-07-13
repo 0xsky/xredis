@@ -187,7 +187,7 @@ private:
     uint32_t FindNodeIndex(uint32_t slot);
     uint32_t GetKeySlotIndex(const char* key);
     RedisConnection *FindNodeConnection(const char *key);
-
+    bool GetClusterNodes(redisContext *ctx);
 private:
     RedisConnectionList   *mRedisConnList;
     xLock                 *mLock;     
