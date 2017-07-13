@@ -12,7 +12,7 @@
 
 using namespace std;
 
-#define MAX_REDIS_POOLSIZE 64
+#define MAX_REDIS_POOLSIZE 128
 #define MAX_TIME_OUT       5
 
 typedef std::vector<std::string>    VSTRING;
@@ -62,6 +62,27 @@ typedef struct _REDISCONN_ {
     }
     ~_REDISCONN_(){}
     
+    redisContext * ConnectWithTimeout()
+    {
+        struct timeval timeoutVal;
+        timeoutVal.tv_sec = MAX_TIME_OUT;
+        timeoutVal.tv_usec = 0;
+
+        redisContext *ctx = NULL;
+        ctx = redisConnectWithTimeout(mHost, mPort, timeoutVal);
+        if (NULL == ctx || ctx->err) {
+            if (NULL != ctx) {
+                redisFree(ctx);
+                ctx = NULL;
+            }
+            else {
+
+            }
+        }
+
+        return ctx;
+    }
+
     redisContext *mCtx;
     const char   *mHost;
     uint32_t      mPort;
@@ -98,10 +119,10 @@ private:
 
         bool CheckSlot(uint32_t slotindex)
         {
-            std::vector<std::pair<uint32_t, uint32_t> >::iterator iter = mSlots.begin();
-            for (; iter != mSlots.end(); ++iter) {
+            std::vector<std::pair<uint32_t, uint32_t> >::const_iterator  citer = mSlots.begin();
+            for (; citer != mSlots.end(); ++citer) {
                 //printf("check %u [%u, %u]\n", slotindex, iter->first, iter->second);
-                if ((slotindex >= iter->first) && (slotindex <= iter->second)) {
+                if ((slotindex >= citer->first) && (slotindex <= citer->second)) {
                     return true;
                 }
             }
@@ -173,7 +194,7 @@ private:
     uint32_t               mPoolSize;
     NODELIST               vNodes;
     bool                   mClusterEnabled;
-    
+    RedisConnection        mConn;
 };
 
 

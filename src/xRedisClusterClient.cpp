@@ -131,6 +131,22 @@ void xRedisClusterClient::Keepalive()
     //    printf("PING: %s\n", reply->str);
     //    freeReplyObject(reply);
     //}
+
+    size_t node_count = vNodes.size();
+    for (size_t i = 0; i < node_count; ++i) {
+        XLOCK(mLock[i]);
+        RedisConnectionList *pList = &mRedisConnList[i];
+        RedisConnectionIter iter = pList->begin();
+        for (; iter != pList->end(); iter++) {
+            RedisConnection *pConn = *iter;
+            redisReply *reply = static_cast<redisReply *>(redisCommand(pConn->mCtx, "PING"));
+            bool bRet = (NULL != reply);
+            if (bRet) {
+                freeReplyObject(reply);
+            }
+        }
+    }
+
 }
 
 void xRedisClusterClient::Release()
@@ -145,6 +161,7 @@ void xRedisClusterClient::Release()
             delete *iter;
         }
     }
+    vNodes.clear();
     delete [] mRedisConnList;
     mRedisConnList = NULL;
     delete [] mLock;
@@ -413,7 +430,7 @@ uint32_t xRedisClusterClient::FindNodeIndex(uint32_t slot)
 
 uint32_t xRedisClusterClient::GetKeySlotIndex(const char* key)
 {
-    if (key != NULL) {
+    if (NULL != key) {
         return KeyHashSlot(key, strlen(key));
     }
     return 0;
