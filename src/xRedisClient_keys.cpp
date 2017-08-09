@@ -120,6 +120,58 @@ bool xRedisClient::randomkey(const RedisDBIdx& dbi, KEY& key){
 }
 
 
+bool xRedisClient::scan(const RedisDBIdx& dbi, const std::string& key,
+    int64_t &cursor, const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx)
+{
+    SETDEFAULTIOTYPE(MASTER);
+    VDATA vCmdData;
+    vCmdData.push_back("scan");
+    vCmdData.push_back(key);
+    if (NULL != pattern) {
+        vCmdData.push_back("MATCH");
+        vCmdData.push_back(pattern);
+    }
+
+    if (0 != count) {
+        vCmdData.push_back("COUNT");
+        vCmdData.push_back(toString(count));
+    }
+
+    bool bRet = false;
+    RedisConn *pRedisConn = static_cast<RedisConn *>(ctx.conn);
+    if (NULL == pRedisConn) {
+        SetErrString(dbi, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
+        return false;
+    }
+
+    vector<const char*> argv(vCmdData.size());
+    vector<size_t> argvlen(vCmdData.size());
+    unsigned int j = 0;
+    for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end(); ++i, ++j) {
+        argv[j] = i->c_str(), argvlen[j] = i->size();
+    }
+
+    redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+    if (RedisPool::CheckReply(reply)) {
+        if (0==reply->elements){
+            cursor = 0;
+        } else {
+            cursor = atoi(reply->element[0]->str);
+            redisReply *replyData = reply->element[1]->element;
+            for (size_t i = 0; i < reply->element[1]->elements; i++) {
+                DataItem item;
+                item.type = replyData->type;
+                item.str.assign(replyData->str, replyData->len);
+                array.push_back(item);
+            }
+        }
+        bRet = true;
+    } else {
+        SetErrInfo(dbi, reply);
+    }
+    RedisPool::FreeReply(reply);
+    return bRet;
+}
 
 
 bool xRedisClient::sort(const RedisDBIdx& dbi, ArrayReply& array, const string& key, const char* by,

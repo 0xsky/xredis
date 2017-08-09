@@ -215,8 +215,9 @@ public:
     /* RANDOMKEY    */  bool randomkey(const RedisDBIdx& dbi,  KEY& key);
     /* RENAME       */  
     /* RENAMENX     */  
-    /* RESTORE      */  
-    /* SCAN         */  
+    /* RESTORE      */       
+    /* SCAN         */  bool scan(const RedisDBIdx& dbi, const std::string& key, 
+        int64_t &cursor, std::string &pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
 
     
     /* SORT         */  bool sort(const RedisDBIdx& dbi, ArrayReply& array, const std::string& key, const char* by = NULL,
