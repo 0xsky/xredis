@@ -473,6 +473,37 @@ void test_subscribe()
     xClient.FreexRedisContext(&ctx);
 }
 
+void test_scan()
+{
+    char szHKey[256] = { 0 };
+    strcpy(szHKey, "t*");
+    RedisDBIdx dbi(&xClient);
+    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    if (!bRet) {
+        return;
+    }
+
+    ArrayReply arrayReply;
+    int64_t cursor = 0;
+    xRedisContext ctx;
+    xClient.GetxRedisContext(dbi, &ctx);
+
+    do 
+    {
+        if (xClient.scan(dbi, szHKey, cursor, NULL, 0, arrayReply, ctx)) {
+            printf("%lld\t\r\n", cursor);
+            ReplyData::iterator iter = arrayReply.begin();
+            for (; iter != arrayReply.end(); iter++) {
+                printf("\t\t%s\r\n",  (*iter).str.c_str());
+            }
+        } else {
+            printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+        }
+    } while (cursor != 0);
+
+    xClient.FreexRedisContext(&ctx);
+}
+
 int main(int argc, char **argv)
 {
     printf("%d %s\r\n", argc, argv[0]);

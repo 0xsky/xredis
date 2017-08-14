@@ -407,6 +407,16 @@ int xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
     return ret;
 }
 
+bool xRedisClient::GetxRedisContext(const RedisDBIdx& dbi, xRedisContext* ctx)
+{
+    RedisConn *pRedisConn = mRedisPool->GetConnection(dbi.mType, dbi.mIndex, dbi.mIOtype);
+    if (NULL == pRedisConn) {
+        return false;
+    }
+    ctx->conn = pRedisConn;
+    return true;
+}
+
 void xRedisClient::FreexRedisContext(xRedisContext* ctx)
 {
     RedisConn *pRedisConn = static_cast<RedisConn *>(ctx->conn);
@@ -569,6 +579,8 @@ bool xRedisClient::commandargv_integer(const RedisDBIdx& dbi, const VDATA& vData
     mRedisPool->FreeConnection(pRedisConn);
     return bRet;
 }
+
+
 
 
 

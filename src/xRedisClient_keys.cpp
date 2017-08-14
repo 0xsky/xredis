@@ -129,7 +129,7 @@ bool xRedisClient::scan(const RedisDBIdx& dbi, const std::string& key,
     vCmdData.push_back(key);
     if (NULL != pattern) {
         vCmdData.push_back("MATCH");
-        vCmdData.push_back(pattern);
+        vCmdData.push_back(*pattern);
     }
 
     if (0 != count) {
@@ -157,11 +157,11 @@ bool xRedisClient::scan(const RedisDBIdx& dbi, const std::string& key,
             cursor = 0;
         } else {
             cursor = atoi(reply->element[0]->str);
-            redisReply *replyData = reply->element[1]->element;
+            redisReply **replyData = reply->element[1]->element;
             for (size_t i = 0; i < reply->element[1]->elements; i++) {
                 DataItem item;
-                item.type = replyData->type;
-                item.str.assign(replyData->str, replyData->len);
+                item.type = replyData[i]->type;
+                item.str.assign(replyData[i]->str, replyData[i]->len);
                 array.push_back(item);
             }
         }

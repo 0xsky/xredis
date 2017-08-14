@@ -159,6 +159,7 @@ public:
     inline RedisPool *GetRedisPool();
     static void FreeReply(const rReply* reply);
     static int GetReply(xRedisContext* ctx, ReplyData& vData);
+    bool GetxRedisContext(const RedisDBIdx& dbi, xRedisContext* ctx);
     void FreexRedisContext(xRedisContext* ctx);
     bool ConnectRedisCache( const RedisNode *redisnodelist, unsigned int hashbase, unsigned int cachetype);
 
@@ -216,8 +217,8 @@ public:
     /* RENAME       */  
     /* RENAMENX     */  
     /* RESTORE      */       
-    /* SCAN         */  bool scan(const RedisDBIdx& dbi, const std::string& key, 
-        int64_t &cursor, std::string &pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
+    /* SCAN         */  bool scan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, 
+        const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
 
     
     /* SORT         */  bool sort(const RedisDBIdx& dbi, ArrayReply& array, const std::string& key, const char* by = NULL,
@@ -262,8 +263,6 @@ public:
     /* RPUSH        */  bool rpush(const RedisDBIdx& dbi,    const std::string& key, const VALUES& vValue, int64_t& length);
     /* RPUSHX       */  bool rpushx(const RedisDBIdx& dbi,   const std::string& key, const std::string& value, int64_t& length);
 
-
-
     /* SADD         */  bool sadd(const RedisDBIdx& dbi,        const KEY& key, const VALUES& vValue, int64_t& count);
     /* SCARD        */  bool scard(const RedisDBIdx& dbi, const KEY& key, int64_t& count);
     /* SDIFF        */  bool sdiff(const DBIArray& dbi,       const KEYS& vKkey, VALUES& vValue);
@@ -276,7 +275,8 @@ public:
     /* SPOP         */  bool spop(const RedisDBIdx& dbi,        const KEY& key, VALUE& member);
     /* SRANDMEMBER  */  bool srandmember(const RedisDBIdx& dbi, const KEY& key, VALUES& vmember, int num=0);
     /* SREM         */  bool srem(const RedisDBIdx& dbi,        const KEY& key, const VALUES& vmembers, int64_t& count);
-    /* SSCAN        */  
+    /* SSCAN        */  bool sscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor,
+        const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
     /* SUNION       */  bool sunion(const DBIArray& dbi,      const KEYS& vkey, VALUES& vValue);
     /* SUNIONSTORE  */  bool sunionstore(const RedisDBIdx& dbi, const KEY& deskey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count);
 
@@ -295,7 +295,8 @@ public:
     /* ZREVRANGEBYLEX   */  bool zrevrangebylex(const RedisDBIdx& dbi, const string& key, string& start, string& end, VALUES& vValues, int offset = 0, int count = 0);
     /* ZREVRANGEBYSCORE */  
     /* ZREVRANK         */  bool zrevrank(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, int64_t& rank);
-    /* ZSCAN            */  
+    /* ZSCAN            */  bool zscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const std::string *pattern,
+        uint32_t count, ArrayReply& array, xRedisContext& ctx);
     /* ZSCORE           */  bool zscore(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, std::string& score);
     /* ZUNIONSTORE      */  
 

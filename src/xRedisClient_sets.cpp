@@ -151,6 +151,12 @@ bool xRedisClient::srem(const RedisDBIdx& dbi,  const KEY& key, const VALUES& vm
     return commandargv_integer(dbi, vCmdData, count);
 }
 
+bool xRedisClient::sscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const std::string *pattern, 
+    uint32_t count, ArrayReply& array, xRedisContext& ctx)
+{
+    return scan(dbi, key, cursor, pattern, count, array, ctx);
+}
+
 bool xRedisClient::sunion(const DBIArray& vdbi,     const KEYS& vkey, VALUES& sValue){
     size_t size = vkey.size();
     VALUES *setData = new VALUES[size];
