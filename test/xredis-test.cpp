@@ -498,6 +498,7 @@ void test_scan()
             }
         } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
+            break;
         }
     } while (cursor != 0);
 
