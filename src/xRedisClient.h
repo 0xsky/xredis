@@ -217,7 +217,7 @@ public:
     /* RENAME       */  
     /* RENAMENX     */  
     /* RESTORE      */       
-    /* SCAN         */  bool scan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, 
+    /* SCAN         */  bool scan(const RedisDBIdx& dbi, int64_t &cursor, 
         const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
 
     
@@ -240,7 +240,8 @@ public:
     /* HLEN         */  bool hlen(const RedisDBIdx& dbi,    const std::string& key, int64_t& count);
     /* HMGET        */  bool hmget(const RedisDBIdx& dbi,   const std::string& key, const KEYS& field, ArrayReply& array);
     /* HMSET        */  bool hmset(const RedisDBIdx& dbi,   const std::string& key, const VDATA& vData);
-    /* HSCAN        */                                      
+    /* HSCAN        */ bool  hscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor,
+                                const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
     /* HSET         */  bool hset(const RedisDBIdx& dbi,    const std::string& key, const std::string& field, const std::string& value, int64_t& retval);
     /* HSETNX       */  bool hsetnx(const RedisDBIdx& dbi,  const std::string& key, const std::string& field, const std::string& value);
     /* HVALS        */  bool hvals(const RedisDBIdx& dbi,   const std::string& key, VALUES& values);
@@ -328,7 +329,9 @@ private:
     void SetErrString(const RedisDBIdx& dbi, const char *str, int len);
     void SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...);
     void SetIOtype(const RedisDBIdx& dbi, unsigned int iotype, bool ioflag = false);
-    
+    bool ScanFun(const RedisDBIdx& dbi, const std::string *key, int64_t &cursor,
+        const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
+
 public:
 
     bool command_bool(const RedisDBIdx& dbi,                       const char* cmd, ...);

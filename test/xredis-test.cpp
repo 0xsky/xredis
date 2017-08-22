@@ -475,10 +475,9 @@ void test_subscribe()
 
 void test_scan()
 {
-    char szHKey[256] = { 0 };
-    strcpy(szHKey, "t*");
+    const char* pattern = "t*";
     RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.CreateDBIndex(0, CACHE_TYPE_1);
     if (!bRet) {
         return;
     }
@@ -490,7 +489,7 @@ void test_scan()
 
     do 
     {
-        if (xClient.scan(dbi, szHKey, cursor, NULL, 0, arrayReply, ctx)) {
+        if (xClient.scan(dbi, cursor, pattern, 0, arrayReply, ctx)) {
             printf("%lld\t\r\n", cursor);
             ReplyData::iterator iter = arrayReply.begin();
             for (; iter != arrayReply.end(); iter++) {

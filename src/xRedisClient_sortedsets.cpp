@@ -92,7 +92,7 @@ bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int star
  bool xRedisClient::zscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const std::string *pattern,
      uint32_t count, ArrayReply& array, xRedisContext& ctx)
  {
-     return scan(dbi, key, cursor, pattern, count, array, ctx);
+     return ScanFun(dbi, &key, cursor, pattern, count, array, ctx);
  }
 
  bool xRedisClient::zscore(const RedisDBIdx& dbi,  const string& key, const string &member, string& score ){
