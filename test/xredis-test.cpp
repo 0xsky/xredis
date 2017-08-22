@@ -475,7 +475,7 @@ void test_subscribe()
 
 void test_scan()
 {
-    std::string pattern = "t*";
+    char* pattern = "t*";
     RedisDBIdx dbi(&xClient);
     bool bRet = dbi.CreateDBIndex(0, CACHE_TYPE_1);
     if (!bRet) {
@@ -489,7 +489,7 @@ void test_scan()
 
     do 
     {
-        if (xClient.scan(dbi, cursor, &pattern, 0, arrayReply, ctx)) {
+        if (xClient.scan(dbi, cursor, pattern, 0, arrayReply, ctx)) {
             printf("%lld\t\r\n", cursor);
             ReplyData::iterator iter = arrayReply.begin();
             for (; iter != arrayReply.end(); iter++) {
