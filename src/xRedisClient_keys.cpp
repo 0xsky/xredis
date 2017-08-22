@@ -119,7 +119,7 @@ bool xRedisClient::randomkey(const RedisDBIdx& dbi, KEY& key){
     return command_string(dbi, key, "RANDOMKEY");
 }
 
-bool xRedisClient::scan(const RedisDBIdx& dbi, int64_t &cursor, const std::string *pattern, 
+bool xRedisClient::scan(const RedisDBIdx& dbi, int64_t &cursor, const char *pattern, 
     uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
     return ScanFun(dbi, NULL, cursor, pattern, count, array, ctx);

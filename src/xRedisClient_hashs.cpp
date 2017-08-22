@@ -92,7 +92,7 @@ bool xRedisClient::hmset(const RedisDBIdx& dbi,    const string& key, const VDAT
     return commandargv_status(dbi, vCmdData);
 }
 
-bool xRedisClient::hscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const std::string *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx)
+bool xRedisClient::hscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const char *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
     return ScanFun(dbi, &key, cursor, pattern, count, array, ctx);
 }

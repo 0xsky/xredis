@@ -151,7 +151,7 @@ bool xRedisClient::srem(const RedisDBIdx& dbi,  const KEY& key, const VALUES& vm
     return commandargv_integer(dbi, vCmdData, count);
 }
 
-bool xRedisClient::sscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const std::string *pattern, 
+bool xRedisClient::sscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const char *pattern, 
     uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
     return ScanFun(dbi, &key, cursor, pattern, count, array, ctx);
