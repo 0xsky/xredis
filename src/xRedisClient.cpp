@@ -590,6 +590,8 @@ bool xRedisClient::ScanFun(const RedisDBIdx& dbi, const std::string *key,
         vCmdData.push_back(*key);
     }
 
+    vCmdData.push_back(toString(cursor));
+
     if (NULL != pattern) {
         vCmdData.push_back("MATCH");
         vCmdData.push_back(pattern);
