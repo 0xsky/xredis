@@ -475,7 +475,7 @@ void test_subscribe()
 
 void test_scan()
 {
-    char* pattern = "t*";
+    char* pattern = "a*";
     RedisDBIdx dbi(&xClient);
     bool bRet = dbi.CreateDBIndex(0, CACHE_TYPE_1);
     if (!bRet) {
@@ -489,6 +489,7 @@ void test_scan()
 
     do 
     {
+        arrayReply.clear();
         if (xClient.scan(dbi, cursor, pattern, 0, arrayReply, ctx)) {
             printf("%lld\t\r\n", cursor);
             ReplyData::iterator iter = arrayReply.begin();
@@ -541,7 +542,7 @@ int main(int argc, char **argv)
     test_rpop();
 
     test_type();
-
+    test_scan();
     //int n = 10;
     //while (n--) {
     //    xClient.KeepAlive();
