@@ -122,7 +122,7 @@ bool xRedisClient::randomkey(const RedisDBIdx& dbi, KEY& key){
 bool xRedisClient::scan(const RedisDBIdx& dbi, int64_t &cursor, const char *pattern, 
     uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
-    return ScanFun(dbi, NULL, cursor, pattern, count, array, ctx);
+    return ScanFun("SCAN",dbi, NULL, cursor, pattern, count, array, ctx);
 }
 
 bool xRedisClient::sort(const RedisDBIdx& dbi, ArrayReply& array, const string& key, const char* by,

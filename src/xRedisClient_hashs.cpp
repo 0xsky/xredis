@@ -94,7 +94,7 @@ bool xRedisClient::hmset(const RedisDBIdx& dbi,    const string& key, const VDAT
 
 bool xRedisClient::hscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const char *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
-    return ScanFun(dbi, &key, cursor, pattern, count, array, ctx);
+    return ScanFun("HSCAN", dbi, &key, cursor, pattern, count, array, ctx);
 }
 
 bool xRedisClient::hset(const RedisDBIdx& dbi,    const string& key, const string& field, const string& value, int64_t& retval){

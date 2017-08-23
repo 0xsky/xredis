@@ -329,7 +329,7 @@ private:
     void SetErrString(const RedisDBIdx& dbi, const char *str, int len);
     void SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...);
     void SetIOtype(const RedisDBIdx& dbi, unsigned int iotype, bool ioflag = false);
-    bool ScanFun(const RedisDBIdx& dbi, const std::string *key, int64_t &cursor,
+    bool ScanFun(const char* cmd, const RedisDBIdx& dbi, const std::string *key, int64_t &cursor,
         const char* pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
 
 public:

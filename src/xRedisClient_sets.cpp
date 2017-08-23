@@ -154,7 +154,7 @@ bool xRedisClient::srem(const RedisDBIdx& dbi,  const KEY& key, const VALUES& vm
 bool xRedisClient::sscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const char *pattern, 
     uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
-    return ScanFun(dbi, &key, cursor, pattern, count, array, ctx);
+    return ScanFun("sscan", dbi, &key, cursor, pattern, count, array, ctx);
 }
 
 bool xRedisClient::sunion(const DBIArray& vdbi,     const KEYS& vkey, VALUES& sValue){
