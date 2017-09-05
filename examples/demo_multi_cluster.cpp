@@ -52,8 +52,8 @@ int main(int argc, char **argv) {
 
     xRedisClient xRedis;
     xRedis.Init(CACHE_TYPE_MAX);
-    xRedis.ConnectRedisCache(RedisList1, 3, CACHE_TYPE_1);
-    xRedis.ConnectRedisCache(RedisList2, 5, CACHE_TYPE_2);
+    xRedis.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode),3, CACHE_TYPE_1);
+    xRedis.ConnectRedisCache(RedisList2, sizeof(RedisList2) / sizeof(RedisNode), 5, CACHE_TYPE_2);
         
     const char *key = "test";
     const char *value = "test value";

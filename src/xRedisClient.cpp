@@ -125,7 +125,7 @@ void xRedisClient::FreeReply(const rReply* reply)
     RedisPool::FreeReply((redisReply*)reply);
 }
 
-bool xRedisClient::ConnectRedisCache( const RedisNode *redisnodelist, unsigned int hashbase, unsigned int cachetype) {
+bool xRedisClient::ConnectRedisCache(const RedisNode *redisnodelist, unsigned int nodecount, unsigned int hashbase, unsigned int cachetype) {
     if (NULL==mRedisPool) {
         return false;
     }
@@ -134,7 +134,7 @@ bool xRedisClient::ConnectRedisCache( const RedisNode *redisnodelist, unsigned i
         return false;
     }
     
-    for (unsigned int n = 0; n<hashbase; n++) {
+    for (unsigned int n = 0; n<nodecount; n++) {
         const RedisNode *pNode = &redisnodelist[n];
         if (NULL==pNode) {
             return false;

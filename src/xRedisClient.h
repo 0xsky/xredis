@@ -161,7 +161,8 @@ public:
     static int GetReply(xRedisContext* ctx, ReplyData& vData);
     bool GetxRedisContext(const RedisDBIdx& dbi, xRedisContext* ctx);
     void FreexRedisContext(xRedisContext* ctx);
-    bool ConnectRedisCache( const RedisNode *redisnodelist, unsigned int hashbase, unsigned int cachetype);
+    bool ConnectRedisCache(const RedisNode *redisnodelist, unsigned int nodecount, 
+        unsigned int hashbase, unsigned int cachetype);
 
 public:
 
