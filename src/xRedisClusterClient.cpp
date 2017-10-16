@@ -235,7 +235,7 @@ bool xRedisClusterClient::ClusterEnabled(redisContext *ctx)
     }
     //printf("redis info:\r\n%s\r\n", redis_reply->str);
     char *p = strstr(redis_reply->str, "cluster_enabled:");
-    bool bRet = (0 == strncmp(p + strlen("cluster_enabled:"), "1", 1));
+    bool bRet = p != NULL && (0 == strncmp(p + strlen("cluster_enabled:"), "1", 1));
     //printf("--:%s\r\n", p + strlen("cluster_enabled:"));
     freeReplyObject(redis_reply);
     return bRet;
