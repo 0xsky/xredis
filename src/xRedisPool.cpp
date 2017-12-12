@@ -204,7 +204,7 @@ bool RedisConn::RedisConnect()
     if (NULL==mCtx) {
         bRet = false;
     } else {
-        bRet = auth();
+        bRet = auth() && Ping();
         mConnStatus = bRet;
     }
 
@@ -234,7 +234,7 @@ bool RedisConn::RedisReConnect()
 bool RedisConn::Ping()
 {
     redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "PING"));
-    bool bRet = (NULL != reply);
+    bool bRet = (NULL != reply) && (reply->str) && (strcasecmp(reply->str, "PONG") == 0);
     mConnStatus = bRet;
     if(bRet)
     {
