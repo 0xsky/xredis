@@ -1,4 +1,5 @@
 xRedis   
+[![Build Status](https://travis-ci.org/freeeyes/PSS.svg?branch=master)](https://travis-ci.org/freeeyes/PSS)
 ======
 
 C++ Redis client, support the data slice storage, redis cluster, connection pool, read/write separation.
