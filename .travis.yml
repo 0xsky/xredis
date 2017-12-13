@@ -36,5 +36,5 @@ script:
   - export
   - cd $TRAVIS_BUILD_DIR
   - make
-  - make install 
+  - sudo make install 
 
