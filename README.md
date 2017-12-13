@@ -1,5 +1,6 @@
 xRedis   
 [![Build Status](https://travis-ci.org/freeeyes/PSS.svg?branch=master)](https://travis-ci.org/freeeyes/PSS)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0 )
 ======
 
 C++ Redis client, support the data slice storage, redis cluster, connection pool, read/write separation.
