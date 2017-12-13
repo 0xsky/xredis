@@ -1,0 +1,40 @@
+sudo: false         # 开启基于容器的Travis CI任务，让编译效率更高。
+language: cpp
+os:
+  - linux
+
+compiler:
+  - gcc
+
+branches:
+  only:
+  - master
+
+env:
+  matrix:
+    - REDIS=1
+  global:
+    - CURPATH=$(pwd)
+    - TOOLSDIR=$HOME/Tools
+    - HIREDISDIR=$TOOLSDIR/redis
+    - LD_LIBRARY_PATH=$HIREDISDIR:$LD_LIBRARY_PATH
+    - COMPILER=g++-7
+
+before_install:
+  - mkdir -p $TOOLSDIR
+  - cd $TOOLSDIR
+  - wget http://download.redis.io/releases/redis-3.0.6.tar.gz
+  - tar zxf redis-3.0.6.tar.gz
+
+before_script:
+  - export
+  - cd $HIREDISDIR/redis-3.0.6/deps/hiredis
+  - make
+  - make install
+
+script: 
+  - export
+  - cd $TRAVIS_BUILD_DIR
+  - make
+  - make install 
+
