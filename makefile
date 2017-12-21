@@ -4,7 +4,7 @@
 # Copyright (C) 2013-2016 xsky <guozhw at gmail dot com>
 # This file is released under the BSD license, see the COPYING file
 
-OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.cpp \
+OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.o \
 src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
