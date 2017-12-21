@@ -246,7 +246,7 @@ public:
     /* HSETNX       */  bool hsetnx(const RedisDBIdx& dbi,  const std::string& key, const std::string& field, const std::string& value);
     /* HVALS        */  bool hvals(const RedisDBIdx& dbi,   const std::string& key, VALUES& values);
 
-    /* BLPOP        */  
+    /* BLPOP        */  bool blPop(const RedisDBIdx& dbi,    const std::string& key, VALUES& vValues, int64_t timeout);
     /* BRPOP        */  
     /* BRPOPLPUSH   */  
     /* LINDEX       */  bool lindex(const RedisDBIdx& dbi,    const std::string& key, int64_t index, VALUE& value);
