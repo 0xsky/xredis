@@ -19,8 +19,15 @@ bool xRedisClient::psubscribe(const RedisDBIdx& dbi, const KEYS& patterns, xRedi
 }
 
 bool xRedisClient::publish(const RedisDBIdx& dbi,  const KEY& channel, const std::string& message, int64_t& count) {
+    //SETDEFAULTIOTYPE(MASTER);
+    //return command_integer(dbi, count, "PUBLISH %s %s", channel.c_str(), message.c_str(), count);
+
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, count, "PUBLISH %s %s", channel.c_str(), message.c_str(), count);
+    VDATA vCmdData;
+    vCmdData.push_back("PUBLISH");
+    vCmdData.push_back(channel);
+    vCmdData.push_back(message);
+    return commandargv_integer(dbi, vCmdData, count);
 }
 
 bool xRedisClient::pubsub_channels(const RedisDBIdx& dbi, const std::string &pattern, ArrayReply &reply) {
