@@ -44,6 +44,24 @@ bool xRedisClient::blPop(const RedisDBIdx& dbi,    const std::string& key, VALUE
     return command_list(dbi, vValues, "BLPOP %s %d", key.c_str(), (int)timeout);	
 }
 
+bool xRedisClient::brPop(const RedisDBIdx& dbi,    const std::string& key, VALUES& vValues, int64_t timeout)
+{
+    if (0==key.length()) {
+        return false;
+    }
+    SETDEFAULTIOTYPE(MASTER);
+    return command_list(dbi, vValues, "BRPOP %s %d", key.c_str(), (int)timeout);	
+}
+
+bool xRedisClient::brPoplpush(const RedisDBIdx& dbi, const std::string& key, std::string& targetkey, VALUE& value, int64_t timeout)
+{
+    if (0==key.length()) {
+        return false;
+    }
+    SETDEFAULTIOTYPE(MASTER);
+    return command_string(dbi, value, "BRPOPLPUSH %s %s %d", key.c_str(), targetkey.c_str(), (int)timeout);	
+}
+
 bool xRedisClient::lpop(const RedisDBIdx& dbi,    const string& key, string& value){
     if (0==key.length()) {
         return false;
