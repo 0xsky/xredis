@@ -247,8 +247,8 @@ public:
     /* HVALS        */  bool hvals(const RedisDBIdx& dbi,   const std::string& key, VALUES& values);
 
     /* BLPOP        */  bool blPop(const RedisDBIdx& dbi,    const std::string& key, VALUES& vValues, int64_t timeout);
-    /* BRPOP        */  
-    /* BRPOPLPUSH   */  
+    /* BRPOP        */  bool brPop(const RedisDBIdx& dbi,    const std::string& key, VALUES& vValues, int64_t timeout);
+    /* BRPOPLPUSH   */  bool brPoplpush(const RedisDBIdx& dbi, const std::string& key, std::string& targetkey, VALUE& value, int64_t timeout);
     /* LINDEX       */  bool lindex(const RedisDBIdx& dbi,    const std::string& key, int64_t index, VALUE& value);
     /* LINSERT      */  bool linsert(const RedisDBIdx& dbi,  const std::string& key, LMODEL mod, const std::string& pivot, const std::string& value, int64_t& retval);
     /* LLEN         */  bool llen(const RedisDBIdx& dbi,     const std::string& key, int64_t& len);
