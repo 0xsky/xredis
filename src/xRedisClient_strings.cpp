@@ -24,11 +24,39 @@ bool xRedisClient::append(const RedisDBIdx& dbi,    const string& key,  const st
     return commandargv_status(dbi, vCmdData);
 }
 
-bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const string& value) {
+bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const string& value, SETOP setpo, int milliseconds) {
     VDATA vCmdData;
     vCmdData.push_back("SET");
     vCmdData.push_back(key);
     vCmdData.push_back(value);
+    if(setpo == EX && milliseconds > 0)
+    {
+    	int seconds = milliseconds/1000;
+    	char sztemp[20]  ={'\0'};
+    	string strsecond;
+    	sprintf(sztemp, " %d", seconds);
+    	vCmdData.push_back("EX");
+    	strsecond = sztemp;
+    	vCmdData.push_back(strsecond);
+    }
+    else if(setpo == PX && milliseconds > 0)
+    {
+    	char sztemp[20]  ={'\0'};
+    	string strsecond;
+    	sprintf(sztemp, " %d", milliseconds);
+    	vCmdData.push_back("EX");
+    	strsecond = sztemp;
+    	vCmdData.push_back(strsecond);
+    }
+    else if(setpo == NX)
+    {
+    	vCmdData.push_back("NX");    	
+    }
+    else if(setpo == XX)
+    {
+    	vCmdData.push_back("XX");    	
+    }    
+    
     SETDEFAULTIOTYPE(MASTER);
     return commandargv_status(dbi, vCmdData);
 }
