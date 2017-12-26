@@ -110,6 +110,18 @@ typedef struct xRedisContext_{
     void* conn;
 }xRedisContext;
 
+typedef enum _SET_TYPE_{
+    NONE = 0,
+    PX = 1,
+    EX  = 2
+}SETPXEX;
+
+typedef enum _SET_TYPE_NXEX_{
+    NONE = 0,
+    NX = 1,
+    XX  = 2
+}SETNXXX;
+
 typedef enum _BIT_OP_{
     AND = 0,
     OR  = 1,
@@ -193,6 +205,8 @@ public:
     /* PSETEX      */  bool psetex(const RedisDBIdx& dbi,  const std::string& key,  int milliseconds, const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key,  const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int len, int second=0);
+    /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const std::string& value, 
+        SETPXEX pxex = SETPXEX::NONE, int second = 0, SETNXXX nxxx = SETNXXX::NONE);
     /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const std::string& key,  int offset, int64_t newbitValue, int64_t oldbitValue);
     /* SETEX       */  bool setex(const RedisDBIdx& dbi,   const std::string& key,  int seconds, const std::string& value);
     /* SETNX       */  bool setnx(const RedisDBIdx& dbi,   const std::string& key,  const std::string& value);

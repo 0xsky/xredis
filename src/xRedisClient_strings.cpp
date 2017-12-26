@@ -8,6 +8,7 @@
 
 #include "hiredis.h"
 #include "xRedisClient.h"
+#include "xRedisPool.h"
 #include <sstream>
 
 bool xRedisClient::psetex(const RedisDBIdx& dbi,    const string& key,  int milliseconds, const string& value) {
@@ -30,6 +31,30 @@ bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const strin
     vCmdData.push_back(key);
     vCmdData.push_back(value);
     SETDEFAULTIOTYPE(MASTER);
+    return commandargv_status(dbi, vCmdData);
+}
+
+bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const string& value, SETPXEX pxex, int second, SETPXEX nxxx) {
+    static const char* pNexx[]={"px","ex","nx","xx"};
+    SETDEFAULTIOTYPE(MASTER);
+
+    VDATA vCmdData;
+    vCmdData.push_back("SET");
+    vCmdData.push_back(key);
+    vCmdData.push_back(value);
+
+    if(pxex==PX){
+        vCmdData.push_back(pNexx[0]);
+        vCmdData.push_back(toString(second));
+    }else if(pxex==EX){
+        vCmdData.push_back(pNexx[1]);
+        vCmdData.push_back(toString(second));
+    }
+
+    if (nxxx>0){
+       vCmdData.push_back((nxxx==NX)?pNexx[2]:pNexx[3]); 
+    }
+
     return commandargv_status(dbi, vCmdData);
 }
 
