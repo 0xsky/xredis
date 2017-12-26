@@ -43,11 +43,8 @@ bool xRedisClient::set(const RedisDBIdx& dbi, const string& key, const string& v
     vCmdData.push_back(key);
     vCmdData.push_back(value);
 
-    if(pxex==PX){
-        vCmdData.push_back(pNexx[0]);
-        vCmdData.push_back(toString(expiretime));
-    }else if(pxex==EX){
-        vCmdData.push_back(pNexx[1]);
+    if (pxex>0) {
+        vCmdData.push_back((pxex == PX) ? pNexx[0] : pNexx[1]);
         vCmdData.push_back(toString(expiretime));
     }
 
