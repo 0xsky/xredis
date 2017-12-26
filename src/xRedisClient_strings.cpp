@@ -35,7 +35,7 @@ bool xRedisClient::set(const RedisDBIdx& dbi,    const string& key,  const strin
 }
 
 bool xRedisClient::set(const RedisDBIdx& dbi, const string& key, const string& value, SETPXEX pxex, int expiretime, SETNXXX nxxx) {
-    static const char* pNexx[]={"px","ex","nx","xx"};
+    static const char* pXflag[]={"px","ex","nx","xx"};
     SETDEFAULTIOTYPE(MASTER);
 
     VDATA vCmdData;
@@ -44,12 +44,12 @@ bool xRedisClient::set(const RedisDBIdx& dbi, const string& key, const string& v
     vCmdData.push_back(value);
 
     if (pxex>0) {
-        vCmdData.push_back((pxex == PX) ? pNexx[0] : pNexx[1]);
+        vCmdData.push_back((pxex == PX) ? pXflag[0] : pXflag[1]);
         vCmdData.push_back(toString(expiretime));
     }
 
     if (nxxx>0){
-       vCmdData.push_back((nxxx==NX)?pNexx[2]:pNexx[3]); 
+        vCmdData.push_back((nxxx == NX) ? pXflag[2] : pXflag[3]);
     }
 
     return commandargv_status(dbi, vCmdData);
