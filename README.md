@@ -52,3 +52,5 @@ sudo make install
 <p>xRedis QQ Group: 190107312
   <p>[Donate]捐赠作者(https://github.com/0xsky/xredis/blob/master/donate.jpg) 
 
+![](./donate.jpg =100x100)
+
