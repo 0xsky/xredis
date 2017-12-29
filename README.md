@@ -50,4 +50,5 @@ sudo make install
 
 <p>blog: <a href="http://www.0xsky.com/">xSky's Blog</a>
 <p>xRedis QQ Group: 190107312
+  :![](donate.jpg)
   ![xredis](https://github.com/0xsky/xredis/blob/master/donate.jpg)
