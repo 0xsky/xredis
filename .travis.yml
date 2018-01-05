@@ -28,6 +28,7 @@ before_install:
 
 before_script:
   - export
+
   - cd redis-3.0.6/deps/hiredis
   - make
   - sudo make install
@@ -36,5 +37,5 @@ script:
   - export
   - cd $TRAVIS_BUILD_DIR
   - make
-  - sudo make install 
 
+  - sudo make install 

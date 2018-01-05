@@ -299,11 +299,12 @@ bool RedisDBSlice::ConnectRedisNodes(unsigned int cahcetype, unsigned int dbinde
                 if (pRedisconn->RedisConnect()) {
                     mSliceConn.RedisMasterConn.push_back(pRedisconn);
                     mStatus = REDISDB_WORKING;
+                    bRet = true;
                 } else {
                     delete pRedisconn;
                 }
             }
-            bRet = true;
+            
         } else if (SLAVE == role) {
             XLOCK(mSliceConn.SlaveLock);
             RedisConnPool *pSlaveNode = new RedisConnPool;
@@ -317,12 +318,12 @@ bool RedisDBSlice::ConnectRedisNodes(unsigned int cahcetype, unsigned int dbinde
                 pRedisconn->Init(cahcetype, dbindex, host.c_str(), port, passwd.c_str(), poolsize, timeout, role, slave_idx);
                 if (pRedisconn->RedisConnect()) {
                     pSlaveNode->push_back(pRedisconn);
+                    bRet = true;
                 } else {
                     delete pRedisconn;
                 }
             }
             mSliceConn.RedisSlaveConn.push_back(pSlaveNode);
-            bRet = true;
             mHaveSlave = true;
         } else {
             bRet = false;

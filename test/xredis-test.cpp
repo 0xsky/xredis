@@ -517,7 +517,7 @@ int main(int argc, char **argv)
         {2, "127.0.0.1", 6379, "", 2, 5, 0}
     };
 
-    xClient.ConnectRedisCache(RedisList1, 3, CACHE_TYPE_1);
+    xClient.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode),3, CACHE_TYPE_1);
 
     test_zadd("test:sorted:key", "sorted value hello xredis");
     test_set("test", "wwww");
