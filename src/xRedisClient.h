@@ -204,7 +204,7 @@ public:
     /* MSETNX      */  
     /* PSETEX      */  bool psetex(const RedisDBIdx& dbi,  const std::string& key,  int milliseconds, const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key,  const std::string& value);
-    /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int len, int second=0);
+    /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int len, int second);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const std::string& value, 
         SETPXEX pxex = TYPE_NONE, int expiretime = 0, SETNXXX nxxx = TNXXX_NONE);
     /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const std::string& key,  int offset, int64_t newbitValue, int64_t oldbitValue);
