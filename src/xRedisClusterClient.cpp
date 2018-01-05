@@ -158,6 +158,7 @@ bool xRedisClusterClient::GetClusterNodes(redisContext *redis_ctx)
     }
 
     freeReplyObject(redis_reply);
+    return true;
 }
 
 void xRedisClusterClient::Keepalive()
