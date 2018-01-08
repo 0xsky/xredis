@@ -17,6 +17,7 @@
 #include <map>
 #include <algorithm>
 #include <sstream>
+#include "hiredis.h"
 
 using namespace std;
 
@@ -76,6 +77,9 @@ public:
     bool CreateDBIndex(int64_t id, unsigned int type);
     char *GetErrInfo() {return mStrerr;}
     void SetIOMaster();
+    void setIndex(unsigned int idx){ mIndex = idx; }
+    void setType(unsigned int tp){ mType = tp; }
+    xRedisClient* getClient(){ return mClient; }
 
 private:
     bool SetErrInfo(const char *info, int len);
@@ -90,6 +94,103 @@ private:
     unsigned int mIOtype;
     bool         mIOFlag;
 };
+
+class RedisDBICluster :public  RedisDBIdx
+{
+public:
+    RedisDBICluster();
+    ~RedisDBICluster();
+
+    bool ConnectRedisCluster(const char *host, uint32_t port, uint32_t poolsize);
+    bool ClusterDBI(const char *key, const unsigned int type);
+
+public:
+    uint32_t        uCount;
+    RedisNode       *pRedisNodeList;
+
+private:
+    struct NodeInfo
+    {
+        std::string strinfo;
+        std::string id;         // The node ID, a 40 characters random string generated when a node is created and never changed again (unless CLUSTER RESET HARD is used)
+        std::string ip;         // The node IP
+        uint16_t port;          // The node port
+        std::string flags;      // A list of comma separated flags: myself, master, slave, fail?, fail, handshake, noaddr, noflags
+        bool is_fail;
+        bool is_master;         // true if node is master, false if node is salve
+        bool is_slave;
+        std::string master_id;  // The replication master
+        int ping_sent;          // Milliseconds unix time at which the currently active ping was sent, or zero if there are no pending pings
+        int pong_recv;          // Milliseconds unix time the last pong was received
+        int epoch;              // The configuration epoch (or version) of the current node (or of the current master if the node is a slave). Each time there is a failover, a new, unique, monotonically increasing configuration epoch is created. If multiple nodes claim to serve the same hash slots, the one with higher configuration epoch wins
+        bool connected;         // The state of the link used for the node-to-node cluster bus
+        std::vector<std::pair<uint32_t, uint32_t> > mSlots; // A hash slot number or range
+
+        bool CheckSlot(uint32_t slotindex)
+        {
+            std::vector<std::pair<uint32_t, uint32_t> >::const_iterator  citer = mSlots.begin();
+            for (; citer != mSlots.end(); ++citer) {
+                //printf("check %u [%u, %u]\n", slotindex, iter->first, iter->second);
+                if ((slotindex >= citer->first) && (slotindex <= citer->second)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool ParseNodeString(const std::string &nodeString)
+        {
+            std::string::size_type ColonPos = nodeString.find(':');
+            if (ColonPos == std::string::npos) {
+                return false;
+            }
+            else {
+                const std::string port_str = nodeString.substr(ColonPos + 1);
+                port = atoi(port_str.c_str());
+                ip = nodeString.substr(0, ColonPos);
+                return true;
+            }
+        }
+
+        void ParseSlotString(const std::string &SlotString)
+        {
+            uint32_t StartSlot = 0;
+            uint32_t EndSlot = 0;
+            std::string::size_type BarPos = SlotString.find('-');
+            if (BarPos == std::string::npos) {
+                StartSlot = atoi(SlotString.c_str());
+                EndSlot = StartSlot;
+            }
+            else {
+                const std::string EndSlotStr = SlotString.substr(BarPos + 1);
+                EndSlot = atoi(EndSlotStr.c_str());
+                StartSlot = atoi(SlotString.substr(0, BarPos).c_str());
+            }
+            mSlots.push_back(make_pair(StartSlot, EndSlot));
+        }
+    };
+
+    typedef std::vector<NodeInfo> NODELIST;
+
+private:
+    static uint16_t crc16(const char *buf, int len);
+    static int str2Vect(const char* pSrc, vector<string> &vDest, const char *pSep = ",");
+
+private:
+    NODELIST        vNodes;
+
+    uint32_t KeyHashSlot(const char *key, size_t keylen);
+    uint32_t FindNodeIndex(uint32_t slot);
+    uint32_t GetKeySlotIndex(const char* key);
+    
+    uint32_t GetClusterIndex(const char *key);
+    bool ClusterEnabled(redisContext *ctx);
+    bool Clusterinfo(redisContext *ctx);
+    
+};
+
+
+
 
 typedef struct _DATA_ITEM_{
     int         type;
@@ -165,6 +266,7 @@ public:
     xRedisClient();
     ~xRedisClient();
 
+    // xRedis 相关接口;
     bool Init(unsigned int maxtype);
     void Release();
     void Keepalive();
@@ -175,6 +277,9 @@ public:
     void FreexRedisContext(xRedisContext* ctx);
     bool ConnectRedisCache(const RedisNode *redisnodelist, unsigned int nodecount, 
         unsigned int hashbase, unsigned int cachetype);
+
+public:
+
 
 public:
 
