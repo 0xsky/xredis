@@ -4,7 +4,7 @@
 # Copyright (C) 2013-2016 xsky <guozhw at gmail dot com>
 # This file is released under the BSD license, see the COPYING file
 
-OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.o \
+OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.o src/xRedisClient_Cluster.o \
 src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
@@ -58,6 +58,7 @@ xRedisClient_strings.o:    xRedisClient_strings.cpp
 xRedisClient_pubsub.o:     xRedisClient_pubsub.cpp
 xRedisPool.o:              xRedisPool.cpp
 xRedisClusterClient.o:     xRedisClusterClient.cpp
+xRedisClient_Cluster.o:    xRedisClient_Cluster.cpp
 
 $(DYLIBNAME): $(OBJ)
 	$(DYLIB_MAKE_CMD) $(OBJ)
@@ -71,6 +72,9 @@ static: $(STLIBNAME)
 # Binaries:
 xredis-example: examples/xredis-example.cpp $(STLIBNAME)
 	$(CC) -o examples/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -lhiredis -lpthread
+
+cluster-example: examples/cluster-example.cpp $(STLIBNAME)
+	$(CC) -o examples/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -lhiredis -lxredis -lpthread
 
 examples: $(EXAMPLES)
 

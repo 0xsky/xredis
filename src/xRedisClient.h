@@ -80,6 +80,7 @@ public:
     void setIndex(unsigned int idx){ mIndex = idx; }
     void setType(unsigned int tp){ mType = tp; }
     xRedisClient* getClient(){ return mClient; }
+    void setClient(xRedisClient* client){ mClient = client; }
 
 private:
     bool SetErrInfo(const char *info, int len);
@@ -102,7 +103,7 @@ public:
     ~RedisDBICluster();
 
     bool ConnectRedisCluster(const char *host, uint32_t port, uint32_t poolsize);
-    bool ClusterDBI(const char *key, const unsigned int type);
+    bool ClusterDBI(const char *key);
 
 public:
     uint32_t        uCount;
