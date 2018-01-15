@@ -21,6 +21,9 @@
 
 using namespace std;
 
+namespace xredis
+{
+
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
 #define REDIS_REPLY_INTEGER 3
@@ -474,6 +477,7 @@ private:
 };
 
 
+}
 
 #endif
 
