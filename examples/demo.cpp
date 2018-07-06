@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include "xRedisClient.h"
 
+using namespace xredisclient;
+
 // AP Hash Function
 unsigned int APHash(const char *str) {
     unsigned int hash = 0;
