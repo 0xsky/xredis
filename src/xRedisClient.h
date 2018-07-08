@@ -18,8 +18,6 @@
 #include <algorithm>
 #include <sstream>
 
-using namespace std;
-
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
 #define REDIS_REPLY_INTEGER 3
@@ -148,7 +146,7 @@ typedef struct _SORT_LIMIT_
 
 template<class T>
 std::string toString(const T &t) {
-    ostringstream oss;
+    std::ostringstream oss;
     oss << t;
     return oss.str();
 }
@@ -308,7 +306,7 @@ public:
     /* ZREMRANGEBYRANK  */  bool zremrangebyrank(const RedisDBIdx& dbi,  const std::string& key, int start, int stop, int64_t& num);
     /* ZREMRANGEBYSCORE */  
     /* ZREVRANGE        */  bool zrevrange(const RedisDBIdx& dbi,  const std::string& key, int start, int end, VALUES& vValues, bool withscore=false);
-    /* ZREVRANGEBYLEX   */  bool zrevrangebylex(const RedisDBIdx& dbi, const string& key, string& start, string& end, VALUES& vValues, int offset = 0, int count = 0);
+    /* ZREVRANGEBYLEX   */  bool zrevrangebylex(const RedisDBIdx& dbi, const std::string& key, std::string& start, std::string& end, VALUES& vValues, int offset = 0, int count = 0);
     /* ZREVRANGEBYSCORE */  
     /* ZREVRANK         */  bool zrevrank(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, int64_t& rank);
     /* ZSCAN            */  bool zscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const char *pattern,

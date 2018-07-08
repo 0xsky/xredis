@@ -15,7 +15,6 @@
 #include <string>
 #include <list>
 #include "xRedisClient.h"
-using namespace std;
 
 #define MAX_REDIS_CONN_POOLSIZE     128      // 每个DB最大连接数
 #define MAX_REDIS_CACHE_TYPE        128      // 最大支持的CACHE种类数
@@ -70,9 +69,9 @@ private:
 private:
     // redis connector context
     redisContext   *mCtx;
-    string          mHost;          // redis host
+    std::string     mHost;          // redis host
     unsigned int    mPort;          // redis sever port
-    string          mPass;          // redis server password
+    std::string     mPass;          // redis server password
     unsigned int    mTimeout;       // connect timeout second
     unsigned int    mPoolsize;      // connect pool size for each redis DB
     unsigned int    mType;          // redis cache pool type

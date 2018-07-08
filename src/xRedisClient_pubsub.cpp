@@ -62,8 +62,8 @@ bool xRedisClient::punsubscribe(const RedisDBIdx& dbi, const KEYS& patterns, xRe
         return false;
     }
 
-    vector<const char*> argv(vCmdData.size());
-    vector<size_t> argvlen(vCmdData.size());
+    std::vector<const char*> argv(vCmdData.size());
+    std::vector<size_t> argvlen(vCmdData.size());
     unsigned int j = 0;
     for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end(); ++i, ++j) {
         argv[j] = i->c_str(), argvlen[j] = i->size();
@@ -101,8 +101,8 @@ bool xRedisClient::unsubscribe(const RedisDBIdx& dbi, const KEYS& channels, xRed
         return false;
     }
 
-    vector<const char*> argv(vCmdData.size());
-    vector<size_t> argvlen(vCmdData.size());
+    std::vector<const char*> argv(vCmdData.size());
+    std::vector<size_t> argvlen(vCmdData.size());
     unsigned int j = 0;
     for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end(); ++i, ++j) {
         argv[j] = i->c_str(), argvlen[j] = i->size();

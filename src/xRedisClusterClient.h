@@ -10,7 +10,6 @@
 #include "hiredis.h"
 #include "xLock.h"
 
-using namespace std;
 
 #define MAX_REDIS_POOLSIZE 128
 #define MAX_TIME_OUT       5
@@ -155,7 +154,7 @@ private:
                 EndSlot = atoi(EndSlotStr.c_str());
                 StartSlot = atoi(SlotString.substr(0, BarPos).c_str());
             }
-            mSlots.push_back(make_pair(StartSlot, EndSlot));
+            mSlots.push_back(std::make_pair(StartSlot, EndSlot));
         }
     };
 
@@ -174,7 +173,7 @@ private:
     static uint16_t crc16(const char *buf, int len);
     static bool CheckReply(const redisReply *reply);
     static void FreeReply(const redisReply *reply);
-    static int str2Vect(const char* pSrc, vector<string> &vDest, const char *pSep = ",");
+    static int str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep = ",");
 private:
     void Release();
     bool ConnectRedisNode(int idx, const char *host, uint32_t port, uint32_t poolsize);

@@ -14,7 +14,7 @@ void xRedisClient::quit(){
 }
 
 
-bool xRedisClient::echo(const RedisDBIdx& dbi, const string& str, std::string &value)
+bool xRedisClient::echo(const RedisDBIdx& dbi, const std::string& str, std::string &value)
 {
 	if (0==str.length()) {
         return false;

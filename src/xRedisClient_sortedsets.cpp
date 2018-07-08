@@ -19,7 +19,7 @@ bool xRedisClient::zadd(const RedisDBIdx& dbi, const KEY& key,   const VALUES& v
     return commandargv_integer(dbi, vCmdData, count);
 }
 
-bool xRedisClient::zscrad(const RedisDBIdx& dbi,     const string& key, int64_t& count){
+bool xRedisClient::zscrad(const RedisDBIdx& dbi, const std::string& key, int64_t& count){
     if (0==key.length()) {
         return false;
     }
@@ -27,7 +27,7 @@ bool xRedisClient::zscrad(const RedisDBIdx& dbi,     const string& key, int64_t&
     return command_integer(dbi, count, "ZSCRAD %s", key.c_str());
 }
 
-bool xRedisClient::zincrby(const RedisDBIdx& dbi,  const string& key, const double &increment, const string& member, string& value ) {
+bool xRedisClient::zincrby(const RedisDBIdx& dbi, const std::string& key, const double &increment, const std::string& member, std::string& value) {
     if (0==key.length()) {
         return false;
     }
@@ -35,7 +35,7 @@ bool xRedisClient::zincrby(const RedisDBIdx& dbi,  const string& key, const doub
     return command_string(dbi, value, "ZINCRBY %s %f %s", key.c_str(), increment, member.c_str());
 }
 
-bool xRedisClient::zrange(const RedisDBIdx& dbi,  const string& key, int start, int end, VALUES& vValues, bool withscore) {
+bool xRedisClient::zrange(const RedisDBIdx& dbi, const std::string& key, int start, int end, VALUES& vValues, bool withscore) {
     if (0==key.length()) {
         return false;
     }
@@ -46,7 +46,7 @@ bool xRedisClient::zrange(const RedisDBIdx& dbi,  const string& key, int start, 
     return command_list(dbi, vValues, "ZRANGE %s %d %d", key.c_str(), start, end);
 }
 
-bool xRedisClient::zrank(const RedisDBIdx& dbi,  const string& key, const string& member, int64_t &rank) {
+bool xRedisClient::zrank(const RedisDBIdx& dbi, const std::string& key, const std::string& member, int64_t &rank) {
     if (0==key.length()) {
         return false;
     }
@@ -63,7 +63,7 @@ bool xRedisClient::zrem(const RedisDBIdx& dbi,        const KEY& key, const VALU
     return commandargv_integer(dbi, vCmdData, count);
 }
 
-bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi,  const string& key, int start, int stop, int64_t& count) {
+bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi, const std::string& key, int start, int stop, int64_t& count) {
     if (0==key.length()) {
         return false;
     }
@@ -71,7 +71,7 @@ bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi,  const string& key, in
     return command_integer(dbi, count, "ZREMRANGEBYRANK %s %d %d", key.c_str(), start, stop);
 }
 
-bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int start, int end, VALUES& vValues, bool withscore) {
+bool xRedisClient::zrevrange(const RedisDBIdx& dbi, const std::string& key, int start, int end, VALUES& vValues, bool withscore) {
     if (0==key.length()) {
         return false;
     }
@@ -81,7 +81,7 @@ bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int star
     return command_list(dbi, vValues, "ZREVRANGE %s %d %d", key.c_str(), start, end);
 }
 
- bool xRedisClient::zrevrank(const RedisDBIdx& dbi,  const string& key, const string &member, int64_t& rank){
+bool xRedisClient::zrevrank(const RedisDBIdx& dbi, const std::string& key, const std::string &member, int64_t& rank){
      if (0==key.length()) {
          return false;
      }
@@ -95,7 +95,7 @@ bool xRedisClient::zrevrange(const RedisDBIdx& dbi,  const string& key, int star
      return ScanFun("ZSCAN", dbi, &key, cursor, pattern, count, array, ctx);
  }
 
- bool xRedisClient::zscore(const RedisDBIdx& dbi,  const string& key, const string &member, string& score ){
+ bool xRedisClient::zscore(const RedisDBIdx& dbi, const std::string& key, const std::string &member, std::string& score){
      if (0==key.length()) {
          return false;
      }
