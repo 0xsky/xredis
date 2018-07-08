@@ -4,6 +4,8 @@
 
 #include "xRedisClusterClient.h"
 
+using namespace xredisclient;
+
 int main(int argc, char **argv) {
 
     xRedisClusterClient redisclient;

@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <sstream>
 
+namespace xredisclient
+{	
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
 #define REDIS_REPLY_INTEGER 3
@@ -365,7 +367,7 @@ private:
     RedisPool *mRedisPool;
 };
 
-
+}
 
 #endif
 
