@@ -9,6 +9,7 @@
 #include "xRedisClient.h"
 #include "xRedisPool.h"
 #include <sstream>
+using namespace xrc;
 
 bool xRedisClient::psubscribe(const RedisDBIdx& dbi, const KEYS& patterns, xRedisContext& ctx) {
     SETDEFAULTIOTYPE(MASTER);

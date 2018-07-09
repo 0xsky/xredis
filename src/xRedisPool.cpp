@@ -10,6 +10,8 @@
 #include "hiredis.h"
 #include <time.h>
 
+using namespace xrc;
+
 RedisPool::RedisPool() {
     mRedisCacheList = NULL;
     mTypeSize=0;

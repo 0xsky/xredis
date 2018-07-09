@@ -16,6 +16,9 @@
 #include <list>
 #include "xRedisClient.h"
 
+namespace xrc
+{
+
 #define MAX_REDIS_CONN_POOLSIZE     128      // 每个DB最大连接数
 #define MAX_REDIS_CACHE_TYPE        128      // 最大支持的CACHE种类数
 #define MAX_REDIS_DB_HASHBASE       128      // 最大HASH分库基数
@@ -173,5 +176,7 @@ private:
     unsigned int    mTypeSize;
 };
 
+
+}
 
 #endif

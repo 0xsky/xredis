@@ -9,6 +9,7 @@
 #include <stdio.h> 
 #include "xRedisClient.h"
 #include <sstream>
+using namespace xrc;
 
 bool xRedisClient::lindex(const RedisDBIdx& dbi,    const std::string& key, int64_t index, VALUE& value){
     if (0==key.length()) {

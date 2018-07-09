@@ -8,7 +8,7 @@
 
 #include "xRedisClient.h"
 #include <sstream>
-
+using namespace xrc;
 
 bool xRedisClient::zadd(const RedisDBIdx& dbi, const KEY& key,   const VALUES& vValues, int64_t& count){
     VDATA vCmdData;

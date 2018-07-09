@@ -8,6 +8,7 @@
 
 #include "xRedisClient.h"
 #include <sstream>
+using namespace xrc;
 
 void xRedisClient::quit(){
 	Release();

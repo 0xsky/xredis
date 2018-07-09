@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <sstream>
 
+namespace xrc
+{
 
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
@@ -205,7 +207,7 @@ public:
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key,  const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int len, int second);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const std::string& value, 
-        SETPXEX pxex = TYPE_NONE, int expiretime = 0, SETNXXX nxxx = TNXXX_NONE);
+        SETPXEX pxex, int expiretime, SETNXXX nxxx);
     /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const std::string& key,  int offset, int64_t newbitValue, int64_t oldbitValue);
     /* SETEX       */  bool setex(const RedisDBIdx& dbi,   const std::string& key,  int seconds, const std::string& value);
     /* SETNX       */  bool setnx(const RedisDBIdx& dbi,   const std::string& key,  const std::string& value);
@@ -366,7 +368,7 @@ private:
     RedisPool *mRedisPool;
 };
 
-
+}
 
 #endif
 

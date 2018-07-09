@@ -4,6 +4,8 @@
 
 #include "xRedisClient.h"
 
+using namespace xrc;
+
 #define CACHE_TYPE_1 1
 xRedisClient xClient;
 
@@ -166,7 +168,7 @@ void test_get()
         RedisDBIdx dbi(&xClient);
         bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
         if (bRet) {
-            string strData;
+            std::string strData;
             if (xClient.get(dbi, szKey, strData)) {
                 printf("%s success data:%s \r\n", __PRETTY_FUNCTION__, strData.c_str());
             } else {
@@ -181,7 +183,7 @@ void test_get()
         RedisDBIdx dbi(&xClient);
         bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
         if (bRet) {
-            string strData;
+            std::string strData;
             if (xClient.get(dbi, szKey, strData)) {
                 printf("%s error data:%s \r\n", __PRETTY_FUNCTION__, strData.c_str());
             } else {
@@ -199,9 +201,9 @@ void test_type()
     RedisDBIdx dbi(&xClient);
     bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
 
-
-    xClient.set(dbi, szKey, "wwwwwwwwwwwwwwwwwwwwwwwww");
-    string strData;
+    const std::string str = "wwwwwwwwwwwwwwwwwwwwwwwww";
+    xClient.set(dbi, szKey, str);
+    std::string strData;
     if (xClient.type(dbi, szKey, strData)) {
         printf("%s success data:%s \r\n", __PRETTY_FUNCTION__, strData.c_str());
     } else {
@@ -223,7 +225,7 @@ void test_getrange()
     RedisDBIdx dbi(&xClient);
     bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
     if (bRet) {
-        string strData;
+        std::string strData;
         if (xClient.getrange(dbi, szKey, 2, 6, strData)) {
             printf("%s success data:%s \r\n", __PRETTY_FUNCTION__, strData.c_str());
         } else {
@@ -397,7 +399,7 @@ void test_lpop()
 
     bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
     if (bRet) {
-        string strVal;
+        std::string strVal;
         if (xClient.lpop(dbi, szHKey, strVal)) {
             printf("%s success val: %s \r\n", __PRETTY_FUNCTION__, strVal.c_str());
         }
@@ -415,7 +417,7 @@ void test_rpop()
 
     bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
     if (bRet) {
-        string strVal;
+        std::string strVal;
         if (xClient.rpop(dbi, szHKey, strVal)) {
             printf("%s success val: %s \r\n", __PRETTY_FUNCTION__, strVal.c_str());
         }

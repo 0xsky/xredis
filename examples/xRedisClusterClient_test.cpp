@@ -4,7 +4,7 @@
 
 #include "xRedisClusterClient.h"
 
-using namespace xredisclient;
+using namespace xrc;
 
 int main(int argc, char **argv) {
 

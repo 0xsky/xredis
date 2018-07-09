@@ -10,6 +10,7 @@
 #include "xRedisClient.h"
 #include "xRedisPool.h"
 #include <sstream>
+using namespace xrc;
 
 bool xRedisClient::psetex(const RedisDBIdx& dbi, const std::string& key, int milliseconds, const std::string& value) {
     SETDEFAULTIOTYPE(MASTER);

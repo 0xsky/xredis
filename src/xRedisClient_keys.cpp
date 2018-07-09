@@ -9,6 +9,7 @@
 #include "xRedisClient.h"
 #include "xRedisPool.h"
 #include <sstream>
+using namespace xrc;
 
 bool  xRedisClient::del(const RedisDBIdx& dbi, const std::string& key) {
     if (0==key.length()) {

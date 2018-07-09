@@ -7,6 +7,7 @@
  */
 
 #include "xRedisClient.h"
+using namespace xrc;
 
 bool xRedisClient::sadd(const RedisDBIdx& dbi,     const std::string& key, const VALUES& vValue, int64_t& count){
     VDATA vCmdData;

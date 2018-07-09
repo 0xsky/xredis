@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "xRedisClient.h"
 
-using namespace xredisclient;
+using namespace xrc;
 
 // AP Hash Function
 unsigned int APHash(const char *str) {
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
         printf("error [%s] \r\n", dbi.GetErrInfo());
     }
 
-    string strValue;
+    std::string strValue;
     bRet = xRedis.get(dbi, key, strValue);
     if (bRet) {
         printf("%s \r\n", strValue.c_str());

@@ -4,7 +4,7 @@
 
 #include "xRedisClient.h"
 
-using namespace xredisclient;
+using namespace xrc;
 
 // AP Hash Function
 unsigned int APHash(const char *str) {
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
         sprintf(szKey, "test_%d", n);
         RedisDBIdx dbi(&xRedis);
         dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
-        string strValue;
+        std::string strValue;
         xRedis.get(dbi, szKey, strValue);
         printf("%s \r\n", strValue.c_str());
     }
