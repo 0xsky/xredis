@@ -82,7 +82,7 @@ void xRedisClusterClient::FreeReply(const redisReply *reply){
     }
 }
 
-int xRedisClusterClient::str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep) {
+int xRedisClusterClient::Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep) {
     if (NULL == pSrc) {
         return -1;
     }
@@ -135,7 +135,7 @@ bool xRedisClusterClient::GetClusterNodes(redisContext *redis_ctx)
         return false;
     }
 
-    str2Vect(redis_reply->str, vlines, "\n");
+    Str2Vect(redis_reply->str, vlines, "\n");
     printf("vlines:%lu\r\n", vlines.size());
 
     for (size_t i = 0; i < vlines.size(); ++i) {
@@ -143,7 +143,7 @@ bool xRedisClusterClient::GetClusterNodes(redisContext *redis_ctx)
         node.strinfo = vlines[i];
 
         std::vector<std::string> nodeinfo;
-        str2Vect(node.strinfo.c_str(), nodeinfo, " ");
+        Str2Vect(node.strinfo.c_str(), nodeinfo, " ");
         for (size_t k = 0; k < nodeinfo.size(); ++k) {
             printf("%lu : %s \r\n", k, nodeinfo[k].c_str());
         }
@@ -242,7 +242,7 @@ bool xRedisClusterClient::ClusterEnabled(redisContext *ctx)
     return bRet;
 }
 
-bool xRedisClusterClient::Clusterinfo(redisContext *ctx)
+bool xRedisClusterClient::ClusterInfo(redisContext *ctx)
 {
     redisReply *redis_reply = (redisReply*)redisCommand(ctx, "CLUSTER info");
     if( (NULL==redis_reply) ||(NULL==redis_reply->str)) {
@@ -299,8 +299,8 @@ bool xRedisClusterClient::ConnectRedis(const char *host, uint32_t port, uint32_t
         return true;
     }
 
-    if(!Clusterinfo(redis_ctx)) {
-        printf("Clusterinfo error \r\n");
+    if(!ClusterInfo(redis_ctx)) {
+        printf("ClusterInfo error \r\n");
         return false;
     }
     
@@ -314,7 +314,7 @@ bool xRedisClusterClient::ConnectRedis(const char *host, uint32_t port, uint32_t
         return false;
     }
     
-    str2Vect(redis_reply->str, vlines, "\n");
+    Str2Vect(redis_reply->str, vlines, "\n");
     printf("vlines:%lu\r\n", vlines.size());
     
     for (size_t i= 0; i < vlines.size(); ++i) {
@@ -322,7 +322,7 @@ bool xRedisClusterClient::ConnectRedis(const char *host, uint32_t port, uint32_t
         node.strinfo = vlines[i];
 
         std::vector<std::string> nodeinfo;
-        str2Vect(node.strinfo.c_str(), nodeinfo, " ");
+        Str2Vect(node.strinfo.c_str(), nodeinfo, " ");
         for (size_t k = 0; k < nodeinfo.size(); ++k) {
             printf("%lu : %s \r\n", k, nodeinfo[k].c_str());
         }

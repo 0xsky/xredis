@@ -73,8 +73,7 @@ typedef struct _REDISCONN_ {
             if (NULL != ctx) {
                 redisFree(ctx);
                 ctx = NULL;
-            }
-            else {
+            } else {
 
             }
         }
@@ -173,14 +172,14 @@ private:
     static uint16_t crc16(const char *buf, int len);
     static bool CheckReply(const redisReply *reply);
     static void FreeReply(const redisReply *reply);
-    static int str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep = ",");
+    static int Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep = ",");
 private:
     void Release();
     bool ConnectRedisNode(int idx, const char *host, uint32_t port, uint32_t poolsize);
     bool CheckReply(redisReply *reply);
     uint32_t KeyHashSlot(const char *key, size_t keylen);
     bool ClusterEnabled(redisContext *ctx);
-    bool Clusterinfo(redisContext *ctx);
+    bool ClusterInfo(redisContext *ctx);
     RedisConnection *GetConnection(uint32_t idx);
     void FreeConnection(RedisConnection * pRedis);
     uint32_t FindNodeIndex(uint32_t slot);
