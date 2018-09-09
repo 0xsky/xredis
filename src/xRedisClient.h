@@ -41,13 +41,13 @@ typedef std::vector<std::string>     VDATA;
 typedef std::set<std::string>        SETDATA;
 
 typedef struct _REDIS_NODE_{
-    unsigned int dbindex;       //  节点编号索引，从0开始
+    uint32_t dbindex;       //  节点编号索引，从0开始
     const char  *host;          //  REDIS节点主机IP地址
-    unsigned int port;          //  redis服务端口
+    uint32_t port;          //  redis服务端口
     const char  *passwd;        //  redis认证密码
-    unsigned int poolsize;      //  此节点上的连接池大小
-    unsigned int timeout;       //  连接超时时间 秒
-    unsigned int role;          //  节点角色 
+    uint32_t poolsize;      //  此节点上的连接池大小
+    uint32_t timeout;       //  连接超时时间 秒
+    uint32_t role;          //  节点角色 
 }RedisNode;
 
 /* This is the reply object returned by redisCommand() */
@@ -62,7 +62,7 @@ typedef struct rReply {
 
 
 
-typedef unsigned int (*HASHFUN)(const char *);
+typedef uint32_t (*HASHFUN)(const char *);
 
 class RedisPool;
 class xRedisClient;
@@ -73,22 +73,22 @@ public:
     RedisDBIdx(xRedisClient *xredisclient);
     ~RedisDBIdx();
 
-    bool CreateDBIndex(const char *key,  HASHFUN fun, unsigned int type);
-    bool CreateDBIndex(int64_t id, unsigned int type);
+    bool CreateDBIndex(const char *key,  HASHFUN fun, uint32_t type);
+    bool CreateDBIndex(int64_t id, uint32_t type);
     char *GetErrInfo() {return mStrerr;}
     void SetIOMaster();
 
 private:
     bool SetErrInfo(const char *info, int len);
-    void IOtype(unsigned int type);
+    void IOtype(uint32_t type);
     friend class xRedisClient;
 
 private:
-    unsigned int mType;
-    unsigned int mIndex;
+    uint32_t mType;
+    uint32_t mIndex;
     char         *mStrerr;
     xRedisClient *mClient;
-    unsigned int mIOtype;
+    uint32_t mIOtype;
     bool         mIOFlag;
 };
 
@@ -166,7 +166,7 @@ public:
     xRedisClient();
     ~xRedisClient();
 
-    bool Init(unsigned int maxtype);
+    bool Init(uint32_t maxtype);
     void Release();
     void Keepalive();
     inline RedisPool *GetRedisPool();
@@ -174,8 +174,8 @@ public:
     static int GetReply(xRedisContext* ctx, ReplyData& vData);
     bool GetxRedisContext(const RedisDBIdx& dbi, xRedisContext* ctx);
     void FreexRedisContext(xRedisContext* ctx);
-    bool ConnectRedisCache(const RedisNode *redisnodelist, unsigned int nodecount, 
-        unsigned int hashbase, unsigned int cachetype);
+    bool ConnectRedisCache(const RedisNode *redisnodelist, uint32_t nodecount, 
+        uint32_t hashbase, uint32_t cachetype);
 
 public:
 
@@ -219,15 +219,15 @@ public:
                         bool del(const DBIArray& dbi,      const KEYS &  vkey, int64_t& count);
     /* DUMP         */
     /* EXISTS       */  bool exists(const RedisDBIdx& dbi, const std::string& key);
-    /* EXPIRE       */  bool expire(const RedisDBIdx& dbi, const std::string& key, unsigned int second);
-    /* EXPIREAT     */  bool expireat(const RedisDBIdx& dbi, const std::string& key, unsigned int timestamp);
+    /* EXPIRE       */  bool expire(const RedisDBIdx& dbi, const std::string& key, uint32_t second);
+    /* EXPIREAT     */  bool expireat(const RedisDBIdx& dbi, const std::string& key, uint32_t timestamp);
     /* KEYS         */  
     /* MIGRATE      */  
     /* MOVE         */  
     /* OBJECT       */  
     /* PERSIST      */  bool persist(const RedisDBIdx& dbi, const std::string& key);
-    /* PEXPIRE      */  bool pexpire(const RedisDBIdx& dbi, const std::string& key, unsigned int milliseconds);
-    /* PEXPIREAT    */  bool pexpireat(const RedisDBIdx& dbi, const std::string& key, unsigned int millisecondstimestamp);
+    /* PEXPIRE      */  bool pexpire(const RedisDBIdx& dbi, const std::string& key, uint32_t milliseconds);
+    /* PEXPIREAT    */  bool pexpireat(const RedisDBIdx& dbi, const std::string& key, uint32_t millisecondstimestamp);
     /* PTTL         */  bool pttl(const RedisDBIdx& dbi, const std::string& key,  int64_t &milliseconds);
     /* RANDOMKEY    */  bool randomkey(const RedisDBIdx& dbi,  KEY& key);
     /* RENAME       */  
@@ -344,7 +344,7 @@ private:
     void SetErrInfo(const RedisDBIdx& dbi, void *p);
     void SetErrString(const RedisDBIdx& dbi, const char *str, int len);
     void SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...);
-    void SetIOtype(const RedisDBIdx& dbi, unsigned int iotype, bool ioflag = false);
+    void SetIOtype(const RedisDBIdx& dbi, uint32_t iotype, bool ioflag = false);
     bool ScanFun(const char* cmd, const RedisDBIdx& dbi, const std::string *key, int64_t &cursor,
         const char* pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
 

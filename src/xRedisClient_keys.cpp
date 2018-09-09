@@ -45,7 +45,7 @@ bool xRedisClient::exists(const RedisDBIdx& dbi, const std::string& key) {
     return command_bool(dbi, "EXISTS %s", key.c_str());
 }
 
-bool xRedisClient::expire(const RedisDBIdx& dbi, const std::string& key, unsigned int second) {
+bool xRedisClient::expire(const RedisDBIdx& dbi, const std::string& key, uint32_t second) {
     if (0==key.length()) {
         return false;
     }
@@ -63,7 +63,7 @@ bool xRedisClient::expire(const RedisDBIdx& dbi, const std::string& key, unsigne
     }
 }
 
-bool xRedisClient::expireat(const RedisDBIdx& dbi, const std::string& key, unsigned int timestamp) {
+bool xRedisClient::expireat(const RedisDBIdx& dbi, const std::string& key, uint32_t timestamp) {
     if (0==key.length()) {
         return false;
     }
@@ -79,14 +79,14 @@ bool xRedisClient::persist(const RedisDBIdx& dbi, const std::string& key) {
     return command_bool(dbi, "PERSIST %s %u", key.c_str());
 }
 
-bool xRedisClient::pexpire(const RedisDBIdx& dbi, const std::string& key, unsigned int milliseconds) {
+bool xRedisClient::pexpire(const RedisDBIdx& dbi, const std::string& key, uint32_t milliseconds) {
     if (0==key.length()) {
         return false;
     }
     return command_bool(dbi, "PEXPIRE %s %u", key.c_str(), milliseconds);
 }
 
-bool xRedisClient::pexpireat(const RedisDBIdx& dbi, const std::string& key, unsigned int millisecondstimestamp) {
+bool xRedisClient::pexpireat(const RedisDBIdx& dbi, const std::string& key, uint32_t millisecondstimestamp) {
     if (0==key.length()) {
         return false;
     }

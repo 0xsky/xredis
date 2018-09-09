@@ -525,7 +525,7 @@ bool xRedisClusterClient::RedisCommandArgv(const VSTRING& vDataIn, RedisResult &
 
     std::vector<const char*> argv(vDataIn.size());
     std::vector<size_t> argvlen(vDataIn.size());
-    unsigned int j = 0;
+    uint32_t j = 0;
     for (VSTRING::const_iterator i = vDataIn.begin(); i != vDataIn.end(); ++i, ++j) {
         argv[j] = i->c_str(), argvlen[j] = i->size();
     }
