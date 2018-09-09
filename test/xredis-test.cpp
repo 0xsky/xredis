@@ -1,3 +1,5 @@
+
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -199,7 +201,7 @@ void test_type()
 
     strcpy(szKey, "test");
     RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
 
     const std::string str = "wwwwwwwwwwwwwwwwwwwwwwwww";
     xClient.set(dbi, szKey, str);
@@ -209,10 +211,6 @@ void test_type()
     } else {
         printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
     }
-    
-
-
-
 
 }
 
@@ -477,7 +475,7 @@ void test_subscribe()
 
 void test_scan()
 {
-    char* pattern = "a*";
+    const char* pattern = "a*";
     RedisDBIdx dbi(&xClient);
     bool bRet = dbi.CreateDBIndex(0, CACHE_TYPE_1);
     if (!bRet) {
@@ -493,7 +491,7 @@ void test_scan()
     {
         arrayReply.clear();
         if (xClient.scan(dbi, cursor, pattern, 0, arrayReply, ctx)) {
-            printf("%lld\t\r\n", cursor);
+            printf("%"PRId64"\t\r\n", cursor);
             ReplyData::iterator iter = arrayReply.begin();
             for (; iter != arrayReply.end(); iter++) {
                 printf("\t\t%s\r\n",  (*iter).str.c_str());

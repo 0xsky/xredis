@@ -94,9 +94,9 @@ void RedisPool::FreeReply(const redisReply *reply){
 }
 
 bool RedisPool::ConnectRedisDB( uint32_t cahcetype,  uint32_t dbindex,
-    const char *host,  uint32_t port, const char *passwd,
+    const std::string& host, uint32_t port, const std::string& passwd,
     uint32_t poolsize,  uint32_t timeout, uint32_t role){
-    if( (NULL==host)
+    if( (0==host.length())
         || (cahcetype>MAX_REDIS_CACHE_TYPE)
         || (dbindex>MAX_REDIS_DB_HASHBASE)
         || (cahcetype>mTypeSize - 1)
@@ -245,7 +245,8 @@ bool RedisConn::Ping()
     return bRet;
 }
 
-void RedisConn::Init(uint32_t cahcetype, uint32_t dbindex, const std::string& host, uint32_t port, const std::string& pass, uint32_t poolsize, uint32_t timeout, uint32_t role, uint32_t slaveidx)
+void RedisConn::Init(uint32_t cahcetype, uint32_t dbindex, const std::string& host, uint32_t port, 
+    const std::string& pass, uint32_t poolsize, uint32_t timeout, uint32_t role, uint32_t slaveidx)
 {
     mType = cahcetype;
     mDbindex = dbindex;
@@ -278,7 +279,8 @@ void RedisDBSlice::Init( uint32_t cahcetype,  uint32_t dbindex)
     mDbindex = dbindex;
 }
 
-bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const std::string& host, uint32_t port, const std::string& passwd, uint32_t poolsize, uint32_t timeout, int32_t role)
+bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const std::string& host, uint32_t port,
+    const std::string& passwd, uint32_t poolsize, uint32_t timeout, int32_t role)
 {
     bool bRet = false;
     if ((host.empty())
@@ -297,7 +299,7 @@ bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const
                     continue;
                 }
 
-                pRedisconn->Init(cahcetype, dbindex, host.c_str(), port, passwd.c_str(), poolsize, timeout, role, 0);
+                pRedisconn->Init(cahcetype, dbindex, host, port, passwd, poolsize, timeout, role, 0);
                 if (pRedisconn->RedisConnect()) {
                     mSliceConn.RedisMasterConn.push_back(pRedisconn);
                     mStatus = REDISDB_WORKING;
@@ -317,7 +319,7 @@ bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const
                     continue;
                 }
 
-                pRedisconn->Init(cahcetype, dbindex, host.c_str(), port, passwd.c_str(), poolsize, timeout, role, slave_idx);
+                pRedisconn->Init(cahcetype, dbindex, host, port, passwd, poolsize, timeout, role, slave_idx);
                 if (pRedisconn->RedisConnect()) {
                     pSlaveNode->push_back(pRedisconn);
                     bRet = true;
@@ -492,8 +494,8 @@ bool RedisCache::InitDB(uint32_t cachetype, uint32_t hashbase)
     return true;
 }
 
-bool RedisCache::ConnectRedisDB(uint32_t cahcetype, uint32_t dbindex, const char *host, 
-    uint32_t port, const char *passwd, uint32_t poolsize, uint32_t timeout, uint32_t role)
+bool RedisCache::ConnectRedisDB(uint32_t cahcetype, uint32_t dbindex, const std::string& host,
+    uint32_t port, const std::string& passwd, uint32_t poolsize, uint32_t timeout, uint32_t role)
 {
     mDBList[dbindex].Init(cahcetype, dbindex);
     return mDBList[dbindex].ConnectRedisNodes(cahcetype, dbindex, host, port,
