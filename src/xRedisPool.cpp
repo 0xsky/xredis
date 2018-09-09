@@ -278,7 +278,7 @@ void RedisDBSlice::Init( uint32_t cahcetype,  uint32_t dbindex)
     mDbindex = dbindex;
 }
 
-bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const std::string& host, uint32_t port, const std::string& passwd, uint32_t poolsize, uint32_t timeout, int role)
+bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const std::string& host, uint32_t port, const std::string& passwd, uint32_t poolsize, uint32_t timeout, int32_t role)
 {
     bool bRet = false;
     if ((host.empty())
@@ -310,7 +310,7 @@ bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex, const
         } else if (SLAVE == role) {
             XLOCK(mSliceConn.SlaveLock);
             RedisConnPool *pSlaveNode = new RedisConnPool;
-            int slave_idx = mSliceConn.RedisSlaveConn.size();
+            int32_t slave_idx = mSliceConn.RedisSlaveConn.size();
             for (uint32_t i = 0; i < poolsize; ++i) {
                 RedisConn *pRedisconn = new RedisConn;
                 if (NULL == pRedisconn) {
@@ -367,7 +367,7 @@ RedisConn * RedisDBSlice::GetSlaveConn()
     return pRedisConn;
 }
 
-RedisConn * RedisDBSlice::GetConn(int ioRole)
+RedisConn * RedisDBSlice::GetConn(int32_t ioRole)
 {
     RedisConn *pRedisConn = NULL;
     if (!mHaveSlave) {

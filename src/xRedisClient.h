@@ -52,9 +52,9 @@ typedef struct _REDIS_NODE_{
 
 /* This is the reply object returned by redisCommand() */
 typedef struct rReply {
-    int type; /* REDIS_REPLY_* */
+    int32_t type; /* REDIS_REPLY_* */
     long long integer; /* The integer when type is REDIS_REPLY_INTEGER */
-    int len; /* Length of string */
+    int32_t len; /* Length of string */
     char *str; /* Used for both REDIS_REPLY_ERROR and REDIS_REPLY_STRING */
     size_t elements; /* number of elements, for REDIS_REPLY_ARRAY */
     struct rReply **element; /* elements vector for REDIS_REPLY_ARRAY */
@@ -79,7 +79,7 @@ public:
     void SetIOMaster();
 
 private:
-    bool SetErrInfo(const char *info, int len);
+    bool SetErrInfo(const char *info, int32_t len);
     void IOtype(uint32_t type);
     friend class xRedisClient;
 
@@ -93,7 +93,7 @@ private:
 };
 
 typedef struct _DATA_ITEM_{
-    int         type;
+    int32_t         type;
     std::string str;
     
     _DATA_ITEM_ & operator=(const _DATA_ITEM_ &data) {
@@ -143,8 +143,8 @@ typedef enum _SORT_ORDER_{
 
 typedef struct _SORT_LIMIT_
 { 
-	int offset; 
-	int count; 
+	int32_t offset; 
+	int32_t count; 
 }LIMIT;
 
 template<class T>
@@ -171,7 +171,7 @@ public:
     void Keepalive();
     inline RedisPool *GetRedisPool();
     static void FreeReply(const rReply* reply);
-    static int GetReply(xRedisContext* ctx, ReplyData& vData);
+    static int32_t GetReply(xRedisContext* ctx, ReplyData& vData);
     bool GetxRedisContext(const RedisDBIdx& dbi, xRedisContext* ctx);
     void FreexRedisContext(xRedisContext* ctx);
     bool ConnectRedisCache(const RedisNode *redisnodelist, uint32_t nodecount, 
@@ -188,31 +188,31 @@ public:
 
     //                 Commands operating on std::string values
     /* APPEND      */  bool append(const RedisDBIdx& dbi,  const std::string& key,  const std::string& value);
-    /* BITCOUNT    */  bool bitcount(const RedisDBIdx& dbi,const std::string& key, int& count, int start=0, int end=0);
-    /* BITOP       */  bool bitop(const RedisDBIdx& dbi,   const BITOP operation, const std::string& destkey, const KEYS& keys, int& lenght);
-    /* BITPOS      */  bool bitpos(const RedisDBIdx& dbi,  const std::string& key, int bit, int64_t& pos, int start=0, int end=0);
+    /* BITCOUNT    */  bool bitcount(const RedisDBIdx& dbi,const std::string& key, int32_t& count, int32_t start=0, int32_t end=0);
+    /* BITOP       */  bool bitop(const RedisDBIdx& dbi,   const BITOP operation, const std::string& destkey, const KEYS& keys, int32_t& lenght);
+    /* BITPOS      */  bool bitpos(const RedisDBIdx& dbi,  const std::string& key, int32_t bit, int64_t& pos, int32_t start=0, int32_t end=0);
     /* DECR        */  bool decr(const RedisDBIdx& dbi,    const std::string& key, int64_t& result);
-    /* DECRBY      */  bool decrby(const RedisDBIdx& dbi,  const std::string& key, int by, int64_t& result);
+    /* DECRBY      */  bool decrby(const RedisDBIdx& dbi,  const std::string& key, int32_t by, int64_t& result);
     /* GET         */  bool get(const RedisDBIdx& dbi,     const std::string& key, std::string& value);
-    /* GETBIT      */  bool getbit(const RedisDBIdx& dbi,  const std::string& key, int& offset, int& bit);
-    /* GETRANGE    */  bool getrange(const RedisDBIdx& dbi,const std::string& key, int start, int end, std::string& out);
+    /* GETBIT      */  bool getbit(const RedisDBIdx& dbi,  const std::string& key, int32_t& offset, int32_t& bit);
+    /* GETRANGE    */  bool getrange(const RedisDBIdx& dbi,const std::string& key, int32_t start, int32_t end, std::string& out);
     /* GETSET      */  bool getset(const RedisDBIdx& dbi,  const std::string& key, const std::string& newValue, std::string& oldValue);
     /* INCR        */  bool incr(const RedisDBIdx& dbi,    const std::string& key, int64_t& result);
-    /* INCRBY      */  bool incrby(const RedisDBIdx& dbi,  const std::string& key, int by, int64_t& result);
+    /* INCRBY      */  bool incrby(const RedisDBIdx& dbi,  const std::string& key, int32_t by, int64_t& result);
     /* INCRBYFLOAT */  
     /* MGET        */  bool mget(const DBIArray& dbi,    const KEYS &  keys, ReplyData& vDdata);
     /* MSET        */  bool mset(const DBIArray& dbi,    const VDATA& data);
     /* MSETNX      */  
-    /* PSETEX      */  bool psetex(const RedisDBIdx& dbi,  const std::string& key,  int milliseconds, const std::string& value);
+    /* PSETEX      */  bool psetex(const RedisDBIdx& dbi,  const std::string& key,  int32_t milliseconds, const std::string& value);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key,  const std::string& value);
-    /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int len, int second);
+    /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const char *value, int32_t len, int32_t second);
     /* SET         */  bool set(const RedisDBIdx& dbi,     const std::string& key, const std::string& value, 
-        SETPXEX pxex, int expiretime, SETNXXX nxxx);
-    /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const std::string& key,  int offset, int64_t newbitValue, int64_t oldbitValue);
-    /* SETEX       */  bool setex(const RedisDBIdx& dbi,   const std::string& key,  int seconds, const std::string& value);
+        SETPXEX pxex, int32_t expiretime, SETNXXX nxxx);
+    /* SETBIT      */  bool setbit(const RedisDBIdx& dbi,  const std::string& key,  int32_t offset, int64_t newbitValue, int64_t oldbitValue);
+    /* SETEX       */  bool setex(const RedisDBIdx& dbi,   const std::string& key,  int32_t seconds, const std::string& value);
     /* SETNX       */  bool setnx(const RedisDBIdx& dbi,   const std::string& key,  const std::string& value);
-    /* SETRANGE    */  bool setrange(const RedisDBIdx& dbi,const std::string& key,  int offset, const std::string& value, int& length);
-    /* STRLEN      */  bool strlen(const RedisDBIdx& dbi,  const std::string& key, int& length);
+    /* SETRANGE    */  bool setrange(const RedisDBIdx& dbi,const std::string& key,  int32_t offset, const std::string& value, int32_t& length);
+    /* STRLEN      */  bool strlen(const RedisDBIdx& dbi,  const std::string& key, int32_t& length);
 
 
     /* DEL          */  bool del(const RedisDBIdx& dbi,    const std::string& key);
@@ -272,9 +272,9 @@ public:
     /* LPUSH        */  bool lpush(const RedisDBIdx& dbi,    const std::string& key, const VALUES& vValue, int64_t& length);
     /* LPUSHX       */  bool lpushx(const RedisDBIdx& dbi,   const std::string& key, const std::string& value, int64_t& length);
     /* LRANGE       */  bool lrange(const RedisDBIdx& dbi,   const std::string& key, int64_t start, int64_t end, ArrayReply& array);
-    /* LREM         */  bool lrem(const RedisDBIdx& dbi,     const std::string& key,  int count, const std::string& value, int64_t num);
-    /* LSET         */  bool lset(const RedisDBIdx& dbi,     const std::string& key,  int index, const std::string& value);
-    /* LTRIM        */  bool ltrim(const RedisDBIdx& dbi,    const std::string& key,  int start, int end);
+    /* LREM         */  bool lrem(const RedisDBIdx& dbi,     const std::string& key,  int32_t count, const std::string& value, int64_t num);
+    /* LSET         */  bool lset(const RedisDBIdx& dbi,     const std::string& key,  int32_t index, const std::string& value);
+    /* LTRIM        */  bool ltrim(const RedisDBIdx& dbi,    const std::string& key,  int32_t start, int32_t end);
     /* RPOP         */  bool rpop(const RedisDBIdx& dbi,     const std::string& key, std::string& value);
     /* RPOPLPUSH    */  bool rpoplpush(const RedisDBIdx& dbi,const std::string& key_src, const std::string& key_dest, std::string& value);
     /* RPUSH        */  bool rpush(const RedisDBIdx& dbi,    const std::string& key, const VALUES& vValue, int64_t& length);
@@ -290,7 +290,7 @@ public:
     /* SMEMBERS     */  bool smembers(const RedisDBIdx& dbi,     const KEY& key,  VALUES& vValue);
     /* SMOVE        */  bool smove(const RedisDBIdx& dbi,       const KEY& srckey, const KEY& deskey,  const VALUE& member);
     /* SPOP         */  bool spop(const RedisDBIdx& dbi,        const KEY& key, VALUE& member);
-    /* SRANDMEMBER  */  bool srandmember(const RedisDBIdx& dbi, const KEY& key, VALUES& vmember, int num=0);
+    /* SRANDMEMBER  */  bool srandmember(const RedisDBIdx& dbi, const KEY& key, VALUES& vmember, int32_t num=0);
     /* SREM         */  bool srem(const RedisDBIdx& dbi,        const KEY& key, const VALUES& vmembers, int64_t& count);
     /* SSCAN        */  bool sscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor,
         const char *pattern, uint32_t count, ArrayReply& array, xRedisContext& ctx);
@@ -302,14 +302,14 @@ public:
     /* ZCOUNT           */
     /* ZINCRBY          */  bool zincrby(const RedisDBIdx& dbi, const std::string& key, const double &increment, const std::string& member, std::string& value );
     /* ZINTERSTORE      */  
-    /* ZRANGE           */  bool zrange(const RedisDBIdx& dbi,  const std::string& key, int start, int end, VALUES& vValues, bool withscore=false);
+    /* ZRANGE           */  bool zrange(const RedisDBIdx& dbi,  const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore=false);
     /* ZRANGEBYSCORE    */  
     /* ZRANK            */  bool zrank(const RedisDBIdx& dbi,   const std::string& key, const std::string& member, int64_t &rank);
     /* ZREM             */  bool zrem(const RedisDBIdx& dbi,    const KEY& key, const VALUES& vmembers, int64_t &num);
-    /* ZREMRANGEBYRANK  */  bool zremrangebyrank(const RedisDBIdx& dbi,  const std::string& key, int start, int stop, int64_t& num);
+    /* ZREMRANGEBYRANK  */  bool zremrangebyrank(const RedisDBIdx& dbi,  const std::string& key, int32_t start, int32_t stop, int64_t& num);
     /* ZREMRANGEBYSCORE */  
-    /* ZREVRANGE        */  bool zrevrange(const RedisDBIdx& dbi,  const std::string& key, int start, int end, VALUES& vValues, bool withscore=false);
-    /* ZREVRANGEBYLEX   */  bool zrevrangebylex(const RedisDBIdx& dbi, const std::string& key, std::string& start, std::string& end, VALUES& vValues, int offset = 0, int count = 0);
+    /* ZREVRANGE        */  bool zrevrange(const RedisDBIdx& dbi,  const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore=false);
+    /* ZREVRANGEBYLEX   */  bool zrevrangebylex(const RedisDBIdx& dbi, const std::string& key, std::string& start, std::string& end, VALUES& vValues, int32_t offset = 0, int32_t count = 0);
     /* ZREVRANGEBYSCORE */  
     /* ZREVRANK         */  bool zrevrank(const RedisDBIdx& dbi,  const std::string& key, const std::string &member, int64_t& rank);
     /* ZSCAN            */  bool zscan(const RedisDBIdx& dbi, const std::string& key, int64_t &cursor, const char *pattern,
@@ -342,7 +342,7 @@ private:
         }
     }
     void SetErrInfo(const RedisDBIdx& dbi, void *p);
-    void SetErrString(const RedisDBIdx& dbi, const char *str, int len);
+    void SetErrString(const RedisDBIdx& dbi, const char *str, int32_t len);
     void SetErrMessage(const RedisDBIdx& dbi, const char* fmt, ...);
     void SetIOtype(const RedisDBIdx& dbi, uint32_t iotype, bool ioflag = false);
     bool ScanFun(const char* cmd, const RedisDBIdx& dbi, const std::string *key, int64_t &cursor,

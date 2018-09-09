@@ -65,7 +65,7 @@ void RedisDBIdx::SetIOMaster()
     mIOFlag = true;
 }
 
-bool RedisDBIdx::SetErrInfo(const char *info, int len) {
+bool RedisDBIdx::SetErrInfo(const char *info, int32_t len) {
     if (NULL == info) {
         return false;
     }
@@ -161,7 +161,7 @@ void xRedisClient::SetErrInfo(const RedisDBIdx& dbi, void *p) {
     }
 }
 
-void xRedisClient::SetErrString(const RedisDBIdx& dbi, const char *str, int len) {
+void xRedisClient::SetErrString(const RedisDBIdx& dbi, const char *str, int32_t len) {
     RedisDBIdx &dbindex = const_cast<RedisDBIdx&>(dbi);
     dbindex.SetErrInfo(str, len);
 }
@@ -389,13 +389,13 @@ bool xRedisClient::commandargv_array_ex(const RedisDBIdx& dbi, const VDATA& vDat
     return bRet;
 }
 
-int xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
+int32_t xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
 {
     //vData.clear();
     //ReplyData(vData).swap(vData);
     redisReply *reply;
     RedisConn *pRedisConn = static_cast<RedisConn *>(ctx->conn);
-    int ret = redisGetReply(pRedisConn->getCtx(), (void**)&reply);
+    int32_t ret = redisGetReply(pRedisConn->getCtx(), (void**)&reply);
     if (0==ret) {
         for (size_t i = 0; i < reply->elements; i++) {
             DataItem item;

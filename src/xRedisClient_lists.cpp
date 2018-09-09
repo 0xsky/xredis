@@ -42,7 +42,7 @@ bool xRedisClient::blPop(const RedisDBIdx& dbi,    const std::string& key, VALUE
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_list(dbi, vValues, "BLPOP %s %d", key.c_str(), (int)timeout);	
+    return command_list(dbi, vValues, "BLPOP %s %d", key.c_str(), (int32_t)timeout);	
 }
 
 bool xRedisClient::brPop(const RedisDBIdx& dbi,    const std::string& key, VALUES& vValues, int64_t timeout)
@@ -51,7 +51,7 @@ bool xRedisClient::brPop(const RedisDBIdx& dbi,    const std::string& key, VALUE
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_list(dbi, vValues, "BRPOP %s %d", key.c_str(), (int)timeout);	
+    return command_list(dbi, vValues, "BRPOP %s %d", key.c_str(), (int32_t)timeout);	
 }
 
 bool xRedisClient::brPoplpush(const RedisDBIdx& dbi, const std::string& key, std::string& targetkey, VALUE& value, int64_t timeout)
@@ -60,7 +60,7 @@ bool xRedisClient::brPoplpush(const RedisDBIdx& dbi, const std::string& key, std
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "BRPOPLPUSH %s %s %d", key.c_str(), targetkey.c_str(), (int)timeout);	
+    return command_string(dbi, value, "BRPOPLPUSH %s %s %d", key.c_str(), targetkey.c_str(), (int32_t)timeout);	
 }
 
 bool xRedisClient::lpop(const RedisDBIdx& dbi, const std::string& key, std::string& value){
@@ -91,7 +91,7 @@ bool xRedisClient::lrange(const RedisDBIdx& dbi, const std::string& key, int64_t
 	return command_array(dbi, array, "LRANGE %s %lld %lld", key.c_str(), start, end);
 }
 
-bool xRedisClient::lrem(const RedisDBIdx& dbi, const std::string& key, int count, const std::string& value, int64_t num){
+bool xRedisClient::lrem(const RedisDBIdx& dbi, const std::string& key, int32_t count, const std::string& value, int64_t num){
     if (0==key.length()) {
         return false;
     }
@@ -99,7 +99,7 @@ bool xRedisClient::lrem(const RedisDBIdx& dbi, const std::string& key, int count
     return command_integer(dbi, num, "LREM %s %d %s", key.c_str(), count, value.c_str());
 }
 
-bool xRedisClient::lset(const RedisDBIdx& dbi, const std::string& key, int index, const std::string& value){
+bool xRedisClient::lset(const RedisDBIdx& dbi, const std::string& key, int32_t index, const std::string& value){
     if (0==key.length()) {
         return false;
     }
@@ -107,7 +107,7 @@ bool xRedisClient::lset(const RedisDBIdx& dbi, const std::string& key, int index
     return command_status(dbi, "LSET %s %d %s", key.c_str(), index, value.c_str());
 }
 
-bool xRedisClient::ltrim(const RedisDBIdx& dbi, const std::string& key, int start, int end){
+bool xRedisClient::ltrim(const RedisDBIdx& dbi, const std::string& key, int32_t start, int32_t end){
     if (0==key.length()) {
         return false;
     }

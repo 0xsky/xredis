@@ -36,8 +36,8 @@ static const uint16_t crc16tab[256]= {
     0x6e17,0x7e36,0x4e55,0x5e74,0x2e93,0x3eb2,0x0ed1,0x1ef0
 };
 
- uint16_t xRedisClusterClient::crc16(const char *buf, int len) {
-    int counter;
+ uint16_t xRedisClusterClient::crc16(const char *buf, int32_t len) {
+    int32_t counter;
     uint16_t crc = 0;
     for (counter = 0; counter < len; counter++)
             crc = (crc<<8) ^ crc16tab[((crc>>8) ^ *buf++)&0x00FF];
@@ -82,12 +82,12 @@ void xRedisClusterClient::FreeReply(const redisReply *reply){
     }
 }
 
-int xRedisClusterClient::Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep) {
+int32_t xRedisClusterClient::Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep) {
     if (NULL == pSrc) {
         return -1;
     }
 
-    int iLen = strlen(pSrc);
+    int32_t iLen = strlen(pSrc);
     if (iLen == 0) {
         return -1;
     }
@@ -341,17 +341,17 @@ bool xRedisClusterClient::ConnectRedis(const char *host, uint32_t port, uint32_t
     redisFree(redis_ctx);
 
 //    XLOCK(mLock);
-    int cnt = vNodes.size();
+    int32_t cnt = vNodes.size();
     mRedisConnList = new RedisConnectionList[cnt];
     mLock = new xLock[cnt];
-    for (int i = 0; i < cnt; ++i) {
+    for (int32_t i = 0; i < cnt; ++i) {
         ConnectRedisNode(i, vNodes[i].ip.c_str(), vNodes[i].port, mPoolSize);
     }
 
     return true;
 }
 
-bool xRedisClusterClient::ConnectRedisNode(int idx, const char *host, uint32_t port, uint32_t poolsize)
+bool xRedisClusterClient::ConnectRedisNode(int32_t idx, const char *host, uint32_t port, uint32_t poolsize)
 {
     if(NULL==host) {
         printf("error argv \r\n");

@@ -108,11 +108,11 @@ public:
     // 连到到一个REDIS服务节点
     bool ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex,
                            const std::string& host,  uint32_t port, const std::string& passwd,
-                           uint32_t poolsize,  uint32_t timeout, int role);
+                           uint32_t poolsize,  uint32_t timeout, int32_t role);
 
     RedisConn *GetMasterConn();
     RedisConn *GetSlaveConn();
-    RedisConn *GetConn(int ioRole);
+    RedisConn *GetConn(int32_t ioRole);
     void FreeConn(RedisConn *redisconn);
     void CloseConnPool();
     void ConnPoolPing();
