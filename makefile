@@ -75,10 +75,10 @@ xredis-example: examples/xredis-example.cpp $(STLIBNAME)
 examples: $(EXAMPLES)
 
 xredis-test: test/xredis-test.cpp $(STLIBNAME)
-	$(CC) -o test/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS)  -I./src -L. $< $(STLIBNAME) -lhiredis -lpthread
+	$(CC) -o test/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -D__STDC_FORMAT_MACROS -I./src -L. $< $(STLIBNAME) -lhiredis -lpthread
 
 test: xredis-test
-	./test/xredis-test
+	@echo ./test/xredis-test
 
 %.o: %.cpp
 	$(CC) $(REAL_CFLAGS) -c $< -o $@
