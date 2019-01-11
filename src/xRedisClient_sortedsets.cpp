@@ -47,7 +47,7 @@ bool xRedisClient::zrange(const RedisDBIdx& dbi, const std::string& key, int32_t
 }
 
 bool xRedisClient::zrangebyscore(const RedisDBIdx& dbi, const std::string& key, const std::string& min, 
-            const std::string& max, VALUES& vValues, bool withscore, bool withlimit, uint32_t offset, uint32_t count) {
+            const std::string& max, VALUES& vValues, bool withscore, LIMIT *limit /*= NULL*/) {
     if (0==key.length()) {
         return false;
     }
@@ -62,10 +62,10 @@ bool xRedisClient::zrangebyscore(const RedisDBIdx& dbi, const std::string& key, 
         vCmdData.push_back("WITHSCORES");        
     }
 
-    if (withlimit) {
-        vCmdData.push_back("LIMIT");        
-        vCmdData.push_back(toString(offset));        
-        vCmdData.push_back(toString(count));              
+    if (NULL != limit) {
+        vCmdData.push_back("LIMIT");
+        vCmdData.push_back(toString(limit->offset));
+        vCmdData.push_back(toString(limit->count));
     }
 
     SETDEFAULTIOTYPE(SLAVE);
