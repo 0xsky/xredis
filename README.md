@@ -54,5 +54,4 @@ sudo make install
   
 <img src='https://github.com/0xsky/xredis/blob/master/donate.jpg' alt='捐赠作者' height='120px'>
 
-![](./donate.jpg =100x100)
 
