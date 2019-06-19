@@ -10,6 +10,8 @@
 #include "hiredis.h"
 #include "xLock.h"
 
+namespace xrc
+{
 
 #define MAX_REDIS_POOLSIZE 128
 #define MAX_TIME_OUT       5
@@ -35,7 +37,7 @@ public:
         int32_t len() const { return reply->len; }
         char* str() const { return reply->str; }
         size_t elements() const { return reply->elements; }
-        struct RedisReply element(uint32_t index) const { return RedisReply(reply->element[index]); }
+        RedisReply element(uint32_t index) const { return RedisReply(reply->element[index]); }
         private:
         friend class RedisResult;
         redisReply *reply;
@@ -195,5 +197,7 @@ private:
     RedisConnection        mConn;
 };
 
+}
 
 #endif
+

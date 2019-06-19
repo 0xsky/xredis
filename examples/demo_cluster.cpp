@@ -5,6 +5,7 @@
  * <br>More details about this example.
  */
 
+#include <cstdio>
 #include "xRedisClient.h"
 
 using namespace xrc;
@@ -52,7 +53,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    bool bRet = xRedis.set(dbi, key, value)) \
+    bRet = xRedis.set(dbi, key, value);
     if (bRet){
            printf("success \r\n");
      } else {
@@ -60,7 +61,7 @@ int main(int argc, char **argv) {
      }
 
     std::string strValue;
-    bRet = xRedis.get(dbi, szKey, strValue);
+    bRet = xRedis.get(dbi, key, strValue);
     if (bRet) {
         printf("%s \r\n", strValue.c_str());
     } else {
