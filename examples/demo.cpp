@@ -6,7 +6,7 @@
  * <br>More details about this example.
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include "xRedisClient.h"
 
 using namespace xrc;

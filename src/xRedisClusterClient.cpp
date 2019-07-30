@@ -1,5 +1,6 @@
 #include "xRedisClusterClient.h"
 
+using namespace xrc;
 
 static const uint16_t crc16tab[256]= {
     0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
@@ -406,7 +407,8 @@ RedisConnection *xRedisClusterClient::GetConnection(uint32_t idx)
                 mRedisConnList[idx].pop_front();
                 break;
             } else {
-                printf("RedisPool::GetConnection()  error pthread_id=%lu \n", pthread_self());
+                printf("RedisPool::GetConnection()  error pthread_id=%lu \n",
+                       (unsigned long)pthread_self());
             }
         }
         usleep(1000);
