@@ -31,20 +31,24 @@ int main(int argc, char **argv) {
             VSTRING vDataIn;
 
             xRedisClusterClient::str2Vect(strInput.c_str(), vDataIn, " ");
-            xlog("cmd:%s size:%u\r\n", strInput.c_str(), vDataIn.size());
-
             redisclient.RedisCommandArgv(vDataIn, result);
 
-            xlog("type:%d integer:%lld str:%s \r\n",
-                result.type(), result.integer(), result.str());
-
-            for (size_t i = 0; i < result.elements(); ++i) {
-                RedisResult::RedisReply reply = result.element(i);
-                printf("type:%d integer:%lld str:%s \r\n",
-                    reply.type(), reply.integer(), reply.str());
+            switch (result.type()){
+            case REDIS_REPLY_INTEGER:{ printf("%lld \r\n", result.integer()); break;}
+            case REDIS_REPLY_NIL:    { printf("%lld %s \r\n", result.integer(), result.str()); break; }
+            case REDIS_REPLY_STATUS: { printf("%s \r\n", result.str()); break; }
+            case REDIS_REPLY_ERROR:  { printf("%s \r\n", result.str()); break; }
+            case REDIS_REPLY_STRING: { printf("%s \r\n", result.str()); break; }
+            case REDIS_REPLY_ARRAY:  {
+                for (size_t i = 0; i < result.elements(); ++i) {
+                    RedisResult::RedisReply reply = result.element(i);
+                    printf("type:%d integer:%lld str:%s \r\n",
+                        reply.type(), reply.integer(), reply.str());
+                }
+                break;
+            }
             }
         }
-
     }
 
     return 0;
