@@ -327,6 +327,10 @@ bool xRedisClusterClient::ConnectRedis(const char *host, uint32_t port, uint32_t
         for (size_t k = 0; k < nodeinfo.size(); ++k) {
             printf("%lu : %s \r\n", k, nodeinfo[k].c_str());
         }
+        if (NULL != strstr(nodeinfo[7].c_str(), "disconnected")){
+            //printf("%s \r\n", nodeinfo[7].c_str());
+            continue;
+        }
         if (NULL == strstr(nodeinfo[2].c_str(), "master")) {
             printf("%s \r\n", nodeinfo[2].c_str());
             continue;
