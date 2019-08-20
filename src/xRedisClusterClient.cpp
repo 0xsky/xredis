@@ -542,7 +542,6 @@ bool xRedisClusterClient::RedisCommandArgv(const VSTRING& vDataIn, RedisResult &
         //SetErrInfo(dbi, reply);
     }
 
-    FreeReply(reply);
     FreeConnection(pRedisConn);
     return bRet;
 }
