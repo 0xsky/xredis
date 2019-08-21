@@ -43,6 +43,29 @@ make
 sudo make install
 ```
 
+Usage
+```C++
+#Accessing redis or  redis Cluster using the xRedisClusterClient class
+
+#include "xRedisPool.h"
+int main(int argc, char **argv) {
+    xRedisClusterClient redisclient;
+    # Connect to REDIS and establish a connection pool 
+    # If this node is a member of the REDIS cluster, 
+    # a connection pool is automatically established for each primary node in the cluster.
+    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, 4);
+
+    RedisResult result;
+    redisclient.RedisCommand(result, "set %s %s", "key", "hello");
+    
+    printf("type:%d integer:%lld str:%s \r\n",
+        result.type(), result.integer(), result.str());
+
+    return 0;
+}
+```
+
+
 ### Documentation
 ![xredis](http://xredis.0xsky.com/pic/xredis_0.png)
 <p>[xRedis API Site](http://xredis.0xsky.com/) 
