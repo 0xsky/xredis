@@ -35,8 +35,29 @@ cd xredis
 make
 sudo make install
 ```
+使用说明
+```C++
+#使用 xRedisClusterClient类 访问 redis节点或是官方集群
+
+#include "xRedisPool.h"
+int main(int argc, char **argv) {
+    xRedisClusterClient redisclient;
+    # 连接到REDIS，建立大小为4的连接池，
+    # 若此节点是官方集群的成员，则会自动对集群每个主节点建立大小为4的连接池。
+    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, 4);
+
+    RedisResult result;
+    redisclient.RedisCommand(result, "set %s %s", "key", "hello");
+    
+    printf("type:%d integer:%lld str:%s \r\n",
+        result.type(), result.integer(), result.str());
+
+    return 0;
+}
+```
 
 ### 相关文档
+##### xRedis 分片存储架构图
 ![xredis](http://xredis.0xsky.com/pic/xredis_0.png)
 <p>[xRedis API](http://xredis.0xsky.com/) 
 <p>使用示例 [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
