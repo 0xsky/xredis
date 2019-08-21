@@ -39,7 +39,7 @@ sudo make install
 ```C++
 #使用 xRedisClusterClient类 访问 redis节点或是官方集群
 
-#include "xRedisPool.h"
+#include "xRedisClusterClient.h"
 int main(int argc, char **argv) {
     xRedisClusterClient redisclient;
     # 连接到REDIS，建立大小为4的连接池，

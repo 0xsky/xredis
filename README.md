@@ -47,7 +47,7 @@ Usage
 ```C++
 #Accessing redis or  redis Cluster using the xRedisClusterClient class
 
-#include "xRedisPool.h"
+#include "xRedisClusterClient.h"
 int main(int argc, char **argv) {
     xRedisClusterClient redisclient;
     # Connect to REDIS and establish a connection pool 
