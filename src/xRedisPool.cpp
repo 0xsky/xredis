@@ -15,7 +15,7 @@ using namespace xrc;
 RedisPool::RedisPool() {
     mRedisCacheList = NULL;
     mTypeSize=0;
-    srand((uint32_t)time(NULL));
+    srand((unsigned)time(NULL));
 }
 
 RedisPool::~RedisPool() {
