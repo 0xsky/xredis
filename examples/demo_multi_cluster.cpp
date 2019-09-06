@@ -9,6 +9,7 @@
  * <br>More details about this example.
  */
 
+#include <stdio.h>
 #include "xRedisClient.h"
 
 using namespace xrc;
@@ -32,21 +33,22 @@ enum {
  CACHE_TYPE_MAX,
 };
 
-
+/* 有3个redis分片存储节点的集群*/
 RedisNode RedisList1[3]=
 {
-    {0,"127.0.0.1", 7000, "", 2, 5, 0},
-    {1,"127.0.0.1", 7000, "", 2, 5, 0},
-    {2,"127.0.0.1", 7000, "", 2, 5, 0}
+    {0,"10.10.0.1", 7000, "", 2, 5, 0},
+    {1,"10.10.0.2", 7000, "", 2, 5, 0},
+    {2,"10.10.0.3", 7000, "", 2, 5, 0}
 };
 
+/* 有5个redis分片存储节点的集群 */
 RedisNode RedisList2[5]=
 {
-    {0,"127.0.0.1", 7000, "", 2, 5, 0},
-    {1,"127.0.0.1", 7000, "", 2, 5, 0},
-    {2,"127.0.0.1", 7000, "", 2, 5, 0},
-    {3,"127.0.0.1", 7000, "", 2, 5, 0},
-    {4,"127.0.0.1", 7000, "", 2, 5, 0},
+    {0,"10.10.1.1", 7000, "", 2, 5, 0},
+    {1,"10.10.1.2", 7000, "", 2, 5, 0},
+    {2,"10.10.1.3", 7000, "", 2, 5, 0},
+    {3,"10.10.1.4", 7000, "", 2, 5, 0},
+    {4,"10.10.1.5", 7000, "", 2, 5, 0},
 };
 
 int main(int argc, char **argv) {
@@ -65,7 +67,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    bool bRet = xRedis.set(dbi, key, value)) \
+    bRet = xRedis.set(dbi, key, value);
     if (bRet){
            printf("success \r\n");
      } else {
@@ -73,7 +75,7 @@ int main(int argc, char **argv) {
      }
 
     std::string strValue;
-    bRet = xRedis.get(dbi, szKey, strValue);
+    bRet = xRedis.get(dbi, key, strValue);
     if (bRet) {
         printf("%s \r\n", strValue.c_str());
     } else {

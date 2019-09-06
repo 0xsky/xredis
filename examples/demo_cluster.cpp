@@ -5,6 +5,7 @@
  * <br>More details about this example.
  */
 
+#include <cstdio>
 #include "xRedisClient.h"
 
 using namespace xrc;
@@ -29,7 +30,7 @@ enum {
  CACHE_TYPE_MAX,
 };
 
-
+/* 配置一个redis分片存储集群：共三个存储主节点 */
 RedisNode RedisList1[3]=
 {
     {0,"127.0.0.1", 7000, "", 2, 5, 0},
@@ -52,7 +53,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    bool bRet = xRedis.set(dbi, key, value)) \
+    bRet = xRedis.set(dbi, key, value);
     if (bRet){
            printf("success \r\n");
      } else {
@@ -60,7 +61,7 @@ int main(int argc, char **argv) {
      }
 
     std::string strValue;
-    bRet = xRedis.get(dbi, szKey, strValue);
+    bRet = xRedis.get(dbi, key, strValue);
     if (bRet) {
         printf("%s \r\n", strValue.c_str());
     } else {

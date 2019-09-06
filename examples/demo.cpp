@@ -6,7 +6,7 @@
  * <br>More details about this example.
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include "xRedisClient.h"
 
 using namespace xrc;
@@ -31,6 +31,7 @@ enum {
  CACHE_TYPE_MAX,
 };
 
+/* 配置单个redis存储节点 */
 RedisNode RedisList1[1]=
 {
     {0,"127.0.0.1", 7000, "", 8, 5, 0}

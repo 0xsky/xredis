@@ -26,7 +26,7 @@ STLIBSUFFIX=a
 DYLIB_MINOR_NAME=$(LIBNAME).$(DYLIBSUFFIX).$(XREDIS_MAJOR).$(XREDIS_MINOR)
 DYLIB_MAJOR_NAME=$(LIBNAME).$(DYLIBSUFFIX).$(XREDIS_MAJOR)
 DYLIBNAME=$(LIBNAME).$(DYLIBSUFFIX)
-DYLIB_MAKE_CMD=$(CC) -shared -fPIC -Wl,-soname,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
+DYLIB_MAKE_CMD=$(CC) -shared -fPIC -Wl,-soname,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS) -lhiredis
 STLIBNAME=$(LIBNAME).$(STLIBSUFFIX)
 STLIB_MAKE_CMD=ar rcs $(STLIBNAME)
 
@@ -34,14 +34,14 @@ STLIB_MAKE_CMD=ar rcs $(STLIBNAME)
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 ifeq ($(uname_S),SunOS)
   REAL_LDFLAGS+= -ldl -lnsl -lsocket
-  DYLIB_MAKE_CMD=$(CC) -G -o $(DYLIBNAME) -h $(DYLIB_MINOR_NAME) $(LDFLAGS)
+  DYLIB_MAKE_CMD=$(CC) -G -o $(DYLIBNAME) -h $(DYLIB_MINOR_NAME) $(LDFLAGS) -lhiredis
   INSTALL= cp -r
 endif
 ifeq ($(uname_S),Darwin)
   DYLIBSUFFIX=dylib
   DYLIB_MINOR_NAME=$(LIBNAME).$(XREDIS_MAJOR).$(XREDIS_MINOR).$(DYLIBSUFFIX)
   DYLIB_MAJOR_NAME=$(LIBNAME).$(XREDIS_MAJOR).$(DYLIBSUFFIX)
-  DYLIB_MAKE_CMD=$(CC) -shared -Wl,-install_name,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
+  DYLIB_MAKE_CMD=$(CC) -shared -Wl,-install_name,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS) -lhiredis
 endif
 
 all: $(DYLIBNAME) $(STLIBNAME)
@@ -75,10 +75,10 @@ xredis-example: examples/xredis-example.cpp $(STLIBNAME)
 examples: $(EXAMPLES)
 
 xredis-test: test/xredis-test.cpp $(STLIBNAME)
-	$(CC) -o test/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS)  -I./src -L. $< $(STLIBNAME) -lhiredis -lpthread
+	$(CC) -o test/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -D__STDC_FORMAT_MACROS -I./src -L. $< $(STLIBNAME) -lhiredis -lpthread
 
 test: xredis-test
-	./test/xredis-test
+	@echo ./test/xredis-test
 
 %.o: %.cpp
 	$(CC) $(REAL_CFLAGS) -c $< -o $@

@@ -35,7 +35,7 @@ bool xRedisClient::zincrby(const RedisDBIdx& dbi, const std::string& key, const 
     return command_string(dbi, value, "ZINCRBY %s %f %s", key.c_str(), increment, member.c_str());
 }
 
-bool xRedisClient::zrange(const RedisDBIdx& dbi, const std::string& key, int start, int end, VALUES& vValues, bool withscore) {
+bool xRedisClient::zrange(const RedisDBIdx& dbi, const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore) {
     if (0==key.length()) {
         return false;
     }
@@ -44,6 +44,32 @@ bool xRedisClient::zrange(const RedisDBIdx& dbi, const std::string& key, int sta
         return command_list(dbi, vValues, "ZRANGE %s %d %d %s", key.c_str(), start, end, "WITHSCORES");
     }
     return command_list(dbi, vValues, "ZRANGE %s %d %d", key.c_str(), start, end);
+}
+
+bool xRedisClient::zrangebyscore(const RedisDBIdx& dbi, const std::string& key, const std::string& min, 
+            const std::string& max, VALUES& vValues, bool withscore, LIMIT *limit /*= NULL*/) {
+    if (0==key.length()) {
+        return false;
+    }
+
+    VDATA vCmdData;
+    vCmdData.push_back("ZRANGEBYSCORE");
+    vCmdData.push_back(key);
+    vCmdData.push_back(min);
+    vCmdData.push_back(max);
+
+    if (withscore) {
+        vCmdData.push_back("WITHSCORES");        
+    }
+
+    if (NULL != limit) {
+        vCmdData.push_back("LIMIT");
+        vCmdData.push_back(toString(limit->offset));
+        vCmdData.push_back(toString(limit->count));
+    }
+
+    SETDEFAULTIOTYPE(SLAVE);
+    return commandargv_array(dbi, vCmdData, vValues);
 }
 
 bool xRedisClient::zrank(const RedisDBIdx& dbi, const std::string& key, const std::string& member, int64_t &rank) {
@@ -63,7 +89,7 @@ bool xRedisClient::zrem(const RedisDBIdx& dbi,        const KEY& key, const VALU
     return commandargv_integer(dbi, vCmdData, count);
 }
 
-bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi, const std::string& key, int start, int stop, int64_t& count) {
+bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi, const std::string& key, int32_t start, int32_t stop, int64_t& count) {
     if (0==key.length()) {
         return false;
     }
@@ -71,7 +97,15 @@ bool xRedisClient::zremrangebyrank(const RedisDBIdx& dbi, const std::string& key
     return command_integer(dbi, count, "ZREMRANGEBYRANK %s %d %d", key.c_str(), start, stop);
 }
 
-bool xRedisClient::zrevrange(const RedisDBIdx& dbi, const std::string& key, int start, int end, VALUES& vValues, bool withscore) {
+bool xRedisClient::zremrangebyscore(const RedisDBIdx& dbi, const KEY& key, double min, double  max, int64_t& count){
+    if (0==key.length()) {
+        return false;
+    }
+    SETDEFAULTIOTYPE(SLAVE);
+    return command_integer(dbi, count, "ZREMRANGEBYSCORE %s %d %d", key.c_str(), min, max);
+}
+
+bool xRedisClient::zrevrange(const RedisDBIdx& dbi, const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore) {
     if (0==key.length()) {
         return false;
     }

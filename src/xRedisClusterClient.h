@@ -10,6 +10,8 @@
 #include "hiredis.h"
 #include "xLock.h"
 
+namespace xrc
+{
 
 #define MAX_REDIS_POOLSIZE 128
 #define MAX_TIME_OUT       5
@@ -30,21 +32,21 @@ public:
         RedisReply() { reply = NULL; }
         ~RedisReply() {}
     
-        int type() const { return reply->type; }
+        int32_t type() const { return reply->type; }
         long long integer() const {return reply->integer; }
-        int len() const { return reply->len; }
+        int32_t len() const { return reply->len; }
         char* str() const { return reply->str; }
         size_t elements() const { return reply->elements; }
-        struct RedisReply element(uint32_t index) const { return RedisReply(reply->element[index]); }
+        RedisReply element(uint32_t index) const { return RedisReply(reply->element[index]); }
         private:
         friend class RedisResult;
         redisReply *reply;
     };
     
     void Init(redisReply *r) { Reply.reply = r; }
-    int type() const { return Reply.type(); }
+    int32_t type() const { return Reply.type(); }
     long long integer() const {return Reply.integer(); }
-    int len() const { return Reply.len(); }
+    int32_t len() const { return Reply.len(); }
     char* str() const { return Reply.str(); }
     size_t elements() const { return Reply.elements(); }
     RedisReply element(uint32_t index) const { return Reply.element(index); }
@@ -109,9 +111,9 @@ private:
         bool is_master;         // true if node is master, false if node is salve
         bool is_slave;
         std::string master_id;  // The replication master
-        int ping_sent;          // Milliseconds unix time at which the currently active ping was sent, or zero if there are no pending pings
-        int pong_recv;          // Milliseconds unix time the last pong was received
-        int epoch;              // The configuration epoch (or version) of the current node (or of the current master if the node is a slave). Each time there is a failover, a new, unique, monotonically increasing configuration epoch is created. If multiple nodes claim to serve the same hash slots, the one with higher configuration epoch wins
+        int32_t ping_sent;          // Milliseconds unix time at which the currently active ping was sent, or zero if there are no pending pings
+        int32_t pong_recv;          // Milliseconds unix time the last pong was received
+        int32_t epoch;              // The configuration epoch (or version) of the current node (or of the current master if the node is a slave). Each time there is a failover, a new, unique, monotonically increasing configuration epoch is created. If multiple nodes claim to serve the same hash slots, the one with higher configuration epoch wins
         bool connected;         // The state of the link used for the node-to-node cluster bus
         std::vector<std::pair<uint32_t, uint32_t> > mSlots; // A hash slot number or range
 
@@ -169,13 +171,13 @@ public:
     bool RedisCommand(RedisResult &result, const char *format, ...);
 
 private:
-    static uint16_t crc16(const char *buf, int len);
+    static uint16_t crc16(const char *buf, int32_t len);
     static bool CheckReply(const redisReply *reply);
     static void FreeReply(const redisReply *reply);
-    static int Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep = ",");
+    static int32_t Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep = ",");
 private:
     void Release();
-    bool ConnectRedisNode(int idx, const char *host, uint32_t port, uint32_t poolsize);
+    bool ConnectRedisNode(int32_t idx, const char *host, uint32_t port, uint32_t poolsize);
     bool CheckReply(redisReply *reply);
     uint32_t KeyHashSlot(const char *key, size_t keylen);
     bool ClusterEnabled(redisContext *ctx);
@@ -195,5 +197,7 @@ private:
     RedisConnection        mConn;
 };
 
+}
 
 #endif
+

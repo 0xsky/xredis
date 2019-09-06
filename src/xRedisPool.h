@@ -43,7 +43,7 @@ public:
     RedisConn();
     ~RedisConn();
 
-   void Init(uint32_t cahcetype,
+    void Init(uint32_t cahcetype,
               uint32_t dbindex,
               const std::string&  host,
               uint32_t  port,
@@ -104,15 +104,15 @@ public:
     RedisDBSlice();
     ~RedisDBSlice();
 
-    void Init(uint32_t  cahcetype, uint32_t dbindex);
+    void Init( uint32_t  cahcetype, uint32_t  dbindex);
     // 连到到一个REDIS服务节点
     bool ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex,
-        const std::string& host, uint32_t port, const std::string& passwd,
-        uint32_t poolsize, uint32_t timeout, uint32_t role);
+                           const std::string& host,  uint32_t port, const std::string& passwd,
+                           uint32_t poolsize,  uint32_t timeout, int32_t role);
 
     RedisConn *GetMasterConn();
     RedisConn *GetSlaveConn();
-    RedisConn *GetConn(uint32_t ioRole);
+    RedisConn *GetConn(int32_t ioRole);
     void FreeConn(RedisConn *redisconn);
     void CloseConnPool();
     void ConnPoolPing();
@@ -132,12 +132,12 @@ public:
     RedisCache();
     virtual ~RedisCache();
 
-    bool InitDB(uint32_t cachetype, uint32_t hashbase);
-    bool ConnectRedisDB(uint32_t cahcetype, uint32_t dbindex,
-                        const char *host,  uint32_t port, const char *passwd,
-                        uint32_t poolsize, uint32_t timeout, uint32_t role);
+    bool InitDB( uint32_t cachetype,  uint32_t hashbase);
+    bool ConnectRedisDB( uint32_t cahcetype,  uint32_t dbindex,
+        const std::string& host, uint32_t port, const std::string& passwd,
+        uint32_t poolsize, uint32_t timeout, uint32_t role);
 
-    RedisConn *GetConn(uint32_t dbindex, uint32_t ioRole);
+    RedisConn *GetConn( uint32_t dbindex, uint32_t ioRole);
     void FreeConn(RedisConn *redisconn);
     void ClosePool();
     void KeepAlive();
@@ -160,9 +160,9 @@ public:
     bool Init(uint32_t typesize);
     bool setHashBase(uint32_t cachetype, uint32_t hashbase);
     uint32_t getHashBase(uint32_t cachetype);
-    bool ConnectRedisDB(uint32_t cachetype, uint32_t dbindex,
-        const char* host, uint32_t port, const char* passwd,
-        uint32_t poolsize, uint32_t timeout, uint32_t role);
+    bool ConnectRedisDB(uint32_t cachetype,  uint32_t dbindex,
+        const std::string& host, uint32_t port, const std::string& passwd,
+                        uint32_t poolsize,  uint32_t timeout, uint32_t role);
     static bool CheckReply(const redisReply* reply);
     static void FreeReply(const redisReply* reply);
     
