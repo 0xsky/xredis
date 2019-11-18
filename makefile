@@ -69,8 +69,13 @@ dynamic: $(DYLIBNAME)
 static: $(STLIBNAME)
 
 # Binaries:
-xredis-example: examples/xredis-example.cpp $(STLIBNAME)
-	$(CC) -o examples/$@ $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -lhiredis -lpthread
+xredis-example: 
+	$(CC) examples/xredis-example.cpp     -o examples/xredis-example      $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/demo.cpp               -o examples/demo                $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/demo_cluster.cpp       -o examples/demo_cluster        $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/demo_multi_cluster.cpp -o examples/demo_multi_cluster  $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic  -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/xRedisClusterClient_test.cpp -o examples/xRedisClusterClient_test  $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic  -lhiredis -Wl,-Bdynamic -lpthread
+
 
 examples: $(EXAMPLES)
 
