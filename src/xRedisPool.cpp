@@ -206,7 +206,7 @@ bool RedisConn::RedisConnect()
     if (NULL==mCtx) {
         bRet = false;
     } else {
-        bRet = auth() && Ping();
+        bRet = auth();
         mConnStatus = bRet;
     }
 
