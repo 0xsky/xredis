@@ -52,7 +52,8 @@ RedisNode RedisList2[5]=
 };
 
 int main(int argc, char **argv) {
-
+    (void)argc;(void)argv;
+    
     xRedisClient xRedis;
     xRedis.Init(CACHE_TYPE_MAX);
     xRedis.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode),3, CACHE_TYPE_1);

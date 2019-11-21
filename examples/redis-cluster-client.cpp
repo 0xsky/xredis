@@ -9,7 +9,8 @@ using std::endl;
 using std::cin;
 
 int main(int argc, char **argv) {
-
+    (void)argc;(void)argv;
+    
     xRedisClusterClient redisclient;
     
     bool bRet = redisclient.ConnectRedis(argv[1], atoi(argv[2]), 2);
