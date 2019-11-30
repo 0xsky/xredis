@@ -43,7 +43,7 @@ public:
         redisReply *reply;
     };
     
-    void Init(redisReply *r) { Reply.reply = r; }
+    void Init(redisReply *r) { if (Reply.reply) { freeReplyObject((void*)Reply.reply);} Reply.reply = r; }
     int32_t type() const { return Reply.type(); }
     long long integer() const {return Reply.integer(); }
     int32_t len() const { return Reply.len(); }
