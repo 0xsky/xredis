@@ -298,7 +298,7 @@ public:
     /* SUNIONSTORE  */  bool sunionstore(const RedisDBIdx& dbi, const KEY& deskey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count);
 
     /* ZADD             */  bool zadd(const RedisDBIdx& dbi,    const KEY& deskey,   const VALUES& vValues, int64_t& count);
-    /* ZCARD            */  bool zscrad(const RedisDBIdx& dbi,  const std::string& key, int64_t& num);
+    /* ZCARD            */  bool zcard(const RedisDBIdx& dbi,  const std::string& key, int64_t& num);
     /* ZCOUNT           */
     /* ZINCRBY          */  bool zincrby(const RedisDBIdx& dbi, const std::string& key, const double &increment, const std::string& member, std::string& value );
     /* ZINTERSTORE      */  
