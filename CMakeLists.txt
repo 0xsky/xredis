@@ -56,7 +56,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
 
   target_link_libraries(
     xredis_test
-    PRIVATE xredis
+    PRIVATE xredis hiredis
   ) 
 
   add_test(
