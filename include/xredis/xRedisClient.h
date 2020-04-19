@@ -6,8 +6,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef _XREDIS_CLIENT_H_
-#define _XREDIS_CLIENT_H_
+#pragma once
 
 #include <cstdint>
 #include <cstring>
@@ -381,5 +380,3 @@ private:
 };
 
 } // namespace xrc
-
-#endif

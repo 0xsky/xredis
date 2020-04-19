@@ -6,12 +6,13 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef _XREDIS_POOL_H_
-#define _XREDIS_POOL_H_
+#pragma once
 
 #include <cstring>
 #include <string>
 #include <list>
+
+#include "xLock.h"
 #include "xRedisClient.h"
 
 namespace xrc
@@ -175,5 +176,3 @@ private:
 };
 
 } // namespace xrc
-
-#endif

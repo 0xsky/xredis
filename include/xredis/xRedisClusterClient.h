@@ -1,5 +1,4 @@
-#ifndef _XREDIS_HIREDISCPP_H_
-#define _XREDIS_HIREDISCPP_H_
+#pragma once
 
 #include <cstdlib>
 #include <cstring>
@@ -8,7 +7,7 @@
 #include <list>
 #include <vector>
 #include <thread>
-#include <hiredis/hiredis.h>
+
 #include "xLock.h"
 
 namespace xrc
@@ -229,5 +228,3 @@ private:
 };
 
 } // namespace xrc
-
-#endif
