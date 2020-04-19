@@ -8,10 +8,8 @@
 #include <sstream>
 #include <cstdlib>
 
-#include "xRedisClient.h"
-#include "xRedisPool.h"
-#include <sstream>
-#include <stdlib.h>
+#include "xredis.h"
+
 using namespace xrc;
 
 bool xRedisClient::hdel(const RedisDBIdx &dbi, const std::string &key, const std::string &field, int64_t &count)

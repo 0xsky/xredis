@@ -6,10 +6,8 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include "xredis.h"
 
-#include "xRedisClient.h"
-#include "xRedisPool.h"
-#include <sstream>
 using namespace xrc;
 
 RedisDBIdx::RedisDBIdx()

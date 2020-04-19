@@ -5,7 +5,7 @@
 #include <cstring>
 #include <ctime>
 
-#include "xredis/xRedisClient.h"
+#include "xredis/xredis.h"
 
 using namespace xrc;
 

@@ -1,5 +1,4 @@
-#include "xRedisClusterClient.h"
-
+#include "xredis.h"
 using namespace xrc;
 
 static const uint16_t crc16tab[256] = {

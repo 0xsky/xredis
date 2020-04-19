@@ -6,11 +6,8 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include "xredis.h"
 
-#include <hiredis/hiredis.h>
-#include "xRedisClient.h"
-#include "xRedisPool.h"
-#include <sstream>
 using namespace xrc;
 
 bool xRedisClient::psetex(const RedisDBIdx &dbi, const std::string &key, int32_t milliseconds, const std::string &value)
