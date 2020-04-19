@@ -6,6 +6,8 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include <fmt/printf.h>
+
 #include "xredis.h"
 
 using namespace xrc;
@@ -14,7 +16,6 @@ RedisDBIdx::RedisDBIdx()
 {
     mType = 0;
     mIndex = 0;
-    mStrerr = NULL;
     mClient = NULL;
     mIOtype = MASTER;
     mIOFlag = false;
@@ -24,18 +25,12 @@ RedisDBIdx::RedisDBIdx(xRedisClient *xredisclient)
 {
     mType = 0;
     mIndex = 0;
-    mStrerr = NULL;
     mClient = xredisclient;
     mIOtype = MASTER;
     mIOFlag = false;
 }
 RedisDBIdx::~RedisDBIdx()
 {
-    if (NULL != mStrerr)
-    {
-        delete[] mStrerr;
-        mStrerr = NULL;
-    }
 }
 
 bool RedisDBIdx::CreateDBIndex(const char *key, HASHFUN fun, const uint32_t type)
@@ -79,16 +74,7 @@ bool RedisDBIdx::SetErrInfo(const char *info, int32_t len)
     {
         return false;
     }
-    if (NULL == mStrerr)
-    {
-        mStrerr = new char[len + 1];
-    }
-    if (NULL != mStrerr)
-    {
-        strncpy(mStrerr, info, len);
-        mStrerr[len] = '\0';
-        return true;
-    }
+    mStrerr = std::string(info, info + len);
     return false;
 }
 
@@ -204,12 +190,11 @@ void xRedisClient::SetIOtype(const RedisDBIdx &dbi, uint32_t iotype, bool ioflag
 
 void xRedisClient::SetErrMessage(const RedisDBIdx &dbi, const char *fmt, ...)
 {
-    char szBuf[128] = {0};
     va_list va;
     va_start(va, fmt);
-    vsnprintf(szBuf, sizeof(szBuf), fmt, va);
+    std::string formatted = fmt::sprintf(fmt, va);
     va_end(va);
-    SetErrString(dbi, szBuf, ::strlen(szBuf));
+    SetErrString(dbi, formatted.c_str(), formatted.length());
 }
 
 rReply *xRedisClient::command(const RedisDBIdx &dbi, const char *cmd)

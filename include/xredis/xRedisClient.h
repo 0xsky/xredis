@@ -74,7 +74,7 @@ public:
 
     bool CreateDBIndex(const char *key, HASHFUN fun, uint32_t type);
     bool CreateDBIndex(int64_t id, uint32_t type);
-    char *GetErrInfo() { return mStrerr; }
+    const char *GetErrInfo() { return mStrerr.c_str(); }
     void SetIOMaster();
 
 private:
@@ -85,7 +85,7 @@ private:
 private:
     uint32_t mType;
     uint32_t mIndex;
-    char *mStrerr;
+    std::string mStrerr;
     xRedisClient *mClient;
     uint32_t mIOtype;
     bool mIOFlag;
