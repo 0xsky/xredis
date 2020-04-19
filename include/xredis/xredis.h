@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef _MSC_VER
-#include <winsock2.h>
+#include <windows.h>
 #endif
 
 #include <hiredis/hiredis.h>
