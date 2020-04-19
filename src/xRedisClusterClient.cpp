@@ -472,10 +472,10 @@ RedisConnection *xRedisClusterClient::GetConnection(uint32_t idx)
             else
             {
                 printf("RedisPool::GetConnection()  error pthread_id=%lu \n",
-                       (unsigned long)pthread_self());
+                       (unsigned long)std::hash<std::thread::id>()(std::this_thread::get_id()));
             }
         }
-        usleep(1000);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     printf("idx:%u %s:%u \n", idx, pRedisConn->mHost, pRedisConn->mPort);
     return pRedisConn;
