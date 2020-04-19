@@ -618,14 +618,30 @@ void test_scan()
 
 int main(int argc, char **argv)
 {
-    printf("%d %s\r\n", argc, argv[0]);
-
     xClient.Init(3);
 
+    auto server_var = argc > 1 ? argv[1] : std::getenv("XREDIS_TEST_SERVER_ADDR");
+    auto port_var = argc > 2 ? argv[2] : std::getenv("XREDIS_TEST_SERVER_PORT");
+
+    std::string server;
+    int port;
+
+    if (server_var && port_var)
+    {
+        server = std::string(server_var);
+        port = std::stoi(port_var);
+    }
+    else
+    {
+        fprintf(stderr, "Error: You must specify a redis address and ther port to continue!\n");
+        return 1;
+    }
+
+    // ????
     RedisNode RedisList1[3] = {
-        {0, "192.168.1.13", 30005, "", 2, 5, 0},
-        {1, "192.168.1.13", 30005, "", 2, 5, 0},
-        {2, "192.168.1.13", 30005, "", 2, 5, 0}};
+        {0, server, port, "", 2, 5, 0},
+        {1, server, port, "", 2, 5, 0},
+        {2, server, port, "", 2, 5, 0}};
 
     xClient.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode), 3, CACHE_TYPE_1);
 
