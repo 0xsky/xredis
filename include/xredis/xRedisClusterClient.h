@@ -7,7 +7,7 @@
 #include <string>
 #include <list>
 #include <vector>
-#incldue < thread>
+#include <thread>
 #include <hiredis/hiredis.h>
 #include "xLock.h"
 
