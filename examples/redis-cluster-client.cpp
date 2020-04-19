@@ -1,50 +1,80 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string.h>
 #include <iostream>
 #include "xRedisClusterClient.h"
 
+using std::cin;
 using std::cout;
 using std::endl;
-using std::cin;
 
-int main(int argc, char **argv) {
-    (void)argc;(void)argv;
-    
+int main(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+
     xRedisClusterClient redisclient;
-    
+
     bool bRet = redisclient.ConnectRedis(argv[1], atoi(argv[2]), 2);
-    if(!bRet) {
+    if (!bRet)
+    {
         return -1;
     }
 
-    std::string  strInput;
-    while (true) {
+    std::string strInput;
+    while (true)
+    {
         cout << "\033[32mxRedis> \033[0m";
         getline(cin, strInput);
         if (!cin)
             return 0;
 
-        if (strInput.length() < 1) {
+        if (strInput.length() < 1)
+        {
             cout << "input again" << endl;
-        } else {
+        }
+        else
+        {
             RedisResult result;
             VSTRING vDataIn;
 
             xRedisClusterClient::str2Vect(strInput.c_str(), vDataIn, " ");
             redisclient.RedisCommandArgv(vDataIn, result);
 
-            switch (result.type()){
-            case REDIS_REPLY_INTEGER:{ printf("%lld \r\n", result.integer()); break;}
-            case REDIS_REPLY_NIL:    { printf("%lld %s \r\n", result.integer(), result.str()); break; }
-            case REDIS_REPLY_STATUS: { printf("%s \r\n", result.str()); break; }
-            case REDIS_REPLY_ERROR:  { printf("%s \r\n", result.str()); break; }
-            case REDIS_REPLY_STRING: { printf("%s \r\n", result.str()); break; }
-            case REDIS_REPLY_ARRAY:  {
-                for (size_t i = 0; i < result.elements(); ++i) {
+            switch (result.type())
+            {
+            case REDIS_REPLY_INTEGER:
+            {
+                printf("%lld \r\n", result.integer());
+                break;
+            }
+            case REDIS_REPLY_NIL:
+            {
+                printf("%lld %s \r\n", result.integer(), result.str());
+                break;
+            }
+            case REDIS_REPLY_STATUS:
+            {
+                printf("%s \r\n", result.str());
+                break;
+            }
+            case REDIS_REPLY_ERROR:
+            {
+                printf("%s \r\n", result.str());
+                break;
+            }
+            case REDIS_REPLY_STRING:
+            {
+                printf("%s \r\n", result.str());
+                break;
+            }
+            case REDIS_REPLY_ARRAY:
+            {
+                for (size_t i = 0; i < result.elements(); ++i)
+                {
                     RedisResult::RedisReply reply = result.element(i);
                     printf("type:%d integer:%lld str:%s \r\n",
-                        reply.type(), reply.integer(), reply.str());
+                           reply.type(), reply.integer(), reply.str());
                 }
                 break;
             }

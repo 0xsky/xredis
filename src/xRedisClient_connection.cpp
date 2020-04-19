@@ -5,35 +5,24 @@
  * Distributed under GPL license.
  * ----------------------------------------------------------------------------
  */
-
-#include "xRedisClient.h"
 #include <sstream>
+#include <fmt/printf.h>
+#include <fmt/format.h>
+#include "xredis.h"
+
 using namespace xrc;
 
-void xRedisClient::quit(){
-	Release();
+void xRedisClient::quit()
+{
+    Release();
 }
 
-
-bool xRedisClient::echo(const RedisDBIdx& dbi, const std::string& str, std::string &value)
+bool xRedisClient::echo(const RedisDBIdx &dbi, const std::string &str, std::string &value)
 {
-	if (0==str.length()) {
+    if (0 == str.length())
+    {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "echo %s", str.c_str());
+    return command_string(dbi, value, fmt::format("echo {}").c_str());
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
