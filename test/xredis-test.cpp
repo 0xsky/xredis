@@ -6,7 +6,7 @@
 #include <inttypes.h>
 #include <time.h>
 
-#include "xRedisClient.h"
+#include "xredis/xRedisClient.h"
 
 using namespace xrc;
 
