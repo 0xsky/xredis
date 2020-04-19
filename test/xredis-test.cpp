@@ -13,6 +13,11 @@ using namespace xrc;
 #define CACHE_TYPE_1 1
 xRedisClient xClient;
 
+#ifdef _MSC_VER
+
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 // AP Hash Function
 unsigned int APHash(const char *str)
 {
