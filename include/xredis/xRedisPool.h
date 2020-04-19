@@ -9,9 +9,7 @@
 #ifndef _XREDIS_POOL_H_
 #define _XREDIS_POOL_H_
 
-#include <hiredis/hiredis.h>
-#include "xLock.h"
-#include <string.h>
+#include <cstring>
 #include <string>
 #include <list>
 #include "xRedisClient.h"

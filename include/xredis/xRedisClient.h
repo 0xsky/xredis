@@ -9,8 +9,8 @@
 #ifndef _XREDIS_CLIENT_H_
 #define _XREDIS_CLIENT_H_
 
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
+#include <cstring>
 #include <string>
 #include <vector>
 #include <set>

@@ -5,6 +5,7 @@
  * Distributed under GPL license.
  * ----------------------------------------------------------------------------
  */
+#include <sstream>
 
 #include "xRedisClient.h"
 #include <sstream>

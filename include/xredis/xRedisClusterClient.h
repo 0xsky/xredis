@@ -1,9 +1,9 @@
 #ifndef _XREDIS_HIREDISCPP_H_
 #define _XREDIS_HIREDISCPP_H_
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
+#include <cstdlib>
+#include <cstring>
+#include <cstdint>
 #include <string>
 #include <list>
 #include <vector>

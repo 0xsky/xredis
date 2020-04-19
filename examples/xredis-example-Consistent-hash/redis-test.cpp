@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <strings.h>
 
 #include "CMd5.h"
@@ -108,7 +108,7 @@ bool ConHashIdx::_add_node(const RedisNode *rNode, int vnode_num) {
         if (ret.second) {
             vMap.insert(make_pair(hval, pVnode));
         }  else {
-            printf("½Úµã³åÍ»: %s-%u \r\n", vNodekey, hval);
+            printf("ï¿½Úµï¿½ï¿½Í»: %s-%u \r\n", vNodekey, hval);
             delete pVnode;
             return false;
         }

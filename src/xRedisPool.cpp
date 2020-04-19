@@ -5,10 +5,7 @@
  * Distributed under GPL license.
  * ----------------------------------------------------------------------------
  */
-
-#include "xRedisPool.h"
-#include <hiredis/hiredis.h>
-#include <time.h>
+#include <ctime>
 
 using namespace xrc;
 
