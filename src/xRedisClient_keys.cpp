@@ -6,6 +6,9 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include <fmt/printf.h>
+#include <fmt/format.h>
+
 #include "xredis.h"
 
 using namespace xrc;
@@ -18,7 +21,7 @@ bool xRedisClient::del(const RedisDBIdx &dbi, const std::string &key)
     }
 
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "DEL %s", key.c_str());
+    return command_bool(dbi, fmt::format("DEL {}", key).c_str());
 }
 
 bool xRedisClient::del(const DBIArray &vdbi, const KEYS &vkey, int64_t &count)
@@ -49,7 +52,7 @@ bool xRedisClient::exists(const RedisDBIdx &dbi, const std::string &key)
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "EXISTS %s", key.c_str());
+    return command_bool(dbi, fmt::format("EXISTS {}", key).c_str());
 }
 
 bool xRedisClient::expire(const RedisDBIdx &dbi, const std::string &key, uint32_t second)
@@ -60,7 +63,7 @@ bool xRedisClient::expire(const RedisDBIdx &dbi, const std::string &key, uint32_
     }
     SETDEFAULTIOTYPE(MASTER);
     int64_t ret = -1;
-    if (!command_integer(dbi, ret, "EXPIRE %s %u", key.c_str(), second))
+    if (!command_integer(dbi, ret, fmt::format("EXPIRE {} {}", key, second).c_str()))
     {
         return false;
     }
@@ -71,7 +74,7 @@ bool xRedisClient::expire(const RedisDBIdx &dbi, const std::string &key, uint32_
     }
     else
     {
-        SetErrMessage(dbi, "expire return %ld ", ret);
+        SetErrMessage(dbi, "expire return {} ", ret);
         return false;
     }
 }
@@ -83,7 +86,7 @@ bool xRedisClient::expireat(const RedisDBIdx &dbi, const std::string &key, uint3
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "EXPIREAT %s %u", key.c_str(), timestamp);
+    return command_bool(dbi, fmt::format("EXPIREAT {} {}", key, timestamp).c_str());
 }
 
 bool xRedisClient::persist(const RedisDBIdx &dbi, const std::string &key)
@@ -93,7 +96,7 @@ bool xRedisClient::persist(const RedisDBIdx &dbi, const std::string &key)
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "PERSIST %s %u", key.c_str());
+    return command_bool(dbi, fmt::format("PERSIST {}", key).c_str());
 }
 
 bool xRedisClient::pexpire(const RedisDBIdx &dbi, const std::string &key, uint32_t milliseconds)
@@ -102,7 +105,7 @@ bool xRedisClient::pexpire(const RedisDBIdx &dbi, const std::string &key, uint32
     {
         return false;
     }
-    return command_bool(dbi, "PEXPIRE %s %u", key.c_str(), milliseconds);
+    return command_bool(dbi, fmt::format("PEXPIRE {} {}", key, milliseconds).c_str());
 }
 
 bool xRedisClient::pexpireat(const RedisDBIdx &dbi, const std::string &key, uint32_t millisecondstimestamp)
@@ -112,7 +115,7 @@ bool xRedisClient::pexpireat(const RedisDBIdx &dbi, const std::string &key, uint
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "PEXPIREAT %s %u", key.c_str(), millisecondstimestamp);
+    return command_bool(dbi, fmt::format("PEXPIREAT {} {}", key, millisecondstimestamp).c_str());
 }
 
 bool xRedisClient::pttl(const RedisDBIdx &dbi, const std::string &key, int64_t &milliseconds)
@@ -122,7 +125,7 @@ bool xRedisClient::pttl(const RedisDBIdx &dbi, const std::string &key, int64_t &
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, milliseconds, "PTTL %s", key.c_str());
+    return command_integer(dbi, milliseconds, fmt::format("PTTL {}", key).c_str());
 }
 
 bool xRedisClient::ttl(const RedisDBIdx &dbi, const std::string &key, int64_t &seconds)
@@ -132,13 +135,13 @@ bool xRedisClient::ttl(const RedisDBIdx &dbi, const std::string &key, int64_t &s
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, seconds, "TTL %s", key.c_str());
+    return command_integer(dbi, seconds, fmt::format("TTL {}", key).c_str());
 }
 
 bool xRedisClient::type(const RedisDBIdx &dbi, const std::string &key, std::string &value)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "TYPE %s", key.c_str());
+    return command_string(dbi, value, fmt::format("TYPE {}", key).c_str());
 }
 
 bool xRedisClient::randomkey(const RedisDBIdx &dbi, KEY &key)

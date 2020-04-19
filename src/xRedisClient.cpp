@@ -7,6 +7,7 @@
  */
 #include <sstream>
 #include <fmt/printf.h>
+#include <fmt/format.h>
 
 #include "xredis.h"
 

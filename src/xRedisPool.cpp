@@ -6,6 +6,9 @@
  * ----------------------------------------------------------------------------
  */
 #include <ctime>
+#include <fmt/printf.h>
+#include <fmt/format.h>
+
 #include "xredis.h"
 
 using namespace xrc;
@@ -208,7 +211,7 @@ bool RedisConn::auth()
     }
     else
     {
-        redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "AUTH %s", mPass.c_str()));
+        redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, fmt::format("AUTH {}", mPass).c_str()));
         if ((NULL == reply) || (strcasecmp(reply->str, "OK") != 0))
         {
             bRet = false;

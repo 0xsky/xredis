@@ -6,6 +6,9 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include <fmt/printf.h>
+#include <fmt/format.h>
+
 #include "xredis.h"
 
 using namespace xrc;
@@ -27,7 +30,7 @@ bool xRedisClient::zscrad(const RedisDBIdx &dbi, const std::string &key, int64_t
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, count, "ZSCRAD %s", key.c_str());
+    return command_integer(dbi, count, fmt::format("ZSCRAD {}", key).c_str());
 }
 
 bool xRedisClient::zincrby(const RedisDBIdx &dbi, const std::string &key, const double &increment, const std::string &member, std::string &value)
@@ -37,7 +40,7 @@ bool xRedisClient::zincrby(const RedisDBIdx &dbi, const std::string &key, const 
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "ZINCRBY %s %f %s", key.c_str(), increment, member.c_str());
+    return command_string(dbi, value, fmt::format("ZINCRBY {} {} {}", key, increment, member).c_str());
 }
 
 bool xRedisClient::zrange(const RedisDBIdx &dbi, const std::string &key, int32_t start, int32_t end, VALUES &vValues, bool withscore)
@@ -49,9 +52,9 @@ bool xRedisClient::zrange(const RedisDBIdx &dbi, const std::string &key, int32_t
     SETDEFAULTIOTYPE(SLAVE);
     if (withscore)
     {
-        return command_list(dbi, vValues, "ZRANGE %s %d %d %s", key.c_str(), start, end, "WITHSCORES");
+        return command_list(dbi, vValues, fmt::format("ZRANGE {} {} {} WITHSCORES", key, start, end).c_str());
     }
-    return command_list(dbi, vValues, "ZRANGE %s %d %d", key.c_str(), start, end);
+    return command_list(dbi, vValues, fmt::format("ZRANGE {} {} {}", key, start, end).c_str());
 }
 
 bool xRedisClient::zrangebyscore(const RedisDBIdx &dbi, const std::string &key, const std::string &min,
@@ -91,7 +94,7 @@ bool xRedisClient::zrank(const RedisDBIdx &dbi, const std::string &key, const st
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, rank, "ZRANK %s %s", key.c_str(), member.c_str());
+    return command_integer(dbi, rank, fmt::format("ZRANK {} {}", key, member).c_str());
 }
 
 bool xRedisClient::zrem(const RedisDBIdx &dbi, const KEY &key, const VALUES &vmembers, int64_t &count)
@@ -111,7 +114,7 @@ bool xRedisClient::zremrangebyrank(const RedisDBIdx &dbi, const std::string &key
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, count, "ZREMRANGEBYRANK %s %d %d", key.c_str(), start, stop);
+    return command_integer(dbi, count, fmt::format("ZREMRANGEBYRANK {} {} {}", key, start, stop).c_str());
 }
 
 bool xRedisClient::zremrangebyscore(const RedisDBIdx &dbi, const KEY &key, double min, double max, int64_t &count)
@@ -121,7 +124,7 @@ bool xRedisClient::zremrangebyscore(const RedisDBIdx &dbi, const KEY &key, doubl
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, count, "ZREMRANGEBYSCORE %s %d %d", key.c_str(), min, max);
+    return command_integer(dbi, count, fmt::format("ZREMRANGEBYSCORE {} {} {}", key, min, max).c_str());
 }
 
 bool xRedisClient::zrevrange(const RedisDBIdx &dbi, const std::string &key, int32_t start, int32_t end, VALUES &vValues, bool withscore)
@@ -132,9 +135,9 @@ bool xRedisClient::zrevrange(const RedisDBIdx &dbi, const std::string &key, int3
     }
     if (withscore)
     {
-        return command_list(dbi, vValues, "ZREVRANGE %s %d %d %s", key.c_str(), start, end, "WITHSCORES");
+        return command_list(dbi, vValues, fmt::format("ZREVRANGE {} {} {} {}", key, start, end, "WITHSCORES").c_str());
     }
-    return command_list(dbi, vValues, "ZREVRANGE %s %d %d", key.c_str(), start, end);
+    return command_list(dbi, vValues, fmt::format("ZREVRANGE {} {} {}", key, start, end).c_str());
 }
 
 bool xRedisClient::zrevrank(const RedisDBIdx &dbi, const std::string &key, const std::string &member, int64_t &rank)
@@ -144,7 +147,7 @@ bool xRedisClient::zrevrank(const RedisDBIdx &dbi, const std::string &key, const
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, rank, "ZREVRANK %s %s", key.c_str(), member.c_str());
+    return command_integer(dbi, rank, fmt::format("ZREVRANK {} {}", key, member).c_str());
 }
 
 bool xRedisClient::zscan(const RedisDBIdx &dbi, const std::string &key, int64_t &cursor, const char *pattern,
@@ -160,5 +163,5 @@ bool xRedisClient::zscore(const RedisDBIdx &dbi, const std::string &key, const s
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_string(dbi, score, "ZSCORE %s %s", key.c_str(), member.c_str());
+    return command_string(dbi, score, fmt::format("ZSCORE {} {}", key, member).c_str());
 }

@@ -6,6 +6,9 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include <fmt/printf.h>
+#include <fmt/format.h>
+
 #include "xredis.h"
 
 using namespace xrc;
@@ -13,7 +16,7 @@ using namespace xrc;
 bool xRedisClient::psetex(const RedisDBIdx &dbi, const std::string &key, int32_t milliseconds, const std::string &value)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "PSETEX %s %d %s", key.c_str(), milliseconds, value.c_str());
+    return command_bool(dbi, fmt::format("PSETEX {} {} {}", key, milliseconds, value).c_str());
 }
 
 bool xRedisClient::append(const RedisDBIdx &dbi, const std::string &key, const std::string &value)
@@ -63,33 +66,35 @@ bool xRedisClient::set(const RedisDBIdx &dbi, const std::string &key, const std:
 bool xRedisClient::set(const RedisDBIdx &dbi, const std::string &key, const char *value, int32_t len, int32_t second)
 {
     SETDEFAULTIOTYPE(MASTER);
+
+    // use std::string_view here?
     if (0 == second)
     {
-        return command_bool(dbi, "set %s %b", key.c_str(), value, len);
+        return command_bool(dbi, "set %s %b", key, value, len);
     }
     else
     {
-        return command_bool(dbi, "set %s %b EX %d", key.c_str(), value, len, second);
+        return command_bool(dbi, "set %s %b EX %s", key, value, len, second);
     }
 }
 
 bool xRedisClient::setbit(const RedisDBIdx &dbi, const std::string &key, int32_t offset, int64_t newbitValue, int64_t oldbitValue)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, oldbitValue, "SETBIT %s %d %lld", key.c_str(), offset, newbitValue);
+    return command_integer(dbi, oldbitValue, fmt::format("SETBIT {} {} {}", key, offset, newbitValue).c_str());
 }
 
 bool xRedisClient::get(const RedisDBIdx &dbi, const std::string &key, std::string &value)
 {
     SETDEFAULTIOTYPE(SLAVE);
-    return command_string(dbi, value, "GET %s", key.c_str());
+    return command_string(dbi, value, fmt::format("GET {}", key).c_str());
 }
 
 bool xRedisClient::getbit(const RedisDBIdx &dbi, const std::string &key, int32_t &offset, int32_t &bit)
 {
     SETDEFAULTIOTYPE(SLAVE);
     int64_t intval = 0;
-    bool bRet = command_integer(dbi, intval, "GETBIT %s %d", key.c_str(), offset);
+    bool bRet = command_integer(dbi, intval, fmt::format("GETBIT {} {}", key, offset).c_str());
     bit = (int32_t)intval;
     return bRet;
 }
@@ -97,13 +102,13 @@ bool xRedisClient::getbit(const RedisDBIdx &dbi, const std::string &key, int32_t
 bool xRedisClient::getrange(const RedisDBIdx &dbi, const std::string &key, int32_t start, int32_t end, std::string &out)
 {
     SETDEFAULTIOTYPE(SLAVE);
-    return command_string(dbi, out, "GETRANGE %s %d %d", key.c_str(), start, end);
+    return command_string(dbi, out, fmt::format("GETRANGE {} {} {}", key, start, end).c_str());
 }
 
 bool xRedisClient::getset(const RedisDBIdx &dbi, const std::string &key, const std::string &newValue, std::string &oldValue)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, oldValue, "GETSET %s %s", key.c_str(), newValue.c_str());
+    return command_string(dbi, oldValue, fmt::format("GETSET {} {}", key, newValue).c_str());
 }
 
 bool xRedisClient::mget(const DBIArray &vdbi, const KEYS &keys, ReplyData &vDdata)
@@ -125,7 +130,7 @@ bool xRedisClient::mget(const DBIArray &vdbi, const KEYS &keys, ReplyData &vDdat
         const std::string &key = *iter_key;
         if (key.length() > 0)
         {
-            bool ret = command_string(*iter_dbi, item.str, "GET %s", key.c_str());
+            bool ret = command_string(*iter_dbi, item.str, fmt::format("GET {}", key).c_str());
             if (!ret)
             {
                 item.type = REDIS_REPLY_NIL;
@@ -152,7 +157,7 @@ bool xRedisClient::mset(const DBIArray &vdbi, const VDATA &vData)
         const std::string &value = (*iter_data++);
         const RedisDBIdx &dbi = *iter_dbi;
         SETDEFAULTIOTYPE(SLAVE);
-        command_status(dbi, "SET %s %s", key.c_str(), value.c_str());
+        command_status(dbi, fmt::format("SET {} {}", key, value).c_str());
     }
     return true;
 }
@@ -183,7 +188,7 @@ bool xRedisClient::setrange(const RedisDBIdx &dbi, const std::string &key, int32
 {
     int64_t intval = 0;
     SETDEFAULTIOTYPE(MASTER);
-    bool bRet = command_integer(dbi, intval, "setrange %s %d %s", key.c_str(), offset, value.c_str());
+    bool bRet = command_integer(dbi, intval, fmt::format("setrange {} {} {}", key, offset, value).c_str());
     length = (int32_t)intval;
     return bRet;
 }
@@ -192,7 +197,7 @@ bool xRedisClient::strlen(const RedisDBIdx &dbi, const std::string &key, int32_t
 {
     int64_t intval = 0;
     SETDEFAULTIOTYPE(SLAVE);
-    bool bRet = command_integer(dbi, intval, "STRLEN %s", key.c_str());
+    bool bRet = command_integer(dbi, intval, fmt::format("STRLEN {}", key).c_str());
     length = (int32_t)intval;
     return bRet;
 }
@@ -200,13 +205,13 @@ bool xRedisClient::strlen(const RedisDBIdx &dbi, const std::string &key, int32_t
 bool xRedisClient::incr(const RedisDBIdx &dbi, const std::string &key, int64_t &result)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, result, "INCR %s", key.c_str());
+    return command_integer(dbi, result, fmt::format("INCR {}", key).c_str());
 }
 
 bool xRedisClient::incrby(const RedisDBIdx &dbi, const std::string &key, int32_t by, int64_t &result)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, result, "INCRBY %s %d", key.c_str(), by);
+    return command_integer(dbi, result, fmt::format("INCRBY {} {}", key, by).c_str());
 }
 
 bool xRedisClient::bitcount(const RedisDBIdx &dbi, const std::string &key, int32_t &count, int32_t start, int32_t end)
@@ -216,11 +221,11 @@ bool xRedisClient::bitcount(const RedisDBIdx &dbi, const std::string &key, int32
     SETDEFAULTIOTYPE(SLAVE);
     if ((start != 0) || (end != 0))
     {
-        bRet = command_integer(dbi, intval, "bitcount %s %d %d", key.c_str(), start, end);
+        bRet = command_integer(dbi, intval, fmt::format("bitcount {} {} {}", key, start, end).c_str());
     }
     else
     {
-        bRet = command_integer(dbi, intval, "bitcount %s", key.c_str());
+        bRet = command_integer(dbi, intval, fmt::format("bitcount {}", key).c_str());
     }
     count = (int32_t)intval;
     return bRet;
@@ -246,19 +251,19 @@ bool xRedisClient::bitpos(const RedisDBIdx &dbi, const std::string &key, int32_t
     SETDEFAULTIOTYPE(SLAVE);
     if ((start != 0) || (end != 0))
     {
-        return command_integer(dbi, pos, "BITPOS %s %d %d %d", key.c_str(), bit, start, end);
+        return command_integer(dbi, pos, fmt::format("BITPOS {} {} {} {}", key, bit, start, end).c_str());
     }
-    return command_integer(dbi, pos, "BITPOS %s %d", key.c_str(), bit);
+    return command_integer(dbi, pos, fmt::format("BITPOS {} {}", key.c_str(), bit).c_str());
 }
 
 bool xRedisClient::decr(const RedisDBIdx &dbi, const std::string &key, int64_t &result)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, result, "decr %s", key.c_str());
+    return command_integer(dbi, result, fmt::format("decr {}", key).c_str());
 }
 
 bool xRedisClient::decrby(const RedisDBIdx &dbi, const std::string &key, int32_t by, int64_t &result)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, result, "decrby %s %d", key.c_str(), by);
+    return command_integer(dbi, result, fmt::format("decrby {} {}", key.c_str(), by).c_str());
 }

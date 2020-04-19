@@ -6,6 +6,8 @@
  * ----------------------------------------------------------------------------
  */
 #include <sstream>
+#include <fmt/printf.h>
+#include <fmt/format.h>
 #include "xredis.h"
 
 using namespace xrc;
@@ -22,7 +24,7 @@ bool xRedisClient::psubscribe(const RedisDBIdx &dbi, const KEYS &patterns, xRedi
 bool xRedisClient::publish(const RedisDBIdx &dbi, const KEY &channel, const std::string &message, int64_t &count)
 {
     //SETDEFAULTIOTYPE(MASTER);
-    //return command_integer(dbi, count, "PUBLISH %s %s", channel.c_str(), message.c_str(), count);
+    //return command_integer(dbi, count, "PUBLISH {} {}", channel.c_str(), message.c_str(), count);
 
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
@@ -35,7 +37,7 @@ bool xRedisClient::publish(const RedisDBIdx &dbi, const KEY &channel, const std:
 bool xRedisClient::pubsub_channels(const RedisDBIdx &dbi, const std::string &pattern, ArrayReply &reply)
 {
     SETDEFAULTIOTYPE(MASTER);
-    return command_array(dbi, reply, "pubsub channels %s", pattern.c_str());
+    return command_array(dbi, reply, fmt::format("pubsub channels {}", pattern).c_str());
 }
 
 bool xRedisClient::pubsub_numsub(const RedisDBIdx &dbi, const KEYS &keys, ArrayReply &reply)

@@ -8,6 +8,9 @@
 #include <cstdio>
 #include <sstream>
 
+#include <fmt/printf.h>
+#include <fmt/format.h>
+
 #include "xredis.h"
 using namespace xrc;
 
@@ -18,7 +21,7 @@ bool xRedisClient::lindex(const RedisDBIdx &dbi, const std::string &key, int64_t
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_string(dbi, value, "LINDEX %s %lld", key.c_str(), index);
+    return command_string(dbi, value, fmt::format("LINDEX {} {}", key, index).c_str());
 }
 
 bool xRedisClient::linsert(const RedisDBIdx &dbi, const std::string &key, const LMODEL mod, const std::string &pivot, const std::string &value, int64_t &retval)
@@ -29,7 +32,7 @@ bool xRedisClient::linsert(const RedisDBIdx &dbi, const std::string &key, const 
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, retval, "LINSERT %s %s %s %s", key.c_str(), lmodel[mod], pivot.c_str(), value.c_str());
+    return command_integer(dbi, retval, fmt::format("LINSERT {} {} {} {}", key, lmodel[mod], pivot, value).c_str());
 }
 
 bool xRedisClient::llen(const RedisDBIdx &dbi, const std::string &key, int64_t &retval)
@@ -39,7 +42,7 @@ bool xRedisClient::llen(const RedisDBIdx &dbi, const std::string &key, int64_t &
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, retval, "LLEN %s", key.c_str());
+    return command_integer(dbi, retval, fmt::format("LLEN {}", key).c_str());
 }
 
 bool xRedisClient::blPop(const RedisDBIdx &dbi, const std::string &key, VALUES &vValues, int64_t timeout)
@@ -49,7 +52,7 @@ bool xRedisClient::blPop(const RedisDBIdx &dbi, const std::string &key, VALUES &
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_list(dbi, vValues, "BLPOP %s %d", key.c_str(), (int32_t)timeout);
+    return command_list(dbi, vValues, fmt::format("BLPOP {} {}", key, (int32_t)timeout).c_str());
 }
 
 bool xRedisClient::brPop(const RedisDBIdx &dbi, const std::string &key, VALUES &vValues, int64_t timeout)
@@ -59,7 +62,7 @@ bool xRedisClient::brPop(const RedisDBIdx &dbi, const std::string &key, VALUES &
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_list(dbi, vValues, "BRPOP %s %d", key.c_str(), (int32_t)timeout);
+    return command_list(dbi, vValues, fmt::format("BRPOP {} {}", key, (int32_t)timeout).c_str());
 }
 
 bool xRedisClient::brPoplpush(const RedisDBIdx &dbi, const std::string &key, std::string &targetkey, VALUE &value, int64_t timeout)
@@ -69,7 +72,7 @@ bool xRedisClient::brPoplpush(const RedisDBIdx &dbi, const std::string &key, std
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "BRPOPLPUSH %s %s %d", key.c_str(), targetkey.c_str(), (int32_t)timeout);
+    return command_string(dbi, value, fmt::format("BRPOPLPUSH {} {}", key, targetkey, (int32_t)timeout).c_str());
 }
 
 bool xRedisClient::lpop(const RedisDBIdx &dbi, const std::string &key, std::string &value)
@@ -79,7 +82,7 @@ bool xRedisClient::lpop(const RedisDBIdx &dbi, const std::string &key, std::stri
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "LPOP %s", key.c_str());
+    return command_string(dbi, value, fmt::format("LPOP {}", key).c_str());
 }
 
 bool xRedisClient::lpush(const RedisDBIdx &dbi, const std::string &key, const VALUES &vValue, int64_t &length)
@@ -103,7 +106,7 @@ bool xRedisClient::lrange(const RedisDBIdx &dbi, const std::string &key, int64_t
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_array(dbi, array, "LRANGE %s %lld %lld", key.c_str(), start, end);
+    return command_array(dbi, array, fmt::format("LRANGE {} {} {}", key, start, end).c_str());
 }
 
 bool xRedisClient::lrem(const RedisDBIdx &dbi, const std::string &key, int32_t count, const std::string &value, int64_t num)
@@ -113,7 +116,7 @@ bool xRedisClient::lrem(const RedisDBIdx &dbi, const std::string &key, int32_t c
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, num, "LREM %s %d %s", key.c_str(), count, value.c_str());
+    return command_integer(dbi, num, fmt::format("LREM {} {} {}", key, count, value).c_str());
 }
 
 bool xRedisClient::lset(const RedisDBIdx &dbi, const std::string &key, int32_t index, const std::string &value)
@@ -123,7 +126,7 @@ bool xRedisClient::lset(const RedisDBIdx &dbi, const std::string &key, int32_t i
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_status(dbi, "LSET %s %d %s", key.c_str(), index, value.c_str());
+    return command_status(dbi, fmt::format("LSET {} {} {}", key, index, value).c_str());
 }
 
 bool xRedisClient::ltrim(const RedisDBIdx &dbi, const std::string &key, int32_t start, int32_t end)
@@ -133,7 +136,7 @@ bool xRedisClient::ltrim(const RedisDBIdx &dbi, const std::string &key, int32_t 
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_status(dbi, "LTRIM %s %d %d", key.c_str(), start, end);
+    return command_status(dbi, fmt::format("LTRIM {} {} {}", key, start, end).c_str());
 }
 
 bool xRedisClient::rpop(const RedisDBIdx &dbi, const std::string &key, std::string &value)
@@ -143,7 +146,7 @@ bool xRedisClient::rpop(const RedisDBIdx &dbi, const std::string &key, std::stri
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "RPOP %s", key.c_str());
+    return command_string(dbi, value, fmt::format("RPOP {}", key).c_str());
 }
 
 bool xRedisClient::rpoplpush(const RedisDBIdx &dbi, const std::string &key_src, const std::string &key_dest, std::string &value)
@@ -153,7 +156,7 @@ bool xRedisClient::rpoplpush(const RedisDBIdx &dbi, const std::string &key_src, 
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "RPOPLPUSH %s %s", key_src.c_str(), key_dest.c_str());
+    return command_string(dbi, value, fmt::format("RPOPLPUSH {} {}", key_src, key_dest).c_str());
 }
 
 bool xRedisClient::rpush(const RedisDBIdx &dbi, const std::string &key, const VALUES &vValue, int64_t &length)
@@ -177,5 +180,5 @@ bool xRedisClient::rpushx(const RedisDBIdx &dbi, const std::string &key, const s
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, length, "RPUSHX %s %s", key.c_str(), value.c_str());
+    return command_integer(dbi, length, fmt::format("RPUSHX {} {}", key, value).c_str());
 }

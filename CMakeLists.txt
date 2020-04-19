@@ -5,6 +5,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
 endif()
 
+find_package(fmt CONFIG REQUIRED)
 find_package(hiredis)
 
 if (NOT ${hiredis_FOUND})
@@ -41,7 +42,7 @@ target_include_directories(
 
 target_link_libraries(
   xredis
-  PRIVATE hiredis
+  PRIVATE hiredis fmt::fmt fmt::fmt-header-only
 ) 
 
 if (MSVC)
