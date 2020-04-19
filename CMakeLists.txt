@@ -8,7 +8,7 @@ endif()
 find_package(fmt CONFIG REQUIRED)
 find_package(hiredis)
 
-if (NOT ${hiredis_FOUND})
+if (NOT (TARGET hiredis OR ${hiredis_FOUND}))
   message("Dependency 'hiredis' is not within CMake package sources, attempting to add it manually")
   find_path(hiredis_INCLUDE_DIR hiredis/hiredis.h)
   if (hiredis_INCLUDE_DIR)
