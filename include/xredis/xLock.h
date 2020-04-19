@@ -6,7 +6,6 @@
  * ----------------------------------------------------------------------------
  */
 
-
 #ifndef _XLOCK_H_
 #define _XLOCK_H_
 
@@ -18,17 +17,18 @@
 #include <unistd.h>
 #endif
 
-
-class xLock {
+class xLock
+{
 private:
 #ifdef WIN32
-    CRITICAL_SECTION    mSection;
+    CRITICAL_SECTION mSection;
 #else
-    pthread_mutex_t     mMutex;
+    pthread_mutex_t mMutex;
 #endif
-    
+
 public:
-    inline xLock() {
+    inline xLock()
+    {
 #ifdef WIN32
         InitializeCriticalSection(&mSection);
 #else
@@ -36,26 +36,30 @@ public:
         pthread_mutexattr_init(&attr);
         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
         int ret = pthread_mutex_init(&mMutex, &attr);
-        if(ret != 0 ){
-            fprintf(stderr,"pthread_mutex_init error %d \n\r",ret);
+        if (ret != 0)
+        {
+            fprintf(stderr, "pthread_mutex_init error %d \n\r", ret);
         }
 #endif
     };
-    inline ~xLock() {
+    inline ~xLock()
+    {
 #ifdef WIN32
         DeleteCriticalSection(&mSection);
 #else
         pthread_mutex_destroy(&mMutex);
 #endif
     }
-    inline void  Enter() {
+    inline void Enter()
+    {
 #ifdef WIN32
         EnterCriticalSection(&mSection);
 #else
         pthread_mutex_lock(&mMutex);
 #endif
     }
-    inline void Leave() {
+    inline void Leave()
+    {
 #ifdef WIN32
         LeaveCriticalSection(&mSection);
 #else
@@ -64,19 +68,22 @@ public:
     };
 };
 
-class CLockUser {
+class CLockUser
+{
 public:
-    inline  CLockUser(xLock& lock):mlock(lock) {
+    inline CLockUser(xLock &lock) : mlock(lock)
+    {
         mlock.Enter();
-    };    
-    inline  ~CLockUser(){
+    };
+    inline ~CLockUser()
+    {
         mlock.Leave();
     }
+
 private:
-    xLock& mlock;
+    xLock &mlock;
 };
 
 #define XLOCK(T) CLockUser lock(T)
 
-#endif 
-
+#endif
