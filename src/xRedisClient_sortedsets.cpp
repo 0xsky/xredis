@@ -102,7 +102,7 @@ bool xRedisClient::zremrangebyscore(const RedisDBIdx& dbi, const KEY& key, doubl
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, count, "ZREMRANGEBYSCORE %s %d %d", key.c_str(), min, max);
+    return command_integer(dbi, count, "ZREMRANGEBYSCORE %s %f %f", key.c_str(), min, max);
 }
 
 bool xRedisClient::zrevrange(const RedisDBIdx& dbi, const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore) {
