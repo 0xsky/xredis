@@ -33,7 +33,7 @@ enum {
  CACHE_TYPE_MAX,
 };
 
-/* 有3个redis分片存储节点的集群*/
+/* 有3个redis分片存储节点的xRedis集群*/
 RedisNode RedisList1[3]=
 {
     {0,"10.10.0.1", 7000, "", 2, 5, 0},
@@ -41,7 +41,7 @@ RedisNode RedisList1[3]=
     {2,"10.10.0.3", 7000, "", 2, 5, 0}
 };
 
-/* 有5个redis分片存储节点的集群 */
+/* 有5个redis分片存储节点的xRedis集群 */
 RedisNode RedisList2[5]=
 {
     {0,"10.10.1.1", 7000, "", 2, 5, 0},

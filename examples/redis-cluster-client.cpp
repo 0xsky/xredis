@@ -8,6 +8,10 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+/*
+    这是连接redis官方集群客户端的一个示例
+*/
+
 int main(int argc, char **argv) {
     (void)argc;(void)argv;
     
