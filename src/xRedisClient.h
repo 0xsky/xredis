@@ -302,6 +302,8 @@ public:
     /* ZCOUNT           */
     /* ZINCRBY          */  bool zincrby(const RedisDBIdx& dbi, const std::string& key, const double &increment, const std::string& member, std::string& value );
     /* ZINTERSTORE      */  
+    /* ZPOPMAX          */  bool zpopmax(const RedisDBIdx& dbi, const std::string& key, VALUES& vValues);
+    /* ZPOPMIN          */  bool zpopmin(const RedisDBIdx& dbi, const std::string& key, VALUES& vValues);
     /* ZRANGE           */  bool zrange(const RedisDBIdx& dbi,  const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore=false);
     /* ZRANGEBYSCORE    */  bool zrangebyscore(const RedisDBIdx& dbi, const std::string& key, const std::string& min, 
                                    const std::string& max, VALUES& vValues, bool withscore=false, LIMIT *limit = NULL);

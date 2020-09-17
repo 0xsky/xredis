@@ -35,6 +35,22 @@ bool xRedisClient::zincrby(const RedisDBIdx& dbi, const std::string& key, const 
     return command_string(dbi, value, "ZINCRBY %s %f %s", key.c_str(), increment, member.c_str());
 }
 
+bool xRedisClient::zpopmax(const RedisDBIdx& dbi, const std::string& key, VALUES& vValues) {
+    if (0==key.length()) {
+        return false;
+    }
+    SETDEFAULTIOTYPE(MASTER);
+    return command_list(dbi, vValues, "ZPOPMAX %s", key.c_str());
+}
+
+bool xRedisClient::zpopmin(const RedisDBIdx& dbi, const std::string& key,  VALUES& vValues) {
+    if (0==key.length()) {
+        return false;
+    }
+    SETDEFAULTIOTYPE(MASTER);
+    return command_list(dbi, vValues, "ZPOPMIN %s", key.c_str());
+}
+
 bool xRedisClient::zrange(const RedisDBIdx& dbi, const std::string& key, int32_t start, int32_t end, VALUES& vValues, bool withscore) {
     if (0==key.length()) {
         return false;
