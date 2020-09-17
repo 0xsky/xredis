@@ -509,8 +509,7 @@ bool xRedisClusterClient::RedisCommand(RedisResult &result, const char *format, 
     if (CheckReply(reply)) {
         result.Init(reply);
 
-        printf("%d %lld %d %s %lu \r\n", 
-            reply->type, reply->integer, reply->len, reply->str, reply->elements);
+        //printf("%d %lld %d %s %lu \r\n", reply->type, reply->integer, reply->len, reply->str, reply->elements);
 
         bRet = true;
     } else {
@@ -539,8 +538,7 @@ bool xRedisClusterClient::RedisCommandArgv(const VSTRING& vDataIn, RedisResult &
     redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->mCtx, argv.size(), &(argv[0]), &(argvlen[0])));
     if (xRedisClusterClient::CheckReply(reply)) {
         result.Init(reply);
-        printf("%d %lld %d %s %lu \r\n",
-            reply->type, reply->integer, reply->len, reply->str, reply->elements);
+        //printf("%d %lld %d %s %lu \r\n", reply->type, reply->integer, reply->len, reply->str, reply->elements);
         bRet = true;
     } else {
         //SetErrInfo(dbi, reply);
