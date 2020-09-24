@@ -15,8 +15,8 @@ xRedisClusterClient_test:
 
 clean:
 	rm -f demo
-	rm -f demo_cluster
-	rm -f demo_multi_cluster
+	rm -f demo_slice
+	rm -f demo_multi_slice
 	rm -f xredis-example
 	rm -f xRedisClusterClient_test
 
