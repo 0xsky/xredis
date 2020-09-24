@@ -7,7 +7,6 @@
  */
 
 #include "xRedisClient.h"
-#include <sstream>
 using namespace xrc;
 
 void xRedisClient::quit(){
@@ -15,13 +14,13 @@ void xRedisClient::quit(){
 }
 
 
-bool xRedisClient::echo(const RedisDBIdx& dbi, const std::string& str, std::string &value)
+bool xRedisClient::echo(const SliceIndex& index, const std::string& str, std::string &value)
 {
 	if (0==str.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "echo %s", str.c_str());
+    return command_string(index, value, "echo %s", str.c_str());
 }
 
 

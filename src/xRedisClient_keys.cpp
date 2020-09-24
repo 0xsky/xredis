@@ -7,17 +7,16 @@
  */
 
 #include "xRedisClient.h"
-#include "xRedisPool.h"
-#include <sstream>
+
 using namespace xrc;
 
-bool  xRedisClient::del(const RedisDBIdx& dbi, const std::string& key) {
+bool  xRedisClient::del(const SliceIndex& index, const std::string& key) {
     if (0==key.length()) {
         return false;
     }
 
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "DEL %s", key.c_str());
+    return command_bool(index, "DEL %s", key.c_str());
 }
 
 bool  xRedisClient::del(const DBIArray& vdbi,    const KEYS &  vkey, int64_t& count) {
@@ -28,105 +27,105 @@ bool  xRedisClient::del(const DBIArray& vdbi,    const KEYS &  vkey, int64_t& co
     DBIArray::const_iterator iter_dbi = vdbi.begin();
     KEYS::const_iterator iter_key     = vkey.begin();
     for(;iter_key!=vkey.end();++iter_key, ++iter_dbi) {
-        const RedisDBIdx &dbi = (*iter_dbi);
+        const SliceIndex &index = (*iter_dbi);
         const std::string &key = (*iter_key);
-        if (del(dbi, key)) {
+        if (del(index, key)) {
             count++;
         }
     }
     return true;
 }
 
-bool xRedisClient::exists(const RedisDBIdx& dbi, const std::string& key) {
+bool xRedisClient::exists(const SliceIndex& index, const std::string& key) {
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "EXISTS %s", key.c_str());
+    return command_bool(index, "EXISTS %s", key.c_str());
 }
 
-bool xRedisClient::expire(const RedisDBIdx& dbi, const std::string& key, uint32_t second) {
+bool xRedisClient::expire(const SliceIndex& index, const std::string& key, uint32_t second) {
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
     int64_t ret = -1;
-    if (!command_integer(dbi, ret, "EXPIRE %s %u", key.c_str(), second)) {
+    if (!command_integer(index, ret, "EXPIRE %s %u", key.c_str(), second)) {
         return false;
     }
 
     if (1==ret) {
         return true;
     } else {
-        SetErrMessage(dbi, "expire return %ld ", ret);
+        SetErrMessage(index, "expire return %ld ", ret);
         return false;
     }
 }
 
-bool xRedisClient::expireat(const RedisDBIdx& dbi, const std::string& key, uint32_t timestamp) {
+bool xRedisClient::expireat(const SliceIndex& index, const std::string& key, uint32_t timestamp) {
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "EXPIREAT %s %u", key.c_str(), timestamp);
+    return command_bool(index, "EXPIREAT %s %u", key.c_str(), timestamp);
 }
 
-bool xRedisClient::persist(const RedisDBIdx& dbi, const std::string& key) {
+bool xRedisClient::persist(const SliceIndex& index, const std::string& key) {
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "PERSIST %s %u", key.c_str());
+    return command_bool(index, "PERSIST %s %u", key.c_str());
 }
 
-bool xRedisClient::pexpire(const RedisDBIdx& dbi, const std::string& key, uint32_t milliseconds) {
+bool xRedisClient::pexpire(const SliceIndex& index, const std::string& key, uint32_t milliseconds) {
     if (0==key.length()) {
         return false;
     }
-    return command_bool(dbi, "PEXPIRE %s %u", key.c_str(), milliseconds);
+    return command_bool(index, "PEXPIRE %s %u", key.c_str(), milliseconds);
 }
 
-bool xRedisClient::pexpireat(const RedisDBIdx& dbi, const std::string& key, uint32_t millisecondstimestamp) {
-    if (0==key.length()) {
-        return false;
-    }
-    SETDEFAULTIOTYPE(MASTER);
-    return command_bool(dbi, "PEXPIREAT %s %u", key.c_str(), millisecondstimestamp);
-}
-
-bool xRedisClient::pttl(const RedisDBIdx& dbi, const std::string& key, int64_t &milliseconds) {
+bool xRedisClient::pexpireat(const SliceIndex& index, const std::string& key, uint32_t millisecondstimestamp) {
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(MASTER);
-    return command_integer(dbi, milliseconds, "PTTL %s", key.c_str());
+    return command_bool(index, "PEXPIREAT %s %u", key.c_str(), millisecondstimestamp);
 }
 
-bool xRedisClient::ttl(const RedisDBIdx& dbi, const std::string& key, int64_t &seconds) {
+bool xRedisClient::pttl(const SliceIndex& index, const std::string& key, int64_t &milliseconds) {
+    if (0==key.length()) {
+        return false;
+    }
+    SETDEFAULTIOTYPE(MASTER);
+    return command_integer(index, milliseconds, "PTTL %s", key.c_str());
+}
+
+bool xRedisClient::ttl(const SliceIndex& index, const std::string& key, int64_t &seconds) {
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(dbi, seconds, "TTL %s", key.c_str());
+    return command_integer(index, seconds, "TTL %s", key.c_str());
 }
 
-bool xRedisClient::type(const RedisDBIdx& dbi, const std::string& key, std::string& value){
+bool xRedisClient::type(const SliceIndex& index, const std::string& key, std::string& value){
     SETDEFAULTIOTYPE(MASTER);
-    return command_string(dbi, value, "TYPE %s", key.c_str());
+    return command_string(index, value, "TYPE %s", key.c_str());
 }
 
-bool xRedisClient::randomkey(const RedisDBIdx& dbi, KEY& key){
+bool xRedisClient::randomkey(const SliceIndex& index, KEY& key){
     SETDEFAULTIOTYPE(SLAVE);
-    return command_string(dbi, key, "RANDOMKEY");
+    return command_string(index, key, "RANDOMKEY");
 }
 
-bool xRedisClient::scan(const RedisDBIdx& dbi, int64_t &cursor, const char *pattern, 
+bool xRedisClient::scan(const SliceIndex& index, int64_t &cursor, const char *pattern, 
     uint32_t count, ArrayReply& array, xRedisContext& ctx)
 {
-    return ScanFun("SCAN",dbi, NULL, cursor, pattern, count, array, ctx);
+    return ScanFun("SCAN",index, NULL, cursor, pattern, count, array, ctx);
 }
 
-bool xRedisClient::sort(const RedisDBIdx& dbi, ArrayReply& array, const std::string& key, const char* by,
+bool xRedisClient::sort(const SliceIndex& index, ArrayReply& array, const std::string& key, const char* by,
     LIMIT *limit /*= NULL*/, bool alpha /*= false*/, const FILEDS* get /*= NULL*/,
     const SORTODER order /*= ASC*/, const char* destination )
 {
@@ -165,7 +164,7 @@ bool xRedisClient::sort(const RedisDBIdx& dbi, ArrayReply& array, const std::str
         vCmdData.push_back(destination);
     }
     SETDEFAULTIOTYPE(MASTER);
-    return commandargv_array(dbi, vCmdData, array);
+    return commandargv_array(index, vCmdData, array);
 }
 
 
