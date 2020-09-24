@@ -73,6 +73,6 @@ int main(int argc, char **argv) {
 
 <p>blog: <a href="http://www.0xsky.com/">xSky's Blog</a>
 <p>xRedis QQ Group: 190107312
-<img src='https://github.com/0xsky/xredis/blob/master/donate.png' alt='捐赠作者' height='120px'>
+<img src='https://www.0xsky.com/images/donate.png' alt='捐赠作者' height='120px'>
 
 
