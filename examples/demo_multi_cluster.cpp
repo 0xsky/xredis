@@ -13,19 +13,7 @@
 #include "xRedisClient.h"
 
 using namespace xrc;
-// AP Hash Function
-unsigned int APHash(const char *str) {
-    unsigned int hash = 0;
-    int i;
-    for (i=0; *str; i++) {
-        if ((i&  1) == 0) {
-            hash ^= ((hash << 7) ^ (*str++) ^ (hash >> 3));
-        } else {
-            hash ^= (~((hash << 11) ^ (*str++) ^ (hash >> 5)));
-        }
-    }
-    return (hash&  0x7FFFFFFF);
-}
+
 
 enum {
  CACHE_TYPE_1, 
@@ -62,25 +50,25 @@ int main(int argc, char **argv) {
     const char *key = "test";
     const char *value = "test value";
 
-    RedisDBIdx dbi(&xRedis);
-    bool bRet = dbi.CreateDBIndex(key, APHash, CACHE_TYPE_1);
+    SliceIndex index(&xRedis, CACHE_TYPE_1);
+    bool bRet = index.Create(key);
     if (!bRet) {
         return 0;
     }
 
-    bRet = xRedis.set(dbi, key, value);
+    bRet = xRedis.set(index, key, value);
     if (bRet){
            printf("success \r\n");
      } else {
-        printf("error [%s] \r\n", dbi.GetErrInfo());
+        printf("error [%s] \r\n", index.GetErrInfo());
      }
 
     std::string strValue;
-    bRet = xRedis.get(dbi, key, strValue);
+    bRet = xRedis.get(index, key, strValue);
     if (bRet) {
         printf("%s \r\n", strValue.c_str());
     } else {
-        printf("error [%s] \r\n", dbi.GetErrInfo());
+        printf("error [%s] \r\n", index.GetErrInfo());
     }
 
     return 0;

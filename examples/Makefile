@@ -11,7 +11,7 @@ demo_multi_cluster:
 xredis-example:
 	g++ ${LIBS} xredis-example.cpp -o xredis-example
 xRedisClusterClient_test:
-	g++ ${LIBS} xRedisClusterClient_test.cpp -o xRedisClusterClient_test
+	g++ ${LIBS} -I/usr/local/include/hiredis xRedisClusterClient_test.cpp -o xRedisClusterClient_test
 
 clean:
 	rm -f demo
