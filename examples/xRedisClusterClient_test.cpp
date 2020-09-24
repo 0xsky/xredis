@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     
     xRedisClusterClient redisclient;
     //bool bRet = redisclient.ConnectRedis("127.0.0.1", 7000, 4);
-    bool bRet = redisclient.ConnectRedis(argv[1], atoi(argv[2]), 4);
+    bool bRet = redisclient.ConnectRedis(argv[1], atoi(argv[2]), argv[3], 4);
     if(!bRet) {
         return -1;
     }
