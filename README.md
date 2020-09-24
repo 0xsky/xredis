@@ -72,7 +72,8 @@ int main(int argc, char **argv) {
 <p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 
 <p>blog: <a href="http://www.0xsky.com/">xSky's Blog</a>
-<p>xRedis QQ Group: 190107312
+<p>xRedis QQ Group: 190107312 
+<p>支持作者:
 <img src='https://www.0xsky.com/images/donate.png' alt='捐赠作者' height='120px'>
 
 
