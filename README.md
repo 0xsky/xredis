@@ -53,7 +53,8 @@ int main(int argc, char **argv) {
     # Connect to REDIS and establish a connection pool 
     # If this node is a member of the REDIS cluster, 
     # a connection pool is automatically established for each primary node in the cluster.
-    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, 4);
+    std::string passwd = "passwd123";
+    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, passwd, 4);
 
     RedisResult result;
     redisclient.RedisCommand(result, "set %s %s", "key", "hello");

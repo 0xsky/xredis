@@ -44,7 +44,8 @@ int main(int argc, char **argv) {
     xRedisClusterClient redisclient;
     # 连接到REDIS，建立大小为4的连接池，
     # 若此节点是官方集群的成员，则会自动对集群每个主节点建立大小为4的连接池。
-    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, 4);
+    std::string passwd = "passwd123";
+    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, passwd, 4);
 
     RedisResult result;
     redisclient.RedisCommand(result, "set %s %s", "key", "hello");
@@ -55,6 +56,20 @@ int main(int argc, char **argv) {
     return 0;
 }
 ```
+
+更多使用示例
+使用示例 [examples]目录(https://github.com/0xsky/xredis/blob/master/examples)
+
+demo.cpp              使用xredisclient访问单个redis节点示例
+demo_slice.cpp        使用xredisclient访问单组多分片(节点)redis分片集群示例
+demo_multi_slice.cpp  使用xredisclient访问多组多分片(节点)redis分片集群示例
+xredis-example.cpp    使用xredisclient 批量操作示例 
+xredis-example-Consistent-hash xredisclient使用一致性hash，自定义数据分片存储demo
+
+redis-cluster-client.cpp      使用xRedisClusterClient访问redis官方集群示例
+xRedisClusterClient_test.cpp  使用xRedisClusterClient实现简单的redis官方集群客户端示例
+
+/test/xredis-test.cpp   多个redis命令的使用示例
 
 ### 相关文档
 ##### xRedis 分片存储架构图
