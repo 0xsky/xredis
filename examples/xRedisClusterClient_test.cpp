@@ -9,15 +9,15 @@ using namespace xrc;
 int main(int argc, char **argv) {
     (void)argc;(void)argv;
     
-    xRedisClusterClient redisclient;
-    //bool bRet = redisclient.ConnectRedis("127.0.0.1", 7000, 4);
-    bool bRet = redisclient.ConnectRedis(argv[1], atoi(argv[2]), argv[3], 4);
+    xRedisClusterClient redisClusterClient;
+    //bool bRet = redisClusterClient.ConnectRedis("127.0.0.1", 7000, 4);
+    bool bRet = redisClusterClient.ConnectRedis(argv[1], atoi(argv[2]), argv[3], 4);
     if(!bRet) {
         return -1;
     }
 
     RedisResult result;
-    redisclient.RedisCommand(result, "hgetall %s", "htest");
+    redisClusterClient.RedisCommand(result, "hgetall %s", "htest");
     
     printf("type:%d integer:%lld str:%s \r\n",
         result.type(), result.integer(), result.str());

@@ -1,13 +1,13 @@
 
 LIBS=../src/*.o -I../src -lhiredis -lpthread
-all: demo demo_cluster demo_multi_cluster xredis-example xRedisClusterClient_test
+all: demo demo_slice demo_multi_slice xredis-example xRedisClusterClient_test
 
 demo:
 	g++ ${LIBS} demo.cpp -o demo
-demo_cluster:
-	g++ ${LIBS} demo_cluster.cpp -o demo_cluster
-demo_multi_cluster:
-	g++ ${LIBS} demo_multi_cluster.cpp -o demo_multi_cluster
+demo_slice:
+	g++ ${LIBS} demo_slice.cpp -o demo_slice
+demo_multi_slice:
+	g++ ${LIBS} demo_multi_slice.cpp -o demo_multi_slice
 xredis-example:
 	g++ ${LIBS} xredis-example.cpp -o xredis-example
 xRedisClusterClient_test:
