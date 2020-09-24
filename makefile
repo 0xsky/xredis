@@ -11,7 +11,7 @@ TESTS=xredis-test
 LIBNAME=libxredis
 
 XREDIS_MAJOR=0
-XREDIS_MINOR=12
+XREDIS_MINOR=14
 
 # Fallback to gcc when $CC is not in $PATH.
 CC:=g++
