@@ -7,20 +7,6 @@
 
 using namespace xrc;
 
-// AP Hash Function
-unsigned int APHash(const char *str) {
-    unsigned int hash = 0;
-    int i;
-    for (i=0; *str; i++) {
-        if ((i&  1) == 0) {
-            hash ^= ((hash << 7) ^ (*str++) ^ (hash >> 3));
-        } else {
-            hash ^= (~((hash << 11) ^ (*str++) ^ (hash >> 5)));
-        }
-    }
-    return (hash&  0x7FFFFFFF);
-}
-
 enum {
  CACHE_TYPE_1, 
  CACHE_TYPE_2,
@@ -56,21 +42,21 @@ int main(int argc, char **argv) {
     for (int n = 0; n<1000; n++) {
         char szKey[256] = {0};
         sprintf(szKey, "test_%d", n);
-        RedisDBIdx dbi(&xRedis);
-        dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
-        bool bRet = xRedis.set(dbi, szKey, "hello redis!");
+        SliceIndex index(&xRedis, CACHE_TYPE_1);
+        index.Create(szKey);
+        bool bRet = xRedis.set(index, szKey, "hello redis!");
         if (!bRet){
-            printf(" %s %s \n", szKey, dbi.GetErrInfo());
+            printf(" %s %s \n", szKey, index.GetErrInfo());
         }
     }
 
     for (int n = 0; n<1000; n++) {
         char szKey[256] = {0};
         sprintf(szKey, "test_%d", n);
-        RedisDBIdx dbi(&xRedis);
-        dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+        SliceIndex index(&xRedis, CACHE_TYPE_1);
+        index.Create(szKey);
         std::string strValue;
-        xRedis.get(dbi, szKey, strValue);
+        xRedis.get(index, szKey, strValue);
         printf("%s \r\n", strValue.c_str());
     }
     

@@ -1,5 +1,5 @@
-#ifndef _XREDIS_HIREDISCPP_H_
-#define _XREDIS_HIREDISCPP_H_
+#ifndef _XREDIS_XREDISCLUSTERCLIENT_H_
+#define _XREDIS_XREDISCLUSTERCLIENT_H_
 
 #include <stdlib.h>
 #include <string.h>
@@ -29,6 +29,7 @@ public:
     class RedisReply {
     public:
         RedisReply(redisReply *r) { reply = r;}
+        RedisReply(const RedisReply & r) { reply = r.reply; }
         RedisReply() { reply = NULL; }
         ~RedisReply() {}
     
@@ -37,7 +38,7 @@ public:
         int32_t len() const { return reply->len; }
         char* str() const { return reply->str; }
         size_t elements() const { return reply->elements; }
-        RedisReply element(uint32_t index) const { return RedisReply(reply->element[index]); }
+        struct RedisReply element(uint32_t index) const { return RedisReply(reply->element[index]); }
         private:
         friend class RedisResult;
         redisReply *reply;
@@ -57,7 +58,6 @@ private:
 typedef struct _REDISCONN_ {
     _REDISCONN_() {
         mCtx = NULL;
-        mHost = NULL;
         mPort = 0;
         mPoolSize = 0;
     }
@@ -70,7 +70,7 @@ typedef struct _REDISCONN_ {
         timeoutVal.tv_usec = 0;
 
         redisContext *ctx = NULL;
-        ctx = redisConnectWithTimeout(mHost, mPort, timeoutVal);
+        ctx = redisConnectWithTimeout(mHost.c_str(), mPort, timeoutVal);
         if (NULL == ctx || ctx->err) {
             if (NULL != ctx) {
                 redisFree(ctx);
@@ -82,9 +82,53 @@ typedef struct _REDISCONN_ {
 
         return ctx;
     }
+    bool Ping()
+    {
+        redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "PING"));
+        bool bRet = (NULL != reply) && (reply->str) && (strcasecmp(reply->str, "PONG") == 0);
+        if (bRet)
+        {
+            freeReplyObject(reply);
+        }
+        return bRet;
+    }
+    bool RedisReConnect()
+    {
+        bool bRet = false;
+        redisContext *tmp_ctx = ConnectWithTimeout();
+        if (NULL == tmp_ctx) {
+            bRet = false;
+        } else {
+            if (NULL!=mCtx) {
+                redisFree(mCtx);
+            }
+            mCtx = tmp_ctx;
+            bRet = auth();
+        }
+        return bRet;
+    }
+
+    bool auth()
+    {
+        bool bRet = false;
+        if (0 == mPass.length()) {
+            bRet = true;
+        } else {
+            redisReply *reply = static_cast<redisReply *>(redisCommand(mCtx, "AUTH %s", mPass.c_str()));
+            if ((NULL == reply) || (strcasecmp(reply->str, "OK") != 0)) {
+                bRet = false;
+            } else {
+                bRet = true;
+            }
+            freeReplyObject(reply);
+        }
+
+        return bRet;
+    }
 
     redisContext *mCtx;
-    const char   *mHost;
+    std::string   mHost;
+    std::string   mPass;
     uint32_t      mPort;
     uint32_t      mPoolSize;
     uint32_t      mIndex;
@@ -164,7 +208,8 @@ private:
 public:
     void Init();
     
-    bool ConnectRedis(const char *host, uint32_t port, uint32_t poolsize);
+    bool auth(redisContext *c, const std::string &pass);
+    bool ConnectRedis(const std::string &host, uint32_t port, const std::string &pass, uint32_t poolsize);
     bool ReConnectRedis(RedisConnection *pConn);
     void Keepalive();
     bool RedisCommandArgv(const VSTRING& vDataIn, RedisResult &result);
@@ -177,7 +222,7 @@ private:
     static int32_t Str2Vect(const char* pSrc, std::vector<std::string> &vDest, const char *pSep = ",");
 private:
     void Release();
-    bool ConnectRedisNode(int32_t idx, const char *host, uint32_t port, uint32_t poolsize);
+    bool ConnectRedisNode(int idx, const std::string &host, uint32_t port, const std::string &pass, uint32_t poolsize);
     bool CheckReply(redisReply *reply);
     uint32_t KeyHashSlot(const char *key, size_t keylen);
     bool ClusterEnabled(redisContext *ctx);
@@ -200,4 +245,3 @@ private:
 }
 
 #endif
-

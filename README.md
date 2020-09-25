@@ -53,7 +53,8 @@ int main(int argc, char **argv) {
     # Connect to REDIS and establish a connection pool 
     # If this node is a member of the REDIS cluster, 
     # a connection pool is automatically established for each primary node in the cluster.
-    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, 4);
+    std::string passwd = "passwd123";
+    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, passwd, 4);
 
     RedisResult result;
     redisclient.RedisCommand(result, "set %s %s", "key", "hello");
@@ -72,7 +73,8 @@ int main(int argc, char **argv) {
 <p>See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
 
 <p>blog: <a href="http://www.0xsky.com/">xSky's Blog</a>
-<p>xRedis QQ Group: 190107312
-<img src='https://github.com/0xsky/xredis/blob/master/donate.png' alt='捐赠作者' height='120px'>
+<p>xRedis QQ Group: 190107312 
+<p>支持作者:
+<img src='https://www.0xsky.com/images/donate.png' alt='捐赠作者' height='120px'>
 
 

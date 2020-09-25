@@ -8,12 +8,16 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+/*
+    这是连接redis官方集群客户端的一个示例
+*/
+
 int main(int argc, char **argv) {
     (void)argc;(void)argv;
     
-    xRedisClusterClient redisclient;
+    xRedisClusterClient ClusterClient;
     
-    bool bRet = redisclient.ConnectRedis(argv[1], atoi(argv[2]), 2);
+    bool bRet = ClusterClient.ConnectRedis(argv[1], atoi(argv[2]), 2);
     if(!bRet) {
         return -1;
     }
@@ -32,7 +36,7 @@ int main(int argc, char **argv) {
             VSTRING vDataIn;
 
             xRedisClusterClient::str2Vect(strInput.c_str(), vDataIn, " ");
-            redisclient.RedisCommandArgv(vDataIn, result);
+            ClusterClient.RedisCommandArgv(vDataIn, result);
 
             switch (result.type()){
             case REDIS_REPLY_INTEGER:{ printf("%lld \r\n", result.integer()); break;}
