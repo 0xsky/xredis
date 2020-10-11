@@ -14,6 +14,7 @@ xRedis 是一个C++开发的redis客户端，是对hiredis的C++封装，提供�
 * 提供简单易用的C++接口封装，已实现大部分REDIS命令;
 * 只依赖hiredis库;
 * 多线程安全
+* 支持带密码连接;
  
 
 ### Dependencies
