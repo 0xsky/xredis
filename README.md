@@ -76,5 +76,6 @@ int main(int argc, char **argv) {
 <p>xRedis QQ Group: 190107312 
 <p>支持作者:
 <img src='https://www.0xsky.com/images/donate.png' alt='捐赠作者' height='120px'>
+Donate with PayPal guozhw@gmail.com 
 
 
