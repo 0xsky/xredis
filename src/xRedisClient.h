@@ -296,8 +296,9 @@ public:
     /* SUNION       */  bool sunion(const DBIArray& index,      const KEYS& vkey, VALUES& vValue);
     /* SUNIONSTORE  */  bool sunionstore(const SliceIndex& index, const KEY& deskey, const DBIArray& vdbi, const KEYS& vkey, int64_t& count);
 
-    /* ZADD             */  bool zadd(const SliceIndex& index,    const KEY& deskey,   const VALUES& vValues, int64_t& count);
-    /* ZCARD            */  bool zscrad(const SliceIndex& index,  const std::string& key, int64_t& num);
+
+    /* ZADD             */  bool zadd(const SliceIndex& index,   const KEY& deskey,   const VALUES& vValues, int64_t& count);
+    /* ZCARD            */  bool zcrad(const SliceIndex& index,  const std::string& key, int64_t& num);
     /* ZCOUNT           */
     /* ZINCRBY          */  bool zincrby(const SliceIndex& index, const std::string& key, const double &increment, const std::string& member, std::string& value );
     /* ZINTERSTORE      */  

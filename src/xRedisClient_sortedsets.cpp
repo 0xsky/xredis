@@ -18,12 +18,13 @@ bool xRedisClient::zadd(const SliceIndex& index, const KEY& key,   const VALUES&
     return commandargv_integer(index, vCmdData, count);
 }
 
-bool xRedisClient::zscrad(const SliceIndex& index, const std::string& key, int64_t& count){
+
+bool xRedisClient::zcrad(const SliceIndex& index, const std::string& key, int64_t& count){
     if (0==key.length()) {
         return false;
     }
     SETDEFAULTIOTYPE(SLAVE);
-    return command_integer(index, count, "ZSCRAD %s", key.c_str());
+    return command_integer(dbi, count, "ZCARD %s", key.c_str());
 }
 
 bool xRedisClient::zincrby(const SliceIndex& index, const std::string& key, const double &increment, const std::string& member, std::string& value) {
