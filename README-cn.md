@@ -19,7 +19,7 @@ xRedis 是一个C++开发的redis客户端，是对hiredis的C++封装，提供�
 
 ### Dependencies
 
-xredis 依赖 hiredis ,  在使用xRedis前需要安装hiredis库
+xredis 依赖 hiredis ,  在使用xRedis前需要安装[hiredis](https://github.com/redis/hiredis/)库
 
 ### Install
 
@@ -38,7 +38,7 @@ sudo make install
 ```
 使用说明
 ```C++
-#使用 xRedisClusterClient类 访问 redis节点或是官方集群
+#使用 xRedisClusterClient类 访问 redis节点或是官方集群(redis cluster)
 
 #include "xRedisClusterClient.h"
 int main(int argc, char **argv) {
