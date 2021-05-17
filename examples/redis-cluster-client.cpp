@@ -1,3 +1,11 @@
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2021, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

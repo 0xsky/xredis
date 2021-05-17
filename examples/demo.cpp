@@ -1,5 +1,12 @@
 
-
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2021, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+ 
 /** \example demo.cpp
  * This is an example of how to use the xRedis.
  * <br>This demo connect to single redis server with connection pool

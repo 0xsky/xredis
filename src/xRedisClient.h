@@ -1,6 +1,6 @@
 /*
  * ----------------------------------------------------------------------------
- * Copyright (c) 2013-2014, xSky <guozhw at gmail dot com>
+ * Copyright (c) 2013-2021, xSky <guozhw at gmail dot com>
  * All rights reserved.
  * Distributed under GPL license.
  * ----------------------------------------------------------------------------

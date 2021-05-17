@@ -1,5 +1,12 @@
-#include "xRedisClusterClient.h"
+/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2021, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
 
+#include "xRedisClusterClient.h"
 using namespace xrc;
 
 static const uint16_t crc16tab[256]= {
