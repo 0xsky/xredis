@@ -408,7 +408,7 @@ int32_t xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
 {
     //vData.clear();
     //ReplyData(vData).swap(vData);
-    redisReply *reply;
+    redisReply *reply = NULL;
     RedisConn *pRedisConn = static_cast<RedisConn *>(ctx->conn);
     int32_t ret = redisGetReply(pRedisConn->getCtx(), (void**)&reply);
     if (0==ret) {
