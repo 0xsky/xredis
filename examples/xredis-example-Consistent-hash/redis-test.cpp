@@ -6,7 +6,8 @@
 #include "xRedisClient.h"
 
 // AP Hash Function
-unsigned int APHash(const char *str) {
+unsigned int APHash(const char* str)
+{
     unsigned int hash = 0;
     int i;
 
@@ -21,15 +22,13 @@ unsigned int APHash(const char *str) {
     return (hash & 0x7FFFFFFF);
 }
 
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <list>
 #include <map>
 #include <set>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
-#include <list>
+#include <time.h>
 
 typedef std::map<unsigned int, std::string> USMAP;
 typedef std::set<std::string> SSET;
@@ -37,42 +36,41 @@ typedef std::map<unsigned int, SSET> USSMAP;
 typedef std::list<std::string> SLIST;
 typedef std::map<std::string, unsigned int> SUMAP;
 
-typedef unsigned int(*HASHFUNC)(const char *str);
-
-
+typedef unsigned int (*HASHFUNC)(const char* str);
 
 struct vnode_t {
     unsigned int id;
     string rIden;
-    const RedisNode *data;
+    const RedisNode* data;
 };
 
 typedef std::map<unsigned int, vnode_t*> VNODEMAP;
 typedef std::map<std::string, VNODEMAP> RNODELIST;
 
-class ConHashIdx :public RedisDBIdx {
+class ConHashIdx : public RedisDBIdx {
 private:
-    USMAP _node_info;            // nodeid to server
-    USSMAP _node_slot;           // nodeid to keys   
-    HASHFUNC _hash;              // hash function
-    int _vnode_num;              // vnode number per server  
+    USMAP _node_info; // nodeid to server
+    USSMAP _node_slot; // nodeid to keys
+    HASHFUNC _hash; // hash function
+    int _vnode_num; // vnode number per server
 
     VNODEMAP vNodeMap;
     RNODELIST rNodeMap;
+
 public:
-    ConHashIdx(const RedisNode *rNode, int size, HASHFUNC hash, int vnode_num);
+    ConHashIdx(const RedisNode* rNode, int size, HASHFUNC hash, int vnode_num);
     ~ConHashIdx();
 
-    void del_server(const RedisNode *rNode);
+    void del_server(const RedisNode* rNode);
 
-    unsigned int get_index(const char *key);
+    unsigned int get_index(const char* key);
+
 private:
-    bool _add_node(const RedisNode *rNode, int vnode_num);
-    
+    bool _add_node(const RedisNode* rNode, int vnode_num);
 };
 
-
-ConHashIdx::ConHashIdx(const RedisNode *rNode, int size, HASHFUNC hash, int vnode_num) {
+ConHashIdx::ConHashIdx(const RedisNode* rNode, int size, HASHFUNC hash, int vnode_num)
+{
     _hash = hash;
     _vnode_num = vnode_num;
 
@@ -83,42 +81,41 @@ ConHashIdx::ConHashIdx(const RedisNode *rNode, int size, HASHFUNC hash, int vnod
 
 ConHashIdx::~ConHashIdx()
 {
-
 }
 
-bool ConHashIdx::_add_node(const RedisNode *rNode, int vnode_num) {
+bool ConHashIdx::_add_node(const RedisNode* rNode, int vnode_num)
+{
 
     char szIden[128] = { 0 };
     VNODEMAP vMap;
     getMd5Str(rNode->host, szIden);
 
     for (int i = 0; i < vnode_num; i++) {
-        char sztmp[256] = {0};
-        char vNodekey[256] = {0};
+        char sztmp[256] = { 0 };
+        char vNodekey[256] = { 0 };
         sprintf(sztmp, "%s-%06d", szIden, i);
         getMd5Str(sztmp, vNodekey);
         unsigned int hval = _hash(vNodekey);
-        vnode_t *pVnode = new vnode_t;
+        vnode_t* pVnode = new vnode_t;
         pVnode->id = hval;
         pVnode->data = rNode;
         pVnode->rIden = szIden;
         printf("%s %u %s \r\n", vNodekey, pVnode->id, pVnode->data->host);
-        std::pair< VNODEMAP::iterator, bool > ret;
+        std::pair<VNODEMAP::iterator, bool> ret;
         ret = vNodeMap.insert(make_pair(hval, pVnode));
         if (ret.second) {
             vMap.insert(make_pair(hval, pVnode));
-        }  else {
-            printf("½Úµã³åÍ»: %s-%u \r\n", vNodekey, hval);
+        } else {
+            printf("ï¿½Úµï¿½ï¿½Í»: %s-%u \r\n", vNodekey, hval);
             delete pVnode;
             return false;
         }
     }
 
     rNodeMap.insert(make_pair(szIden, vMap));
-
 }
 
-unsigned int ConHashIdx::get_index(const char *key)
+unsigned int ConHashIdx::get_index(const char* key)
 {
     unsigned int hval = _hash(key);
     VNODEMAP::iterator iter = vNodeMap.upper_bound(hval);
@@ -129,12 +126,12 @@ unsigned int ConHashIdx::get_index(const char *key)
     return iter->second->data->dbindex;
 }
 
-void ConHashIdx::del_server(const RedisNode *rNode)
+void ConHashIdx::del_server(const RedisNode* rNode)
 {
     char szIden[128] = { 0 };
     getMd5Str(rNode->host, szIden);
     VNODEMAP::iterator iter = vNodeMap.begin();
-    for (;iter!=vNodeMap.end();){
+    for (; iter != vNodeMap.end();) {
         if (0 == strcasecmp(szIden, iter->second->rIden.c_str())) {
             vNodeMap.erase(iter++);
         } else {
@@ -143,15 +140,13 @@ void ConHashIdx::del_server(const RedisNode *rNode)
     }
 }
 
-RedisNode RedisList1[3] =
-{
+RedisNode RedisList1[3] = {
     { 0, "127.0.0.1", 6379, "", 2, 5 },
     { 1, "127.0.0.2", 6379, "", 2, 5 },
     { 2, "127.0.0.3", 6379, "", 2, 5 }
 };
 
-RedisNode RedisList2[5] =
-{
+RedisNode RedisList2[5] = {
     { 0, "127.0.0.1", 6379, "", 2, 5 },
     { 1, "127.0.0.2", 6379, "", 2, 5 },
     { 2, "127.0.0.3", 6379, "", 2, 5 },
@@ -162,7 +157,8 @@ RedisNode RedisList2[5] =
 #define CACHE_TYPE_1 1
 #define CACHE_TYPE_2 2
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
 
     xRedisClient xRedis;
     xRedis.Init(3);
@@ -185,7 +181,7 @@ int main(int argc, char **argv) {
         RedisDBIdx dbi(&xRedis);
         dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
         bool bRet = xRedis.set(dbi, szKey, "hello redis!");
-        if (!bRet){
+        if (!bRet) {
             printf(" %s %s \n", szKey, dbi.GetErrInfo());
         }
     }
@@ -210,5 +206,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-
