@@ -10,7 +10,9 @@
 #include "xRedisPool.h"
 using namespace xrc;
 
-bool xRedisClient::psubscribe(const SliceIndex& index, const KEYS& patterns, xRedisContext& ctx) {
+bool xRedisClient::psubscribe(const SliceIndex& index, const KEYS& patterns,
+    xRedisContext& ctx)
+{
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
     vCmdData.push_back("PSUBSCRIBE");
@@ -18,9 +20,12 @@ bool xRedisClient::psubscribe(const SliceIndex& index, const KEYS& patterns, xRe
     return commandargv_array_ex(index, vCmdData, ctx);
 }
 
-bool xRedisClient::publish(const SliceIndex& index,  const KEY& channel, const std::string& message, int64_t& count) {
-    //SETDEFAULTIOTYPE(MASTER);
-    //return command_integer(index, count, "PUBLISH %s %s", channel.c_str(), message.c_str(), count);
+bool xRedisClient::publish(const SliceIndex& index, const KEY& channel,
+    const std::string& message, int64_t& count)
+{
+    // SETDEFAULTIOTYPE(MASTER);
+    // return command_integer(index, count, "PUBLISH %s %s", channel.c_str(),
+    // message.c_str(), count);
 
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
@@ -30,12 +35,17 @@ bool xRedisClient::publish(const SliceIndex& index,  const KEY& channel, const s
     return commandargv_integer(index, vCmdData, count);
 }
 
-bool xRedisClient::pubsub_channels(const SliceIndex& index, const std::string &pattern, ArrayReply &reply) {
+bool xRedisClient::pubsub_channels(const SliceIndex& index,
+    const std::string& pattern,
+    ArrayReply& reply)
+{
     SETDEFAULTIOTYPE(MASTER);
     return command_array(index, reply, "pubsub channels %s", pattern.c_str());
 }
 
-bool xRedisClient::pubsub_numsub(const SliceIndex& index, const KEYS &keys, ArrayReply &reply) {
+bool xRedisClient::pubsub_numsub(const SliceIndex& index, const KEYS& keys,
+    ArrayReply& reply)
+{
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
     vCmdData.push_back("pubsub");
@@ -44,19 +54,22 @@ bool xRedisClient::pubsub_numsub(const SliceIndex& index, const KEYS &keys, Arra
     return commandargv_array(index, vCmdData, reply);
 }
 
-bool xRedisClient::pubsub_numpat(const SliceIndex& index, int64_t& count) {
+bool xRedisClient::pubsub_numpat(const SliceIndex& index, int64_t& count)
+{
     SETDEFAULTIOTYPE(MASTER);
     return command_integer(index, count, "pubsub numpat");
 }
 
-bool xRedisClient::punsubscribe(const SliceIndex& index, const KEYS& patterns, xRedisContext& ctx) {
+bool xRedisClient::punsubscribe(const SliceIndex& index, const KEYS& patterns,
+    xRedisContext& ctx)
+{
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
     vCmdData.push_back("PUNSUBSCRIBE");
     addparam(vCmdData, patterns);
 
     bool bRet = false;
-    RedisConn *pRedisConn = static_cast<RedisConn *>(ctx.conn);
+    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx.conn);
     if (NULL == pRedisConn) {
         SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
         return false;
@@ -65,11 +78,13 @@ bool xRedisClient::punsubscribe(const SliceIndex& index, const KEYS& patterns, x
     std::vector<const char*> argv(vCmdData.size());
     std::vector<size_t> argvlen(vCmdData.size());
     uint32_t j = 0;
-    for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end(); ++i, ++j) {
+    for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end();
+         ++i, ++j) {
         argv[j] = i->c_str(), argvlen[j] = i->size();
     }
 
-    redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+    redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
+        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         bRet = true;
     } else {
@@ -79,7 +94,9 @@ bool xRedisClient::punsubscribe(const SliceIndex& index, const KEYS& patterns, x
     return bRet;
 }
 
-bool xRedisClient::subscribe(const SliceIndex& index, const KEYS& channels, xRedisContext& ctx) {
+bool xRedisClient::subscribe(const SliceIndex& index, const KEYS& channels,
+    xRedisContext& ctx)
+{
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
     vCmdData.push_back("SUBSCRIBE");
@@ -87,14 +104,16 @@ bool xRedisClient::subscribe(const SliceIndex& index, const KEYS& channels, xRed
     return commandargv_array_ex(index, vCmdData, ctx);
 }
 
-bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels, xRedisContext& ctx) {
+bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels,
+    xRedisContext& ctx)
+{
     SETDEFAULTIOTYPE(MASTER);
     VDATA vCmdData;
     vCmdData.push_back("UNSUBSCRIBE");
     addparam(vCmdData, channels);
 
     bool bRet = false;
-    RedisConn *pRedisConn = static_cast<RedisConn *>(ctx.conn);
+    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx.conn);
     if (NULL == pRedisConn) {
         SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
         return false;
@@ -103,11 +122,13 @@ bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels, xR
     std::vector<const char*> argv(vCmdData.size());
     std::vector<size_t> argvlen(vCmdData.size());
     uint32_t j = 0;
-    for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end(); ++i, ++j) {
+    for (VDATA::const_iterator i = vCmdData.begin(); i != vCmdData.end();
+         ++i, ++j) {
         argv[j] = i->c_str(), argvlen[j] = i->size();
     }
 
-    redisReply *reply = static_cast<redisReply *>(redisCommandArgv(pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+    redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
+        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         bRet = true;
     } else {
@@ -116,16 +137,3 @@ bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels, xR
     RedisPool::FreeReply(reply);
     return bRet;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
