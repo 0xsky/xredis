@@ -20,12 +20,15 @@ using namespace xrc;
 
 enum {
     CACHE_TYPE_1,
-    CACHE_TYPE_2,
     CACHE_TYPE_MAX,
 };
 
 /* 配置单个redis存储节点 */
-RedisNode RedisList1[1] = { { 0, "127.0.0.1", 7000, "", 8, 5, 0 } };
+//RedisNode RedisList1[1] = { { 0, "127.0.0.1", 6379, "", 8, 5, 0 } };
+
+RedisNode RedisList1[1] = { 
+    { .dbindex = 0, .host = "192.168.0.5", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER } 
+    };
 
 int main(int argc, char** argv)
 {

@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <sstream>
 
+
 namespace xrc {
 
 #define REDIS_REPLY_STRING 1
@@ -40,9 +41,9 @@ typedef std::set<std::string>        SETDATA;
 
 typedef struct _REDIS_NODE_{
     uint32_t dbindex;       //  节点编号索引，从0开始
-    std::string host;          //  REDIS节点主机IP地址
+    std::string host;       //  REDIS节点主机IP地址
     uint32_t port;          //  redis服务端口
-    std::string passwd;        //  redis认证密码
+    std::string passwd;     //  redis认证密码
     uint32_t poolsize;      //  此节点上的连接池大小
     uint32_t timeout;       //  连接超时时间 秒
     uint32_t role;          //  节点角色 
@@ -57,8 +58,6 @@ typedef struct rReply {
     size_t elements; /* number of elements, for REDIS_REPLY_ARRAY */
     struct rReply **element; /* elements vector for REDIS_REPLY_ARRAY */
 } rReply;
-
-
 
 typedef uint32_t (*HASHFUN)(const char *);
 
@@ -85,9 +84,9 @@ private:
 private:
     uint32_t mType;
     uint32_t mIndex;
-    char    *mStrerr;
     bool     mIOFlag;
     uint32_t mIOtype;
+    char    *mStrerr;
     xRedisClient *mClient;
 };
 
@@ -160,6 +159,8 @@ typedef enum _REDIS_ROLE_{
 
 #define SETDEFAULTIOTYPE(type) if (!index.mIOFlag) {SetIOtype(index, type);}
 
+
+
 class xRedisClient{
 public:
     xRedisClient();
@@ -175,6 +176,8 @@ public:
     void FreexRedisContext(xRedisContext* ctx);
     bool ConnectRedisCache(const RedisNode *redisnodelist, uint32_t nodecount, 
         uint32_t hashbase, uint32_t cachetype);
+
+    static void SetLogLevel(uint32_t level, void (*emit)(int level, const char* line));
 
 public:
 

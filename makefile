@@ -5,7 +5,7 @@
 # This file is released under the BSD license, see the COPYING file
 
 OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.o \
-src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o
+src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o src/xLog.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
 LIBNAME=libxredis
@@ -59,6 +59,7 @@ xRedisClient_strings.o:    xRedisClient_strings.cpp
 xRedisClient_pubsub.o:     xRedisClient_pubsub.cpp
 xRedisPool.o:              xRedisPool.cpp
 xRedisClusterClient.o:     xRedisClusterClient.cpp
+xLog.o:                    xLog.cpp
 
 $(DYLIBNAME): $(OBJ)
 	$(DYLIB_MAKE_CMD) $(OBJ)
@@ -73,9 +74,9 @@ static: $(STLIBNAME)
 xredis-example: 
 	$(CC) examples/xredis-example.cpp     -o examples/xredis-example      $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
 	$(CC) examples/demo.cpp               -o examples/demo                $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
-	$(CC) examples/demo_cluster.cpp       -o examples/demo_cluster        $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
-	$(CC) examples/demo_multi_cluster.cpp -o examples/demo_multi_cluster  $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic  -lhiredis -Wl,-Bdynamic -lpthread
-	$(CC) examples/xRedisClusterClient_test.cpp -o examples/xRedisClusterClient_test  $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic  -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/demo_slice.cpp       -o examples/demo_slice            $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/demo_multi_slice.cpp -o examples/demo_multi_slice      $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic  -lhiredis -Wl,-Bdynamic -lpthread
+	$(CC) examples/xRedisClusterClient_test.cpp -o examples/xRedisClusterClient_test  $(REAL_CFLAGS) $(REAL_LDFLAGS) -I./src -L./ $< $(STLIBNAME) -Wl,-Bstatic  -lhiredis -Wl,-Bdynamic -lpthread
 
 
 examples: $(EXAMPLES)

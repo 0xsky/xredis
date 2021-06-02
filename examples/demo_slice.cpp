@@ -23,10 +23,12 @@ enum {
     CACHE_TYPE_MAX,
 };
 
-/* 配置一个3分片存储xRedis集群：共三个存储主节点 */
-RedisNode RedisList1[3] = { { 0, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 1, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 2, "127.0.0.1", 7000, "", 2, 5, 0 } };
+/* 配置一个3分片存储xRedis集群：共3个存储主节点 */
+RedisNode RedisList1[3] = {
+    { .dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 1, .host = "127.0.0.2", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 2, .host = "127.0.0.3", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER }
+};
 
 int main(int argc, char** argv)
 {

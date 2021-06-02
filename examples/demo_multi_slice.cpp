@@ -27,18 +27,20 @@ enum {
     CACHE_TYPE_MAX,
 };
 
-/* 有3个redis分片存储节点的xRedis集群*/
-RedisNode RedisList1[3] = { { 0, "10.10.0.1", 7000, "", 2, 5, 0 },
-    { 1, "10.10.0.2", 7000, "", 2, 5, 0 },
-    { 2, "10.10.0.3", 7000, "", 2, 5, 0 } };
+/* 配置一个3分片存储xRedis集群 CACHE_TYPE_1：共3个存储主节点 */
+RedisNode RedisList1[3] = {
+    { .dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 1, .host = "127.0.0.2", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 2, .host = "127.0.0.3", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER }
+};
 
-/* 有5个redis分片存储节点的xRedis集群 */
+/* 配置一个5分片存储xRedis集群 CACHE_TYPE_2：共5个存储主节点 */
 RedisNode RedisList2[5] = {
-    { 0, "10.10.1.1", 7000, "", 2, 5, 0 },
-    { 1, "10.10.1.2", 7000, "", 2, 5, 0 },
-    { 2, "10.10.1.3", 7000, "", 2, 5, 0 },
-    { 3, "10.10.1.4", 7000, "", 2, 5, 0 },
-    { 4, "10.10.1.5", 7000, "", 2, 5, 0 },
+    { .dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 1, .host = "127.0.0.2", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 2, .host = "127.0.0.3", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 3, .host = "127.0.0.4", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 4, .host = "127.0.0.5", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
 };
 
 int main(int argc, char** argv)
