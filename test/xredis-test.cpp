@@ -38,16 +38,16 @@ unsigned int APHash(const char *str)
 }
 
 
-void test_zadd(const char *charkey, const std::string& strValue)
+void test_zadd(const char *key, const std::string& strValue)
 {
-    std::string strkey=charkey;
+    std::string strkey=key;
     VALUES vVal;
     int64_t retVal=0;
     int64_t scores = 168;
     vVal.push_back(toString(scores));
     vVal.push_back(strValue);
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(charkey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(key);
     if (bRet) {
         if (xClient.zadd(dbi, strkey, vVal, retVal)) {
             printf("%s success \r\n", __PRETTY_FUNCTION__);
@@ -57,12 +57,12 @@ void test_zadd(const char *charkey, const std::string& strValue)
     }
 }
 
-void test_set(const char *strkey, const char *strValue)
+void test_set(const char *key, const char *strValue)
 {
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(strkey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(key);
     if (bRet) {
-        if (xClient.set(dbi, strkey, strValue)) {
+        if (xClient.set(dbi, key, strValue)) {
             printf("%s success \r\n", __PRETTY_FUNCTION__);
         } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
@@ -75,8 +75,8 @@ void test_append()
     test_set("test", "hello");
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         if (xClient.append(dbi, szKey, " xsky")) {
             printf("%s success \r\n", __PRETTY_FUNCTION__);
@@ -91,8 +91,8 @@ void test_decr()
     test_set("test", "100");
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         int64_t res = 0;
         if (xClient.decr(dbi, szKey, res)) {
@@ -112,8 +112,8 @@ void test_decrby()
     test_set("test", "100");
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         int64_t res = 0;
         if (xClient.decrby(dbi, szKey, 11, res)) {
@@ -133,8 +133,8 @@ void test_incr()
     test_set("test", "100");
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         int64_t res = 0;
         if (xClient.incr(dbi, szKey, res)) {
@@ -154,8 +154,8 @@ void test_incrby()
     test_set("test", "100");
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         int64_t res = 0;
         if (xClient.incrby(dbi, szKey, 11, res)) {
@@ -176,8 +176,8 @@ void test_get()
     char szKey[256] = {0};
     {
         strcpy(szKey, "test");
-        RedisDBIdx dbi(&xClient);
-        bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+        SliceIndex dbi(&xClient, CACHE_TYPE_1);
+        bool bRet = dbi.Create(szKey);
         if (bRet) {
             std::string strData;
             if (xClient.get(dbi, szKey, strData)) {
@@ -191,8 +191,8 @@ void test_get()
 
     {
         sprintf(szKey, "test_%u", (unsigned int)time(NULL));
-        RedisDBIdx dbi(&xClient);
-        bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+        SliceIndex dbi(&xClient, CACHE_TYPE_1);
+        bool bRet = dbi.Create(szKey);
         if (bRet) {
             std::string strData;
             if (xClient.get(dbi, szKey, strData)) {
@@ -209,8 +209,8 @@ void test_type()
     char szKey[256] = {0};
 
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    dbi.Create(szKey);
 
     const std::string str = "wwwwwwwwwwwwwwwwwwwwwwwww";
     xClient.set(dbi, szKey, str);
@@ -229,8 +229,8 @@ void test_getrange()
     char szKey[256] = {0};
 
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         std::string strData;
         if (xClient.getrange(dbi, szKey, 2, 6, strData)) {
@@ -245,8 +245,8 @@ void test_exists()
 {
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         if (xClient.exists(dbi, szKey)) {
             printf("%s success \r\n", __PRETTY_FUNCTION__);
@@ -260,8 +260,8 @@ void test_del()
 {
     char szKey[256] = {0};
     strcpy(szKey, "test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szKey);
     if (bRet) {
         if (xClient.del(dbi, szKey)) {
             printf("%s success \r\n", __PRETTY_FUNCTION__);
@@ -278,9 +278,9 @@ void test_mset()
     VDATA    kvData;
 
     for (int i = 0; i < 10; i++) {
-        RedisDBIdx dbi(&xClient);
+        SliceIndex dbi(&xClient, CACHE_TYPE_1);
         sprintf(szKey, "mset_key_%d", i);
-        dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+        dbi.Create(szKey);
         vdbi.push_back(dbi);
         kvData.push_back(szKey);
         sprintf(szKey, "mset_value_%d", i);
@@ -301,9 +301,9 @@ void test_mget()
     KEYS     kData;
     ReplyData Reply;
     for (int i = 0; i < 15; i++) {
-        RedisDBIdx dbi(&xClient);
+        SliceIndex dbi(&xClient, CACHE_TYPE_1);
         sprintf(szKey, "mset_key_%d", i);
-        dbi.CreateDBIndex(szKey, APHash, CACHE_TYPE_1);
+        dbi.Create(szKey);
         vdbi.push_back(dbi);
         kData.push_back(szKey);
     }
@@ -323,8 +323,8 @@ void test_hset()
 {
     char szHKey[256] = {0};
     strcpy(szHKey, "hashtest");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (bRet) {
         int64_t count = 0;
         if (xClient.hset(dbi, szHKey, "filed1", "filed1_values", count)) {
@@ -340,11 +340,12 @@ void test_lpush()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "list_test");
-    RedisDBIdx dbi(&xClient);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
     VALUES vVal;
     vVal.push_back(toString(time(NULL)));
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
+    
     if (bRet) {
         int64_t count = 0;
         if (xClient.lpush(dbi, szHKey, vVal, count)) {
@@ -360,9 +361,9 @@ void test_llen()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "list_test");
-    RedisDBIdx dbi(&xClient);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (bRet) {
         int64_t count = 0;
         if (xClient.llen(dbi, szHKey, count)) {
@@ -378,11 +379,11 @@ void test_lrange()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "list_test");
-    RedisDBIdx dbi(&xClient);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
     VALUES vVal;
     
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (bRet) {
         ArrayReply Reply;
         if (xClient.lrange(dbi, szHKey, 0, -1, Reply)) {
@@ -402,9 +403,9 @@ void test_lpop()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "list_test");
-    RedisDBIdx dbi(&xClient);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (bRet) {
         std::string strVal;
         if (xClient.lpop(dbi, szHKey, strVal)) {
@@ -420,9 +421,9 @@ void test_rpop()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "list_test");
-    RedisDBIdx dbi(&xClient);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (bRet) {
         std::string strVal;
         if (xClient.rpop(dbi, szHKey, strVal)) {
@@ -439,9 +440,9 @@ void test_publish()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "pubsub_test");
-    RedisDBIdx dbi(&xClient);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (bRet) {
         int64_t count;
         if (xClient.publish(dbi, szHKey, "test message", count)) {
@@ -456,8 +457,8 @@ void test_subscribe()
 {
     char szHKey[256] = { 0 };
     strcpy(szHKey, "pubsub_test");
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(szHKey, APHash, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.Create(szHKey);
     if (!bRet) {
         return;
     }
@@ -485,8 +486,8 @@ void test_subscribe()
 void test_scan()
 {
     const char* pattern = "a*";
-    RedisDBIdx dbi(&xClient);
-    bool bRet = dbi.CreateDBIndex(0, CACHE_TYPE_1);
+    SliceIndex dbi(&xClient, CACHE_TYPE_1);
+    bool bRet = dbi.CreateByID(0);
     if (!bRet) {
         return;
     }
