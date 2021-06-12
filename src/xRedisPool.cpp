@@ -106,7 +106,7 @@ bool RedisPool::ConnectRedisDB(uint32_t cachetype, uint32_t dbindex,
 {
     if ((0 == host.length()) || (cachetype > MAX_REDIS_CACHE_TYPE) || (dbindex > MAX_REDIS_DB_HASHBASE)
         || (cachetype > mTypeSize - 1) || (role > SLAVE) || (poolsize > MAX_REDIS_CONN_POOLSIZE)) {
-        xredis_error("ConnectRedisDB cachetype:%u dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+        xredis_error("cachetype:%u dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
             cachetype, dbindex, host.c_str(), port, passwd.c_str(), poolsize, timeout, role);
         return false;
     }
@@ -169,7 +169,7 @@ redisContext* RedisConn::ConnectWithTimeout()
     redisContext* ctx = NULL;
     ctx = redisConnectWithTimeout(mHost.c_str(), mPort, timeoutVal);
     if (NULL == ctx || ctx->err) {
-        xredis_info("ConnectWithTimeout auth failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+        xredis_error("failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
             mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
         if (NULL != ctx) {
             redisFree(ctx);
@@ -189,11 +189,11 @@ bool RedisConn::auth()
     } else {
         redisReply* reply = static_cast<redisReply*>(redisCommand(mCtx, "AUTH %s", mPass.c_str()));
         if ((NULL == reply) || (strcasecmp(reply->str, "OK") != 0)) {
-            xredis_error("auth failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+            xredis_error("failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
                 mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
             bRet = false;
         } else {
-            xredis_info("auth success dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+            xredis_info("success dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
                 mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
             bRet = true;
         }
@@ -219,6 +219,10 @@ bool RedisConn::RedisConnect()
         mConnStatus = bRet;
     }
 
+    const char* result = bRet ? "success" : "failed";
+    xredis_info("%s dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+        result, mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
+
     return bRet;
 }
 
@@ -231,7 +235,7 @@ bool RedisConn::RedisReConnect()
     bool bRet = false;
     redisContext* tmp_ctx = ConnectWithTimeout();
     if (NULL == tmp_ctx) {
-        xredis_warn("RedisReConnect failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+        xredis_warn("failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
             mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
         bRet = false;
     } else {
@@ -253,18 +257,22 @@ bool RedisConn::Ping()
         freeReplyObject(reply);
     }
     if (bRet) {
-        xredis_warn("Ping failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+        xredis_debug("OK dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+            mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
+    } else {
+        xredis_warn("failed dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
             mDbindex, mHost.c_str(), mPort, mPass.c_str(), mPoolsize, mTimeout, mRole);
     }
+
     return bRet;
 }
 
-void RedisConn::Init(uint32_t cahcetype, uint32_t dbindex,
+void RedisConn::Init(uint32_t cachetype, uint32_t dbindex,
     const std::string& host, uint32_t port,
     const std::string& pass, uint32_t poolsize,
     uint32_t timeout, uint32_t role, uint32_t slaveidx)
 {
-    mType = cahcetype;
+    mType = cachetype;
     mDbindex = dbindex;
     mHost = host;
     mPort = port;
@@ -285,20 +293,20 @@ RedisDBSlice::RedisDBSlice()
 
 RedisDBSlice::~RedisDBSlice() { }
 
-void RedisDBSlice::Init(uint32_t cahcetype, uint32_t dbindex)
+void RedisDBSlice::Init(uint32_t cachetype, uint32_t dbindex)
 {
-    mType = cahcetype;
+    mType = cachetype;
     mDbindex = dbindex;
 }
 
-bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex,
+bool RedisDBSlice::ConnectRedisNodes(uint32_t cachetype, uint32_t dbindex,
     const std::string& host, uint32_t port,
     const std::string& passwd,
     uint32_t poolsize, uint32_t timeout,
     int32_t role)
 {
     bool bRet = false;
-    if ((host.empty()) || (cahcetype > MAX_REDIS_CACHE_TYPE) || (dbindex > MAX_REDIS_DB_HASHBASE) || (poolsize > MAX_REDIS_CONN_POOLSIZE)) {
+    if ((host.empty()) || (cachetype > MAX_REDIS_CACHE_TYPE) || (dbindex > MAX_REDIS_DB_HASHBASE) || (poolsize > MAX_REDIS_CONN_POOLSIZE)) {
         return false;
     }
 
@@ -310,10 +318,13 @@ bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex,
                 if (NULL == pRedisconn) {
                     continue;
                 }
+                xredis_info("cachetype:%u dbindex:%u host:%s port:%u passwd:%s poolsize:%u timeout:%u role:%u",
+                    cachetype, dbindex, host.c_str(), port, passwd.c_str(), poolsize, timeout, role);
 
-                pRedisconn->Init(cahcetype, dbindex, host, port, passwd, poolsize,
+                pRedisconn->Init(cachetype, dbindex, host, port, passwd, poolsize,
                     timeout, role, 0);
                 if (pRedisconn->RedisConnect()) {
+
                     mSliceConn.RedisMasterConn.push_back(pRedisconn);
                     mStatus = REDISDB_WORKING;
                     bRet = true;
@@ -332,7 +343,7 @@ bool RedisDBSlice::ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex,
                     continue;
                 }
 
-                pRedisconn->Init(cahcetype, dbindex, host, port, passwd, poolsize,
+                pRedisconn->Init(cachetype, dbindex, host, port, passwd, poolsize,
                     timeout, role, slave_idx);
                 if (pRedisconn->RedisConnect()) {
                     pSlaveNode->push_back(pRedisconn);
@@ -446,13 +457,18 @@ void RedisDBSlice::CloseConnPool()
 
 void RedisDBSlice::ConnPoolPing()
 {
+    xredis_info("type:%u index:%u  mStatus:%u", mType, mDbindex, mStatus);
+
     {
         XLOCK(mSliceConn.MasterLock);
         RedisConnIter master_iter = mSliceConn.RedisMasterConn.begin();
         for (; master_iter != mSliceConn.RedisMasterConn.end(); ++master_iter) {
             bool bRet = (*master_iter)->Ping();
             if (!bRet) {
-                (*master_iter)->RedisReConnect();
+                bool bRet = (*master_iter)->RedisReConnect();
+                if (bRet) {
+                    xredis_info("RedisReConnect success type:%u index:%u  mStatus:%u", mType, mDbindex, mStatus);
+                }
             } else {
             }
         }
@@ -467,7 +483,10 @@ void RedisDBSlice::ConnPoolPing()
             for (; iter != pConnPool->end(); ++iter) {
                 bool bRet = (*iter)->Ping();
                 if (!bRet) {
-                    (*iter)->RedisReConnect();
+                    bool bRet = (*iter)->RedisReConnect();
+                    if (bRet) {
+                        xredis_info("RedisReConnect success type:%u index:%u  mStatus:%u", mType, mDbindex, mStatus);
+                    }
                 } else {
                 }
             }
@@ -497,13 +516,13 @@ bool RedisCache::InitDB(uint32_t cachetype, uint32_t hashbase)
     return true;
 }
 
-bool RedisCache::ConnectRedisDB(uint32_t cahcetype, uint32_t dbindex,
+bool RedisCache::ConnectRedisDB(uint32_t cachetype, uint32_t dbindex,
     const std::string& host, uint32_t port,
     const std::string& passwd, uint32_t poolsize,
     uint32_t timeout, uint32_t role)
 {
-    mDBList[dbindex].Init(cahcetype, dbindex);
-    return mDBList[dbindex].ConnectRedisNodes(cahcetype, dbindex, host, port,
+    mDBList[dbindex].Init(cachetype, dbindex);
+    return mDBList[dbindex].ConnectRedisNodes(cachetype, dbindex, host, port,
         passwd, poolsize, timeout, role);
 }
 

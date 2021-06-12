@@ -39,7 +39,7 @@ public:
     RedisConn();
     ~RedisConn();
 
-    void Init(uint32_t cahcetype, uint32_t dbindex, const std::string& host,
+    void Init(uint32_t cachetype, uint32_t dbindex, const std::string& host,
         uint32_t port, const std::string& pass, uint32_t poolsize,
         uint32_t timeout, uint32_t role, uint32_t slaveidx);
 
@@ -91,9 +91,9 @@ public:
     RedisDBSlice();
     ~RedisDBSlice();
 
-    void Init(uint32_t cahcetype, uint32_t dbindex);
+    void Init(uint32_t cachetype, uint32_t dbindex);
     // 连到到一个REDIS服务节点
-    bool ConnectRedisNodes(uint32_t cahcetype, uint32_t dbindex,
+    bool ConnectRedisNodes(uint32_t cachetype, uint32_t dbindex,
         const std::string& host, uint32_t port,
         const std::string& passwd, uint32_t poolsize,
         uint32_t timeout, int32_t role);
@@ -120,7 +120,7 @@ public:
     virtual ~RedisCache();
 
     bool InitDB(uint32_t cachetype, uint32_t hashbase);
-    bool ConnectRedisDB(uint32_t cahcetype, uint32_t dbindex,
+    bool ConnectRedisDB(uint32_t cachetype, uint32_t dbindex,
         const std::string& host, uint32_t port,
         const std::string& passwd, uint32_t poolsize,
         uint32_t timeout, uint32_t role);

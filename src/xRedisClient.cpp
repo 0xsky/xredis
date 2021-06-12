@@ -97,7 +97,9 @@ unsigned int SliceIndex::APHash(const char* str)
     return (hash & 0x7FFFFFFF);
 }
 
-xRedisClient::xRedisClient() { mRedisPool = NULL; }
+xRedisClient::xRedisClient() { 
+    mRedisPool = NULL;
+}
 
 xRedisClient::~xRedisClient() { Release(); }
 
@@ -127,6 +129,8 @@ void xRedisClient::Keepalive()
 {
     if (NULL != mRedisPool) {
         mRedisPool->Keepalive();
+    } else {
+        xredis_error("Keepalive mRedisPoolis NULL");
     }
 }
 
@@ -443,9 +447,8 @@ bool xRedisClient::commandargv_array_ex(const SliceIndex& index,
 
 int32_t xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
 {
-    redisReply *reply = NULL;
+    redisReply* reply;
     RedisConn* pRedisConn = static_cast<RedisConn*>(ctx->conn);
-
     int32_t ret = redisGetReply(pRedisConn->getCtx(), (void**)&reply);
     if (0 == ret) {
         for (size_t i = 0; i < reply->elements; i++) {

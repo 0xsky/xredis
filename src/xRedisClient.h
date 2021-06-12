@@ -21,6 +21,13 @@
 
 namespace xrc {
 
+
+#define LOG_LEVEL_ERROR 0
+#define LOG_LEVEL_WARN 1
+#define LOG_LEVEL_INFO 2
+#define LOG_LEVEL_DEBUG 3
+
+
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
 #define REDIS_REPLY_INTEGER 3
@@ -141,8 +148,8 @@ typedef enum _SORT_ORDER_{
 
 typedef struct _SORT_LIMIT_
 { 
-	int32_t offset; 
-	int32_t count; 
+    int32_t offset; 
+    int32_t count; 
 }LIMIT;
 
 template<class T>
