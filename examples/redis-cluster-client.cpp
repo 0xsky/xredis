@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 
     xRedisClusterClient ClusterClient;
 
-    bool bRet = ClusterClient.ConnectRedis(argv[1], atoi(argv[2]), 2);
+    bool bRet = ClusterClient.Connect(argv[1], atoi(argv[2]), 2);
     if (!bRet) {
         return -1;
     }

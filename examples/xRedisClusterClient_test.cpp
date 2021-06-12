@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "xRedisClusterClient.h"
 
@@ -20,11 +21,16 @@ int main(int argc, char** argv)
     (void)argv;
 
     xRedisClusterClient redisClusterClient;
-    // bool bRet = redisClusterClient.ConnectRedis("127.0.0.1", 7000, 4);
-    bool bRet = redisClusterClient.ConnectRedis(argv[1], atoi(argv[2]), argv[3], 4);
+    std::string pass;
+    bool bRet = redisClusterClient.Connect("127.0.0.1", 7001, pass, 4);
+    //bool bRet = redisClusterClient.ConnectRedis(argv[1], atoi(argv[2]), argv[3], 4);
     if (!bRet) {
         return -1;
     }
+
+    // VSTRING  redis_arg;
+    // redis_arg.push_back("hgetall");
+    // redis_arg.push_back("htest");
 
     RedisResult result;
     redisClusterClient.RedisCommand(result, "hgetall %s", "htest");
@@ -36,6 +42,11 @@ int main(int argc, char** argv)
         RedisResult::RedisReply reply = result.element(i);
         printf("type:%d integer:%lld str:%s \r\n", reply.type(), reply.integer(),
             reply.str());
+    }
+
+    while (true) {
+        usleep(1000 * 1000 * 6);
+        redisClusterClient.Keepalive();
     }
 
     return 0;

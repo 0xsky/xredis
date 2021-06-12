@@ -15,6 +15,7 @@
 
 #include "xRedisClient.h"
 #include <cstdio>
+#include <unistd.h>
 
 using namespace xrc;
 
@@ -24,11 +25,14 @@ enum {
 };
 
 /* 配置单个redis存储节点 */
-//RedisNode RedisList1[1] = { { 0, "127.0.0.1", 6379, "", 8, 5, 0 } };
-
 RedisNode RedisList1[1] = { 
-    { .dbindex = 0, .host = "192.168.0.5", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER } 
+    { .dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER } 
     };
+
+void log_demo(int level, const char* line)
+{
+    printf("xRedis %u %s", level, line);
+}
 
 int main(int argc, char** argv)
 {
@@ -36,6 +40,7 @@ int main(int argc, char** argv)
     (void)argv;
 
     xRedisClient xRedis;
+    //xRedis.SetLogLevel(LOG_LEVEL_DEBUG, log_demo );
     xRedis.Init(CACHE_TYPE_MAX);
     xRedis.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode),
         1, CACHE_TYPE_1);
@@ -49,7 +54,7 @@ int main(int argc, char** argv)
     if (bRet) {
         printf("success \r\n");
     } else {
-        printf("error [%s] \r\n", index.GetErrInfo());
+        printf("error %s \r\n", index.GetErrInfo());
     }
 
     std::string strValue;
@@ -57,8 +62,15 @@ int main(int argc, char** argv)
     if (bRet) {
         printf("%s \r\n", strValue.c_str());
     } else {
-        printf("error [%s] \r\n", index.GetErrInfo());
+        printf("error %s ", index.GetErrInfo());
     }
+
+    while (true)
+    {
+        usleep(1000*1000*6);
+        xRedis.Keepalive();
+    }
+    
 
     return 0;
 }

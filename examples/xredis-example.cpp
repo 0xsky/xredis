@@ -21,16 +21,18 @@ enum {
     CACHE_TYPE_MAX,
 };
 
-RedisNode RedisList1[3] = { { 0, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 1, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 2, "127.0.0.1", 7000, "", 2, 5, 0 } };
+RedisNode RedisList1[3] = { 
+    {.dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    {.dbindex = 1, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    {.dbindex = 2, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER }
+};
 
 RedisNode RedisList2[5] = {
-    { 0, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 1, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 2, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 3, "127.0.0.1", 7000, "", 2, 5, 0 },
-    { 4, "127.0.0.1", 7000, "", 2, 5, 0 },
+    { .dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 1, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 2, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 3, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+    { .dbindex = 4, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER }
 };
 
 int main(int argc, char** argv)
