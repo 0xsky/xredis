@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 #include "xRedisClient.h"
 
@@ -21,7 +20,7 @@ using namespace xrc;
 xRedisClient xClient;
 
 // AP Hash Function
-unsigned int APHash(const char *str)
+unsigned int APHash(const char* str)
 {
     unsigned int hash = 0;
     int i;
@@ -37,12 +36,11 @@ unsigned int APHash(const char *str)
     return (hash & 0x7FFFFFFF);
 }
 
-
-void test_zadd(const char *key, const std::string& strValue)
+void test_zadd(const char* key, const std::string& strValue)
 {
-    std::string strkey=key;
+    std::string strkey = key;
     VALUES vVal;
-    int64_t retVal=0;
+    int64_t retVal = 0;
     int64_t scores = 168;
     vVal.push_back(toString(scores));
     vVal.push_back(strValue);
@@ -57,7 +55,7 @@ void test_zadd(const char *key, const std::string& strValue)
     }
 }
 
-void test_set(const char *key, const char *strValue)
+void test_set(const char* key, const char* strValue)
 {
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(key);
@@ -73,7 +71,7 @@ void test_set(const char *key, const char *strValue)
 void test_append()
 {
     test_set("test", "hello");
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -89,7 +87,7 @@ void test_append()
 void test_decr()
 {
     test_set("test", "100");
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -110,7 +108,7 @@ void test_decr()
 void test_decrby()
 {
     test_set("test", "100");
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -131,7 +129,7 @@ void test_decrby()
 void test_incr()
 {
     test_set("test", "100");
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -152,7 +150,7 @@ void test_incr()
 void test_incrby()
 {
     test_set("test", "100");
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -173,7 +171,7 @@ void test_incrby()
 void test_get()
 {
 
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     {
         strcpy(szKey, "test");
         SliceIndex dbi(&xClient, CACHE_TYPE_1);
@@ -187,7 +185,6 @@ void test_get()
             }
         }
     }
-
 
     {
         sprintf(szKey, "test_%u", (unsigned int)time(NULL));
@@ -206,7 +203,7 @@ void test_get()
 
 void test_type()
 {
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
 
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
@@ -220,13 +217,12 @@ void test_type()
     } else {
         printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
     }
-
 }
 
 void test_getrange()
 {
     test_set("test", "01234567890123456789");
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
 
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
@@ -243,7 +239,7 @@ void test_getrange()
 
 void test_exists()
 {
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -258,7 +254,7 @@ void test_exists()
 
 void test_del()
 {
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     strcpy(szKey, "test");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szKey);
@@ -273,9 +269,9 @@ void test_del()
 
 void test_mset()
 {
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     DBIArray vdbi;
-    VDATA    kvData;
+    VDATA kvData;
 
     for (int i = 0; i < 10; i++) {
         SliceIndex dbi(&xClient, CACHE_TYPE_1);
@@ -296,9 +292,9 @@ void test_mset()
 
 void test_mget()
 {
-    char szKey[256] = {0};
+    char szKey[256] = { 0 };
     DBIArray vdbi;
-    KEYS     kData;
+    KEYS kData;
     ReplyData Reply;
     for (int i = 0; i < 15; i++) {
         SliceIndex dbi(&xClient, CACHE_TYPE_1);
@@ -321,7 +317,7 @@ void test_mget()
 
 void test_hset()
 {
-    char szHKey[256] = {0};
+    char szHKey[256] = { 0 };
     strcpy(szHKey, "hashtest");
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
     bool bRet = dbi.Create(szHKey);
@@ -335,7 +331,6 @@ void test_hset()
     }
 }
 
-
 void test_lpush()
 {
     char szHKey[256] = { 0 };
@@ -345,13 +340,12 @@ void test_lpush()
     VALUES vVal;
     vVal.push_back(toString(time(NULL)));
     bool bRet = dbi.Create(szHKey);
-    
+
     if (bRet) {
         int64_t count = 0;
         if (xClient.lpush(dbi, szHKey, vVal, count)) {
             printf("%s success %ld \r\n", __PRETTY_FUNCTION__, count);
-        }
-        else {
+        } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
         }
     }
@@ -368,8 +362,7 @@ void test_llen()
         int64_t count = 0;
         if (xClient.llen(dbi, szHKey, count)) {
             printf("%s success len: %ld \r\n", __PRETTY_FUNCTION__, count);
-        }
-        else {
+        } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
         }
     }
@@ -382,7 +375,7 @@ void test_lrange()
     SliceIndex dbi(&xClient, CACHE_TYPE_1);
 
     VALUES vVal;
-    
+
     bool bRet = dbi.Create(szHKey);
     if (bRet) {
         ArrayReply Reply;
@@ -392,8 +385,7 @@ void test_lrange()
             for (; iter != Reply.end(); iter++) {
                 printf("%d\t%s\r\n", (*iter).type, (*iter).str.c_str());
             }
-        }
-        else {
+        } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
         }
     }
@@ -410,8 +402,7 @@ void test_lpop()
         std::string strVal;
         if (xClient.lpop(dbi, szHKey, strVal)) {
             printf("%s success val: %s \r\n", __PRETTY_FUNCTION__, strVal.c_str());
-        }
-        else {
+        } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
         }
     }
@@ -428,13 +419,11 @@ void test_rpop()
         std::string strVal;
         if (xClient.rpop(dbi, szHKey, strVal)) {
             printf("%s success val: %s \r\n", __PRETTY_FUNCTION__, strVal.c_str());
-        }
-        else {
+        } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
         }
     }
 }
-
 
 void test_publish()
 {
@@ -462,7 +451,7 @@ void test_subscribe()
     if (!bRet) {
         return;
     }
-    
+
     VDATA channels;
     channels.push_back(szHKey);
     xRedisContext ctx;
@@ -475,7 +464,7 @@ void test_subscribe()
                 printf("%d\t%s\r\n", (*iter).type, (*iter).str.c_str());
             }
         }
-        
+
     } else {
         printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
     }
@@ -497,14 +486,13 @@ void test_scan()
     xRedisContext ctx;
     xClient.GetxRedisContext(dbi, &ctx);
 
-    do 
-    {
+    do {
         arrayReply.clear();
         if (xClient.scan(dbi, cursor, pattern, 0, arrayReply, ctx)) {
-            printf("%"PRId64"\t\r\n", cursor);
+            printf("%" PRId64 "\t\r\n", cursor);
             ReplyData::iterator iter = arrayReply.begin();
             for (; iter != arrayReply.end(); iter++) {
-                printf("\t\t%s\r\n",  (*iter).str.c_str());
+                printf("\t\t%s\r\n", (*iter).str.c_str());
             }
         } else {
             printf("%s error [%s] \r\n", __PRETTY_FUNCTION__, dbi.GetErrInfo());
@@ -515,19 +503,20 @@ void test_scan()
     xClient.FreexRedisContext(&ctx);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     printf("%d %s\r\n", argc, argv[0]);
 
     xClient.Init(3);
 
+    /* 配置一个3分片存储xRedis集群 CACHE_TYPE_1：共3个存储主节点 */
     RedisNode RedisList1[3] = {
-        {0, "127.0.0.1", 6379, "", 2, 5, 0},
-        {1, "127.0.0.1", 6379, "", 2, 5, 0},
-        {2, "127.0.0.1", 6379, "", 2, 5, 0}
+        { .dbindex = 0, .host = "127.0.0.1", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+        { .dbindex = 1, .host = "127.0.0.2", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER },
+        { .dbindex = 2, .host = "127.0.0.3", .port = 6379, .passwd = "", .poolsize = 4, .timeout = 5, .role = MASTER }
     };
 
-    xClient.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode),3, CACHE_TYPE_1);
+    xClient.ConnectRedisCache(RedisList1, sizeof(RedisList1) / sizeof(RedisNode), 3, CACHE_TYPE_1);
 
     test_zadd("test:sorted:key", "sorted value hello xredis");
     test_set("test", "wwww");
@@ -563,5 +552,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-
