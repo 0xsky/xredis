@@ -1,5 +1,5 @@
 
-LIBS=../src/*.o -I../src -lhiredis -lpthread
+LIBS=-L../ -I../src -lhiredis -lpthread
 all: demo demo_slice demo_multi_slice xredis-example xRedisClusterClient_test
 
 demo:
@@ -19,4 +19,5 @@ clean:
 	rm -f demo_multi_slice
 	rm -f xredis-example
 	rm -f xRedisClusterClient_test
+	rm -f cluster-cli
 

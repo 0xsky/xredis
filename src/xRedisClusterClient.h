@@ -46,12 +46,12 @@ public:
         RedisReply() { reply = NULL; }
         ~RedisReply() { }
 
-        int32_t type() const { return reply->type; }
-        long long integer() const { return reply->integer; }
-        int32_t len() const { return reply->len; }
-        char* str() const { return reply->str; }
-        size_t elements() const { return reply->elements; }
-        struct RedisReply element(uint32_t index) const
+        inline int32_t type() const { return reply->type; }
+        inline long long integer() const { return reply->integer; }
+        inline int32_t len() const { return reply->len; }
+        inline char* str() const { return reply->str; }
+        inline size_t elements() const { return reply->elements; }
+        inline struct RedisReply element(uint32_t index) const
         {
             return RedisReply(reply->element[index]);
         }
@@ -61,19 +61,19 @@ public:
         redisReply* reply;
     };
 
-    void Init(redisReply* r)
+    inline void Init(redisReply* r)
     {
         if (Reply.reply) {
             freeReplyObject((void*)Reply.reply);
         }
         Reply.reply = r;
     }
-    int32_t type() const { return Reply.type(); }
-    long long integer() const { return Reply.integer(); }
-    int32_t len() const { return Reply.len(); }
-    char* str() const { return Reply.str(); }
-    size_t elements() const { return Reply.elements(); }
-    RedisReply element(uint32_t index) const { return Reply.element(index); }
+    inline int32_t type() const { return Reply.type(); }
+    inline long long integer() const { return Reply.integer(); }
+    inline int32_t len() const { return Reply.len(); }
+    inline char* str() const { return Reply.str(); }
+    inline size_t elements() const { return Reply.elements(); }
+    inline RedisReply element(uint32_t index) const { return Reply.element(index); }
 
 private:
     RedisReply Reply;
@@ -91,10 +91,6 @@ public:
     bool commandArgv(const VString& vDataIn, RedisResult& result);
     bool command(RedisResult& result, const char* format, ...);
     void setLogLevel(uint32_t level, void (*emit)(int level, const char* line));
-
-private:
-    xRedisClusterManager* connectRedis(const std::string& host, uint32_t port,
-        const std::string& pass, uint32_t poolsize);
 
 private:
     xRedisClusterManager* mClusterManager_free;

@@ -49,7 +49,7 @@ void timer_handle(int sig)
 {
     (void)sig;
 
-    redis->Keepalive();
+    redis->keepalive();
 }
 
 void init_timer()
@@ -65,8 +65,10 @@ void init_timer()
     signal(SIGUSR1, timer_handle);
 
     int ret = timer_create(CLOCK_REALTIME, &evp, &timer);
-    if (ret)
+    if (ret) {
         perror("timer_create");
+        return;
+    }
 
     ts.it_interval.tv_sec = 5;
     ts.it_interval.tv_nsec = 0;
@@ -96,9 +98,9 @@ int main(int argc, char** argv)
     std::string pass;
     init_timer();
     xRedisClusterClient redisclient;
-    redisclient.SetLogLevel(LOG_LEVEL_INFO, log_demo);
+    redisclient.setLogLevel(LOG_LEVEL_INFO, log_demo);
     redis = &redisclient;
-    bool bRet = redisclient.Connect(argv[1], atoi(argv[2]), pass, 4);
+    bool bRet = redisclient.connect(argv[1], atoi(argv[2]), pass, 4);
 
     if (!bRet) {
         fprintf(stderr, "Connect to %s:%s error\r\n", argv[0], argv[1]);
@@ -119,7 +121,7 @@ int main(int argc, char** argv)
             VString vDataIn;
 
             str2Vect(strInput.c_str(), vDataIn, " ");
-            redisclient.RedisCommandArgv(vDataIn, result);
+            redisclient.commandArgv(vDataIn, result);
 
             switch (result.type()) {
             case REDIS_REPLY_INTEGER: {

@@ -241,6 +241,8 @@ public:
     void freeConnection(RedisConnection* pRedis);
     bool release();
 
+    static xRedisClusterManager* connectRedis(const std::string& host, uint32_t port,
+        const std::string& pass, uint32_t poolsize,  ClusterInfo* &info);
 private:
     bool connectRedisNode(int idx, const std::string& host, uint32_t port,
         const std::string& pass, uint32_t poolsize);

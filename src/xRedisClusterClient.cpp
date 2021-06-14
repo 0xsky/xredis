@@ -648,21 +648,21 @@ bool xrc::xRedisClusterManager::check_cluster_info(ClusterInfo& cinfo)
     return true;
 }
 
-xRedisClusterManager* xrc::xRedisClusterClient::connectRedis(const std::string& host, uint32_t port,
-    const std::string& pass, uint32_t poolsize)
+xRedisClusterManager* xrc::xRedisClusterManager::connectRedis(const std::string& host, uint32_t port,
+    const std::string& pass, uint32_t poolsize,  ClusterInfo* &info)
 {
     xredis_info("host:%s port:%u pass:%s poolsize:%u", host.c_str(), port, pass.c_str(), poolsize);
 
-    if (NULL == mRedisInfo) {
-        mRedisInfo = new ClusterInfo;
+    if (NULL == info) {
+        info = new ClusterInfo;
     }
 
     struct timeval timeoutVal;
     timeoutVal.tv_sec = 5;
     timeoutVal.tv_usec = 0;
 
-    mRedisInfo->pass = pass;
-    mRedisInfo->poolsize = poolsize;
+    info->pass = pass;
+    info->poolsize = poolsize;
 
     redisContext* redis_ctx = redisConnectWithTimeout(host.c_str(), port, timeoutVal);
     if (redis_ctx == NULL || redis_ctx->err) {
@@ -681,10 +681,10 @@ xRedisClusterManager* xrc::xRedisClusterClient::connectRedis(const std::string& 
         }
     }
 
-    mRedisInfo->clusterEnabled = xRedisClusterManager::clusterEnabled(redis_ctx);
-    xredis_info("connectRedis clusterEnabled:%u \n", mRedisInfo->clusterEnabled);
+    info->clusterEnabled = xRedisClusterManager::clusterEnabled(redis_ctx);
+    xredis_info("connectRedis clusterEnabled:%u \n", info->clusterEnabled);
 
-    if (!mRedisInfo->clusterEnabled) {
+    if (!info->clusterEnabled) {
         // 如果没有启用集群模式，则使用单节点redis
         NodeInfo node;
         node.ip = host;
@@ -692,19 +692,19 @@ xRedisClusterManager* xrc::xRedisClusterClient::connectRedis(const std::string& 
         node.is_master = true;
         node.connected = true;
 
-        mRedisInfo->poolsize = poolsize;
-        mRedisInfo->pass = pass;
-        mRedisInfo->nodes.push_back(node);
-        xredis_info("Using single redis, size:%u poolsize:%u", mRedisInfo->nodes.size(), mRedisInfo->poolsize);
+        info->poolsize = poolsize;
+        info->pass = pass;
+        info->nodes.push_back(node);
+        xredis_info("Using single redis, size:%u poolsize:%u", info->nodes.size(), info->poolsize);
         redisFree(redis_ctx);
     } else {
         // 查询redis集群节点列表
-        if (!xRedisClusterManager::clusterNodes(redis_ctx, mRedisInfo)) {
+        if (!xRedisClusterManager::clusterNodes(redis_ctx, info)) {
             xredis_error("clusterNodes error \n");
             redisFree(redis_ctx);
             return NULL;
         }
-        xredis_debug("clusterNodes nodes.size:%u \n", mRedisInfo->nodes.size());
+        xredis_debug("clusterNodes nodes.size:%u \n", info->nodes.size());
 
         // 判断下集群状态，
         if (!xRedisClusterManager::clusterState(redis_ctx)) {
@@ -718,7 +718,7 @@ xRedisClusterManager* xrc::xRedisClusterClient::connectRedis(const std::string& 
     }
 
     xRedisClusterManager* pClusterManager = new xRedisClusterManager;
-    if (!pClusterManager->connectCluster(mRedisInfo)) {
+    if (!pClusterManager->connectCluster(info)) {
         xredis_error("ConnectCluster error \n");
         return NULL;
     }
@@ -727,6 +727,7 @@ xRedisClusterManager* xrc::xRedisClusterClient::connectRedis(const std::string& 
 
     return pClusterManager;
 }
+
 
 xrc::xRedisClusterClient::xRedisClusterClient()
 {
@@ -755,7 +756,7 @@ xrc::xRedisClusterClient::~xRedisClusterClient()
 
 bool xrc::xRedisClusterClient::connect(const std::string& host, uint32_t port, const std::string& pass, uint32_t poolsize)
 {
-    return (mClusterManager = connectRedis(host, port, pass, poolsize));
+    return (mClusterManager = xRedisClusterManager::connectRedis(host, port, pass, poolsize, mRedisInfo));
 }
 
 void xrc::xRedisClusterClient::keepalive()
@@ -764,6 +765,7 @@ void xrc::xRedisClusterClient::keepalive()
         if (mClusterManager_free->release()) {
             delete mClusterManager_free;
             mClusterManager_free = NULL;
+            xredis_warn("mClusterManager_free release OK ");
         } else {
             xredis_warn("Having problems with cluster connection collection?");
         }
@@ -774,7 +776,7 @@ void xrc::xRedisClusterClient::keepalive()
         if (NULL != pConn) {
             if (!mClusterManager->check_cluster_info(*mRedisInfo)) {
                 xredis_warn("The cluster state has changed , the connection pool needs to be reestablished");
-                xRedisClusterManager* pClusterManagerNew = connectRedis(pConn->mHost, pConn->mPort, pConn->mPass, pConn->mPoolSize);
+                xRedisClusterManager* pClusterManagerNew = xRedisClusterManager::connectRedis(pConn->mHost, pConn->mPort, pConn->mPass, pConn->mPoolSize, mRedisInfo);
                 mClusterManager->freeConnection(pConn);
                 mClusterManager->bfree();
 

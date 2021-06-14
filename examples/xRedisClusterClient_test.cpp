@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
     xRedisClusterClient redisClusterClient;
     std::string pass;
-    bool bRet = redisClusterClient.Connect("127.0.0.1", 7001, pass, 4);
+    bool bRet = redisClusterClient.connect("127.0.0.1", 7001, pass, 4);
     //bool bRet = redisClusterClient.ConnectRedis(argv[1], atoi(argv[2]), argv[3], 4);
     if (!bRet) {
         return -1;
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     // redis_arg.push_back("htest");
 
     RedisResult result;
-    redisClusterClient.RedisCommand(result, "hgetall %s", "htest");
+    redisClusterClient.command(result, "hgetall %s", "htest");
 
     printf("type:%d integer:%lld str:%s \r\n", result.type(), result.integer(),
         result.str());
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
     while (true) {
         usleep(1000 * 1000 * 6);
-        redisClusterClient.Keepalive();
+        redisClusterClient.keepalive();
     }
 
     return 0;
