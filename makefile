@@ -94,7 +94,8 @@ test: xredis-test
 
 clean:
 	rm -rf $(DYLIBNAME) $(STLIBNAME) $(TESTS) src/*.o examples/example* *.o test/*.o 
-	rm -rf  examples/demo  examples/demo_multi_slice   examples/demo_slice  examples/xRedisClusterClient_test  examples/xredis-example
+	rm -rf  examples/demo  examples/demo_multi_slice   examples/demo_slice  
+	rm -rf  examples/xRedisClusterClient_test  examples/xredis-example examples/cluster-cli
 dep:
 	$(CC) -MM *.cpp
 
