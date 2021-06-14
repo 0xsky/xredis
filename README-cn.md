@@ -7,14 +7,16 @@ xRedis 是一个C++开发的redis客户端，是对hiredis的C++封装，提供�
 
 ***功能与特点：***
 * 支持数据多节点分布存储，可自定义分片规则;
-* 支持连接到官方集群，支持自动计算节点索引位置;
 * 支持同时连接到每个分片的主从节点，支持主从读写分离;
 * 支持对每个存储节点建立连接池;
 * 支持同时连接多个数据分片集群;
+* 支持连接到官方集群，支持自动计算节点索引位置,支持REDIS集群节点变化连接自动切换;
+    当官方集群节点有添加/删除/slot分布变化时，到集群的连接池会自动更新。
 * 提供简单易用的C++接口封装，已实现大部分REDIS命令;
 * 只依赖hiredis库;
 * 多线程安全
 * 支持带密码连接;
+* 支持linux、windows平台
  
 
 ### Dependencies
@@ -67,8 +69,8 @@ demo_multi_slice.cpp  使用xredisclient访问多组多分片(节点)redis分片
 xredis-example.cpp    使用xredisclient 批量操作示例 
 xredis-example-Consistent-hash xredisclient使用一致性hash，自定义数据分片存储demo
 
-redis-cluster-client.cpp      使用xRedisClusterClient访问redis官方集群示例
 xRedisClusterClient_test.cpp  使用xRedisClusterClient实现简单的redis官方集群客户端示例
+cluster-cli.cpp      使用 xRedisClusterClient 实现的连接redis集群的client，支持集群节增加/删除、slot分布变化时，自动切换。
 
 /test/xredis-test.cpp   多个redis命令的使用示例
 
