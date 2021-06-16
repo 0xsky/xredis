@@ -284,9 +284,9 @@ bool xRedisClusterManager::clusterNodes(redisContext* redis_ctx, ClusterInfo* in
         node.flags = nodeinfo[2];
         node.parse_role(nodeinfo[3]);
         node.master_id = nodeinfo[4];
-        node.ping_sent = atoul(nodeinfo[5].c_str());
-        node.pong_recv = atoul(nodeinfo[6].c_str());
-        node.epoch = atoul(nodeinfo[7].c_str());
+        node.ping_sent = (NULL == nodeinfo[5].c_str()) ? (0) : ((uint32_t)atol(nodeinfo[5].c_str()));
+        node.pong_recv = (NULL == nodeinfo[6].c_str()) ? (0) : ((uint32_t)atol(nodeinfo[6].c_str()));
+        node.epoch = (NULL == nodeinfo[7].c_str()) ? (0) : ((uint32_t)atol(nodeinfo[7].c_str()));
 
         if (nodeinfo.size() > 8) {
             for (uint32_t i = 0; i < nodeinfo.size() - 8; i++) {

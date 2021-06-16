@@ -67,6 +67,12 @@ void SliceIndex::SetIOMaster()
     mIOFlag = true;
 }
 
+void SliceIndex::SetIOSlave()
+{
+    mIOtype = SLAVE;
+    mIOFlag = true;
+}
+
 bool SliceIndex::SetErrInfo(const char* info, int32_t len)
 {
     if (NULL == info) {

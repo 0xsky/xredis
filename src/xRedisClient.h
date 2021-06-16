@@ -81,7 +81,8 @@ public:
     bool CreateByID(int64_t id);
     char *GetErrInfo() {return mStrerr;}
     void SetIOMaster();
-
+    void SetIOSlave();
+    
 private:
     static unsigned int APHash(const char *str);
     bool SetErrInfo(const char *info, int32_t len);

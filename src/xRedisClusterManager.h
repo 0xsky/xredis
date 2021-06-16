@@ -87,7 +87,7 @@ typedef struct _REDISCONN_ {
             }
             freeReplyObject(reply);
         }
-
+        xredis_debug("auth %s:%u %s %d", mHost.c_str(), mPort, mPass.c_str(), bRet);
         return bRet;
     }
 
@@ -242,7 +242,8 @@ public:
     bool release();
 
     static xRedisClusterManager* connectRedis(const std::string& host, uint32_t port,
-        const std::string& pass, uint32_t poolsize,  ClusterInfo* &info);
+        const std::string& pass, uint32_t poolsize, ClusterInfo*& info);
+
 private:
     bool connectRedisNode(int idx, const std::string& host, uint32_t port,
         const std::string& pass, uint32_t poolsize);

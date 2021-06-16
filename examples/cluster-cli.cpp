@@ -90,15 +90,18 @@ int main(int argc, char** argv)
     (void)argc;
     (void)argv;
 
-    if (3 != argc) {
-        printf("Usage:%s host port\r\n", argv[0]);
-        return -1;
-    }
-
     std::string pass;
+
+    if (argc<3) {
+        printf("Usage:%s host port pass \r\n", argv[0]);
+        return -1;
+    }  else if (4==argc) {
+        pass = argv[3];
+    }
+    
     init_timer();
     xRedisClusterClient redisclient;
-    redisclient.setLogLevel(LOG_LEVEL_INFO, log_demo);
+    redisclient.setLogLevel(LOG_LEVEL_DEBUG, log_demo);
     redis = &redisclient;
     bool bRet = redisclient.connect(argv[1], atoi(argv[2]), pass, 4);
 

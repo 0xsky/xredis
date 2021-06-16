@@ -11,16 +11,17 @@ C++ Redis client, support the data slice storage, redis cluster, connection pool
 * Support to connect to master and slave nodes of each shard at the same time, support separation of master and slave reads and writes;
 * Support connection pooling for each storage node;
 * Support simultaneous connection of multiple data sharding clusters;
-* Support to connect to the official cluster, support automatic calculation of node index position, 
-  support Redis cluster node change  connection automatic switch;
-  The connection pool to the cluster is automatically updated when the add/delete /slot distribution of the official cluster node changes.
+* Support for connecting to official clusters, single or multiple nodes
+    Support to set up a connection pool to each node, the client side automatically calculates the slot distribution.
+    Support automatic calculation of node index position, support Redis cluster node change connection automatic switch;
+    The connection pool to the cluster is automatically updated when the add/delete /slot distribution of the official cluster node changes.
 * Provide easy to use C++ interface encapsulation, has implemented most of the Redis command;
 * Only rely on the Hiredis library;
 * Multi-thread safety
 * Support password connection;
 * Support Linux and Windows platforms
 
-中文版说明文档点[这里](https://github.com/0xsky/xredis/blob/master/README-cn.md)
+中文版说明文档[点这里](https://github.com/0xsky/xredis/blob/master/README-cn.md)
 
 ### Dependencies
 
@@ -58,13 +59,18 @@ int main(int argc, char **argv) {
     # If this node is a member of the REDIS cluster, 
     # a connection pool is automatically established for each primary node in the cluster.
     std::string passwd = "passwd123";
-    bool bRet = redisclient.ConnectRedis("127.0.0.1", 6379, passwd, 4);
+    bool bRet = redisclient.connect("127.0.0.1", 6379, passwd, 4);
 
     RedisResult result;
-    redisclient.RedisCommand(result, "set %s %s", "key", "hello");
+    redisclient.command(result, "set %s %s", "key", "hello");
     
     printf("type:%d integer:%lld str:%s \r\n",
         result.type(), result.integer(), result.str());
+
+   while (true) {
+        usleep(1000*1000*6);
+        redisclient.keepalive();
+    }
 
     return 0;
 }

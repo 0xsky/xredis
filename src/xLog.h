@@ -16,7 +16,4 @@
 void log_message(uint32_t level, const char* function, int line, const char* fmt, ...);
 void set_log_level(uint32_t level, void (*emit)(int level, const char* line));
 
-uint64_t atoull(const char* str);
-uint32_t atoul(const char * str);
-
 #endif

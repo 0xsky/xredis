@@ -62,6 +62,3 @@ void log_message(uint32_t level, const char* function, int line, const char* fmt
             _errstr[level], function, line, data1);
     }
 }
-
-uint64_t atoull(const char* str) { return (NULL == str) ? (0) : (strtoull(str, (char**)NULL, 0)); }
-uint32_t atoul(const char* str) { return (NULL == str) ? (0) : ((uint32_t)atol(str)); }
