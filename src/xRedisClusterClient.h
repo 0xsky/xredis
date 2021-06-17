@@ -6,8 +6,8 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef _XREDIS_XREDISCLUSTERCLIENT_H_
-#define _XREDIS_XREDISCLUSTERCLIENT_H_
+#ifndef _XREDIS_CLUSTER_CLIENT_H_
+#define _XREDIS_CLUSTER_CLIENT_H_
 
 #include "hiredis.h"
 #include <stdint.h>

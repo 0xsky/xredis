@@ -24,6 +24,4 @@ bool xRedisClient::echo(const SliceIndex& index, const std::string& str, std::st
     return command_string(index, value, "echo %s", str.c_str());
 }
 
-
 } // namespace xrc
-

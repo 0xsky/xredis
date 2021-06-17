@@ -7,7 +7,6 @@
  */
 
 #include "xRedisClient.h"
-using namespace xrc;
 
 namespace xrc {
 
@@ -236,4 +235,3 @@ bool xRedisClient::sunionstore(const SliceIndex& index, const KEY& deskey,
 }
 
 } // namespace xrc
-

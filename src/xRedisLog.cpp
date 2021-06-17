@@ -1,6 +1,6 @@
 
 
-#include "xLog.h"
+#include "xRedisLog.h"
 #include <stdarg.h>
 #include <time.h>
 

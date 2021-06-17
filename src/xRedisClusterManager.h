@@ -1,16 +1,18 @@
 
-#ifndef _XREDISCLUSTERMANAGER_H_
-#define _XREDISCLUSTERMANAGER_H_
+#ifndef _XREDIS_CLUSTER_MANAGER_H_
+#define _XREDIS_CLUSTER_MANAGER_H_
 
 #include "hiredis.h"
 #include "xLock.h"
-#include "xLog.h"
-#include <list>
+#include "xRedisLog.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <string>
 #include <vector>
+#include <list>
 
 namespace xrc {
 

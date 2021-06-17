@@ -7,10 +7,11 @@
  */
 
 #include "xRedisClient.h"
-#include "xLog.h"
+#include "xRedisLog.h"
 #include "xRedisPool.h"
+
 namespace xrc {
-    
+
 SliceIndex::SliceIndex()
 {
     mType = 0;
@@ -102,7 +103,8 @@ unsigned int SliceIndex::APHash(const char* str)
     return (hash & 0x7FFFFFFF);
 }
 
-xRedisClient::xRedisClient() { 
+xRedisClient::xRedisClient()
+{
     mRedisPool = NULL;
 }
 

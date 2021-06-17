@@ -8,7 +8,6 @@
 
 #include "xRedisClient.h"
 #include "xRedisPool.h"
-
 namespace xrc {
 
 bool xRedisClient::psubscribe(const SliceIndex& index, const KEYS& patterns,

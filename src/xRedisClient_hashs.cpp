@@ -8,10 +8,8 @@
 
 #include "xRedisClient.h"
 #include "xRedisPool.h"
-#include <stdlib.h>
 
 namespace xrc {
-
 
 bool xRedisClient::hdel(const SliceIndex& index, const std::string& key, const std::string& field, int64_t& count)
 {

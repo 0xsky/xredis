@@ -7,7 +7,6 @@
  */
 
 #include "xRedisClient.h"
-#include <stdio.h>
 
 namespace xrc {
 

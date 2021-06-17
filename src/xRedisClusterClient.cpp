@@ -7,8 +7,8 @@
  */
 
 #include "xRedisClusterClient.h"
-#include "xLog.h"
 #include "xRedisClusterManager.h"
+#include "xRedisLog.h"
 
 namespace xrc {
 
@@ -649,7 +649,7 @@ bool xrc::xRedisClusterManager::check_cluster_info(ClusterInfo& cinfo)
 }
 
 xRedisClusterManager* xrc::xRedisClusterManager::connectRedis(const std::string& host, uint32_t port,
-    const std::string& pass, uint32_t poolsize,  ClusterInfo* &info)
+    const std::string& pass, uint32_t poolsize, ClusterInfo*& info)
 {
     xredis_info("host:%s port:%u pass:%s poolsize:%u", host.c_str(), port, pass.c_str(), poolsize);
 
@@ -727,7 +727,6 @@ xRedisClusterManager* xrc::xRedisClusterManager::connectRedis(const std::string&
 
     return pClusterManager;
 }
-
 
 xrc::xRedisClusterClient::xRedisClusterClient()
 {

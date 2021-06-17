@@ -179,4 +179,3 @@ bool xRedisClient::sort(const SliceIndex& index, ArrayReply& array, const std::s
 }
 
 } // namespace xrc
-

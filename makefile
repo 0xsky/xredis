@@ -5,7 +5,7 @@
 # This file is released under the BSD license, see the COPYING file
 
 OBJ=src/xRedisClient.o src/xRedisClient_keys.o src/xRedisClient_sets.o src/xRedisClient_strings.o src/xRedisClient_pubsub.o src/xRedisClusterClient.o \
-src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o src/xLog.o
+src/xRedisClient_connection.o src/xRedisClient_hashs.o src/xRedisClient_lists.o src/xRedisClient_sortedsets.o src/xRedisPool.o src/xRedisLog.o
 EXAMPLES=xredis-example 
 TESTS=xredis-test
 LIBNAME=libxredis
@@ -59,7 +59,7 @@ xRedisClient_strings.o:    xRedisClient_strings.cpp
 xRedisClient_pubsub.o:     xRedisClient_pubsub.cpp
 xRedisPool.o:              xRedisPool.cpp
 xRedisClusterClient.o:     xRedisClusterClient.cpp
-xLog.o:                    xLog.cpp
+xRedisLog.o:                    xRedisLog.cpp
 
 $(DYLIBNAME): $(OBJ)
 	$(DYLIB_MAKE_CMD) $(OBJ)
@@ -96,6 +96,8 @@ clean:
 	rm -rf $(DYLIBNAME) $(STLIBNAME) $(TESTS) src/*.o examples/example* *.o test/*.o 
 	rm -rf  examples/demo  examples/demo_multi_slice   examples/demo_slice  
 	rm -rf  examples/xRedisClusterClient_test  examples/xredis-example examples/cluster-cli
+	rm -rf  test/xredis-test
+	
 dep:
 	$(CC) -MM *.cpp
 
