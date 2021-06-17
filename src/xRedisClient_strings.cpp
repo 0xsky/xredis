@@ -7,8 +7,7 @@
  */
 
 #include "xRedisClient.h"
-
-using namespace xrc;
+namespace xrc {
 
 bool xRedisClient::psetex(const SliceIndex& index, const std::string& key,
     int32_t milliseconds, const std::string& value)
@@ -280,3 +279,5 @@ bool xRedisClient::decrby(const SliceIndex& index, const std::string& key,
     SETDEFAULTIOTYPE(MASTER);
     return command_integer(index, result, "decrby %s %d", key.c_str(), by);
 }
+
+} // namespace xrc

@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <time.h>
 
+namespace xrc {
 
 const char* const _errstr[] = { "\033[01;31mERROR\033[0m", "\033[01;33mWARN \033[0m", "\033[01;37mINFO \033[0m", "\033[22;34mDEBUG\033[0m" };
 static void (*log_fn)(int level, const char* line) = NULL;
@@ -62,3 +63,6 @@ void log_message(uint32_t level, const char* function, int line, const char* fmt
             _errstr[level], function, line, data1);
     }
 }
+
+} // namespace xrc
+

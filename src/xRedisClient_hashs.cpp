@@ -9,7 +9,9 @@
 #include "xRedisClient.h"
 #include "xRedisPool.h"
 #include <stdlib.h>
-using namespace xrc;
+
+namespace xrc {
+
 
 bool xRedisClient::hdel(const SliceIndex& index, const std::string& key, const std::string& field, int64_t& count)
 {
@@ -131,3 +133,5 @@ bool xRedisClient::hvals(const SliceIndex& index, const std::string& key, VALUES
     SETDEFAULTIOTYPE(SLAVE);
     return command_list(index, values, "HVALS %s", key.c_str());
 }
+
+} // namespace xrc

@@ -9,9 +9,8 @@
 #include "xRedisClient.h"
 #include "xLog.h"
 #include "xRedisPool.h"
-
-using namespace xrc;
-
+namespace xrc {
+    
 SliceIndex::SliceIndex()
 {
     mType = 0;
@@ -734,3 +733,5 @@ bool xRedisClient::ScanFun(const char* cmd, const SliceIndex& index,
     RedisPool::FreeReply(reply);
     return bRet;
 }
+
+} // namespace xrc

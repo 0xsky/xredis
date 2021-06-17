@@ -9,7 +9,7 @@
 #ifndef _XLOCK_H_
 #define _XLOCK_H_
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #else
 #include <pthread.h>
@@ -17,9 +17,11 @@
 #include <unistd.h>
 #endif
 
+namespace xrc {
+
 class xLock {
 private:
-#ifdef WIN32
+#ifdef _WIN32
     CRITICAL_SECTION mSection;
 #else
     pthread_mutex_t mMutex;
@@ -28,7 +30,7 @@ private:
 public:
     inline xLock()
     {
-#ifdef WIN32
+#ifdef _WIN32
         InitializeCriticalSection(&mSection);
 #else
         pthread_mutexattr_t attr;
@@ -42,7 +44,7 @@ public:
     };
     inline ~xLock()
     {
-#ifdef WIN32
+#ifdef _WIN32
         DeleteCriticalSection(&mSection);
 #else
         pthread_mutex_destroy(&mMutex);
@@ -50,7 +52,7 @@ public:
     }
     inline void Enter()
     {
-#ifdef WIN32
+#ifdef _WIN32
         EnterCriticalSection(&mSection);
 #else
         pthread_mutex_lock(&mMutex);
@@ -58,7 +60,7 @@ public:
     }
     inline void Leave()
     {
-#ifdef WIN32
+#ifdef _WIN32
         LeaveCriticalSection(&mSection);
 #else
         pthread_mutex_unlock(&mMutex);
@@ -83,5 +85,7 @@ private:
 };
 
 #define XLOCK(T) CLockUser lock(T)
+
+} // namespace xrc
 
 #endif

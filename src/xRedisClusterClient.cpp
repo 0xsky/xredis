@@ -10,7 +10,7 @@
 #include "xLog.h"
 #include "xRedisClusterManager.h"
 
-using namespace xrc;
+namespace xrc {
 
 static const uint16_t crc16tab[256] = {
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7, 0x8108,
@@ -820,3 +820,5 @@ void xrc::xRedisClusterClient::setLogLevel(uint32_t level, void (*emit)(int leve
 {
     set_log_level(level, emit);
 }
+
+} // namespace xrc

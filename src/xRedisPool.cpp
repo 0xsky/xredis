@@ -11,7 +11,7 @@
 #include "xLog.h"
 #include <time.h>
 
-using namespace xrc;
+namespace xrc {
 
 RedisPool::RedisPool()
 {
@@ -562,3 +562,6 @@ RedisConn* RedisCache::GetConn(uint32_t dbindex, uint32_t ioRole)
 }
 
 uint32_t RedisCache::GetHashBase() const { return mHashbase; }
+
+} // namespace xrc
+

@@ -7,7 +7,8 @@
  */
 
 #include "xRedisClient.h"
-using namespace xrc;
+
+namespace xrc {
 
 void xRedisClient::quit()
 {
@@ -22,3 +23,7 @@ bool xRedisClient::echo(const SliceIndex& index, const std::string& str, std::st
     SETDEFAULTIOTYPE(MASTER);
     return command_string(index, value, "echo %s", str.c_str());
 }
+
+
+} // namespace xrc
+
