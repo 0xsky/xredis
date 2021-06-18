@@ -14,6 +14,13 @@
 #include <vector>
 #include <list>
 
+#ifdef _WIN32
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+#define usleep(us)        Sleep((us)/1000)
+#define pthread_self()    GetCurrentThreadId()
+#endif
+
 namespace xrc {
 
 #define MAX_REDIS_POOLSIZE 128

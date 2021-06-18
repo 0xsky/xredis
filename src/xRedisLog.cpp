@@ -25,7 +25,12 @@ void log_message(uint32_t level, const char* function, int line, const char* fmt
     time_t t;
     time(&t);
     struct tm tm;
-    ::localtime_r((const time_t*)&t, &tm);
+	
+#ifdef _WIN32
+	::localtime_s(&tm, (const time_t*)&t);
+#else
+    ::localtime_r((const time_t*)&t, &tm);  
+#endif
 
     char data1[DATA_BUF + 4];
     int i = 0;
