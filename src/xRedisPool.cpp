@@ -178,6 +178,10 @@ redisContext* RedisConn::ConnectWithTimeout()
         }
     }
 
+    if(ctx) {
+        redisSetTimeout(ctx, timeoutVal);
+    }
+
     return ctx;
 }
 
