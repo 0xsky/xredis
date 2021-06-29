@@ -180,6 +180,7 @@ redisContext* RedisConn::ConnectWithTimeout()
 
     if(ctx) {
         redisSetTimeout(ctx, timeoutVal);
+        redisEnableKeepAlive(ctx);
     }
 
     return ctx;
