@@ -75,7 +75,8 @@ int main(int argc, char **argv) {
     return 0;
 }
 ```
-
+### Todo
+  Support redis sentinel 
 
 ### Documentation
 ![xredis](http://xredis.0xsky.com/pic/xredis_0.png)

@@ -81,6 +81,12 @@ cluster-cli.cpp      使用 xRedisClusterClient 实现的连接redis集群的cli
 /test/xredis-test.cpp   多个redis命令的使用示例
 
 ### 相关文档
+
+
+### 计划
+  添加 Redis 哨兵模式支持
+
+
 ##### xRedis 分片存储架构图
 ![xredis](http://xredis.0xsky.com/pic/xredis_0.png)
 <p>[xRedis API](http://xredis.0xsky.com/) 

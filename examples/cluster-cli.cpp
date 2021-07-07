@@ -1,4 +1,18 @@
-﻿#include <signal.h>
+﻿/*
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2013-2021, xSky <guozhw at gmail dot com>
+ * All rights reserved.
+ * Distributed under GPL license.
+ * ----------------------------------------------------------------------------
+ */
+
+/** \example cluster-cli.cpp
+* This is an example used by XredisClusterClient
+* Implemented a simple Redis console client
+* Connecting a single Redis node and an official Redis cluster is supported
+ */
+
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,7 +115,7 @@ int main(int argc, char** argv)
     
     init_timer();
     xRedisClusterClient redisclient;
-    redisclient.setLogLevel(LOG_LEVEL_DEBUG, log_demo);
+    //redisclient.setLogLevel(LOG_LEVEL_DEBUG, log_demo);
     redis = &redisclient;
     bool bRet = redisclient.connect(argv[1], atoi(argv[2]), pass, 4);
 
