@@ -8,6 +8,11 @@
 
 namespace xrc {
 
+#define LOG_LEVEL_ERROR 0
+#define LOG_LEVEL_WARN 1
+#define LOG_LEVEL_INFO 2
+#define LOG_LEVEL_DEBUG 3
+
 #define xredis_error(...) log_message(LOG_LEVEL_ERROR, __FUNCTION__, __LINE__, __VA_ARGS__)
 #define xredis_warn(...) log_message(LOG_LEVEL_WARN, __FUNCTION__, __LINE__, __VA_ARGS__)
 #define xredis_info(...) log_message(LOG_LEVEL_INFO, __FUNCTION__, __LINE__, __VA_ARGS__)

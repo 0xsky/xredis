@@ -8,8 +8,8 @@
 
 #include "xRedisClient.h"
 #include "xRedisPool.h"
-
-namespace xrc {
+#include <stdlib.h>
+using namespace xrc;
 
 bool xRedisClient::hdel(const SliceIndex& index, const std::string& key, const std::string& field, int64_t& count)
 {
@@ -55,12 +55,12 @@ bool xRedisClient::hincrbyfloat(const SliceIndex& index, const std::string& key,
 {
     SETDEFAULTIOTYPE(MASTER);
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex);
     if (NULL == pRedisConn) {
         return false;
     }
 
-    redisReply* reply = static_cast<redisReply*>(redisCommand(pRedisConn->getCtx(), "HINCRBYFLOAT %s %s %f", key.c_str(), field.c_str(), increment));
+    redisReply* reply = static_cast<redisReply*>(redisCommand(pRedisConn->GetCtx(), "HINCRBYFLOAT %s %s %f", key.c_str(), field.c_str(), increment));
     if (RedisPool::CheckReply(reply)) {
         value = atof(reply->str);
         bRet = true;
@@ -131,5 +131,3 @@ bool xRedisClient::hvals(const SliceIndex& index, const std::string& key, VALUES
     SETDEFAULTIOTYPE(SLAVE);
     return command_list(index, values, "HVALS %s", key.c_str());
 }
-
-} // namespace xrc

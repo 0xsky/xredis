@@ -21,13 +21,6 @@
 
 namespace xrc {
 
-
-#define LOG_LEVEL_ERROR 0
-#define LOG_LEVEL_WARN 1
-#define LOG_LEVEL_INFO 2
-#define LOG_LEVEL_DEBUG 3
-
-
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
 #define REDIS_REPLY_INTEGER 3
@@ -38,11 +31,11 @@ namespace xrc {
 
 #define MAX_ERR_STR_LEN 128
 
-typedef std::string             KEY;
-typedef std::string             VALUE;
-typedef std::vector<KEY>        KEYS;
-typedef KEYS                    FILEDS;
-typedef std::vector<VALUE>      VALUES;
+typedef std::string                  KEY;
+typedef std::string                  VALUE;
+typedef std::vector<KEY>             KEYS;
+typedef KEYS                         FILEDS;
+typedef std::vector<VALUE>           VALUES;
 typedef std::vector<std::string>     VDATA;
 typedef std::set<std::string>        SETDATA;
 
@@ -81,8 +74,7 @@ public:
     bool CreateByID(int64_t id);
     char *GetErrInfo() {return mStrerr;}
     void SetIOMaster();
-    void SetIOSlave();
-    
+
 private:
     static unsigned int APHash(const char *str);
     bool SetErrInfo(const char *info, int32_t len);
@@ -149,8 +141,8 @@ typedef enum _SORT_ORDER_{
 
 typedef struct _SORT_LIMIT_
 { 
-    int32_t offset; 
-    int32_t count; 
+	int32_t offset; 
+	int32_t count; 
 }LIMIT;
 
 template<class T>

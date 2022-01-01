@@ -8,7 +8,7 @@
 
 #include "xRedisClient.h"
 #include "xRedisPool.h"
-namespace xrc {
+using namespace xrc;
 
 bool xRedisClient::psubscribe(const SliceIndex& index, const KEYS& patterns,
     xRedisContext& ctx)
@@ -69,7 +69,7 @@ bool xRedisClient::punsubscribe(const SliceIndex& index, const KEYS& patterns,
     addparam(vCmdData, patterns);
 
     bool bRet = false;
-    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx.conn);
+    RedisConnection* pRedisConn = static_cast<RedisConnection*>(ctx.conn);
     if (NULL == pRedisConn) {
         SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
         return false;
@@ -84,7 +84,7 @@ bool xRedisClient::punsubscribe(const SliceIndex& index, const KEYS& patterns,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         bRet = true;
     } else {
@@ -113,7 +113,7 @@ bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels,
     addparam(vCmdData, channels);
 
     bool bRet = false;
-    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx.conn);
+    RedisConnection* pRedisConn = static_cast<RedisConnection*>(ctx.conn);
     if (NULL == pRedisConn) {
         SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
         return false;
@@ -128,7 +128,7 @@ bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         bRet = true;
     } else {
@@ -137,5 +137,3 @@ bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels,
     RedisPool::FreeReply(reply);
     return bRet;
 }
-
-} // namespace xrc

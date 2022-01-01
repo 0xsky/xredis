@@ -7,7 +7,7 @@
  */
 
 #include "xRedisClient.h"
-namespace xrc {
+using namespace xrc;
 
 bool xRedisClient::zadd(const SliceIndex& index, const KEY& key,
     const VALUES& vValues, int64_t& count)
@@ -195,5 +195,3 @@ bool xRedisClient::zscore(const SliceIndex& index, const std::string& key,
     return command_string(index, score, "ZSCORE %s %s", key.c_str(),
         member.c_str());
 }
-
-} // namespace xrc

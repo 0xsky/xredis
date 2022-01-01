@@ -7,8 +7,7 @@
  */
 
 #include "xRedisClient.h"
-
-namespace xrc {
+using namespace xrc;
 
 bool xRedisClient::sadd(const SliceIndex& index, const std::string& key,
     const VALUES& vValue, int64_t& count)
@@ -233,5 +232,3 @@ bool xRedisClient::sunionstore(const SliceIndex& index, const KEY& deskey,
     }
     return sadd(index, deskey, sValue, count);
 }
-
-} // namespace xrc

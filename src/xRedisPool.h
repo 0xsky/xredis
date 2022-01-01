@@ -9,13 +9,11 @@
 #ifndef _XREDIS_POOL_H_
 #define _XREDIS_POOL_H_
 
-#include "xRedisClient.h"
 #include "hiredis.h"
 #include "xLock.h"
-
-#include <string.h>
-
+#include "xRedisClient.h"
 #include <list>
+#include <string.h>
 #include <string>
 
 namespace xrc {
@@ -27,23 +25,21 @@ namespace xrc {
 #define GET_CONNECT_ERROR "get connection error"
 #define CONNECT_CLOSED_ERROR "redis connection be closed"
 
-#ifdef _WIN32
+#ifdef WIN32
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
-#define usleep(us)        Sleep((us)/1000)
-#define pthread_self()    GetCurrentThreadId()
 #endif
 
 enum { REDISDB_UNCONN,
     REDISDB_WORKING,
     REDISDB_DEAD };
 
-class RedisConn {
+class RedisConnection {
 public:
-    RedisConn();
-    ~RedisConn();
+    RedisConnection();
+    ~RedisConnection();
 
-    void Init(uint32_t cachetype, uint32_t dbindex, const std::string& host,
+    void Init(uint32_t cahcetype, uint32_t sliceindex, const std::string& host,
         uint32_t port, const std::string& pass, uint32_t poolsize,
         uint32_t timeout, uint32_t role, uint32_t slaveidx);
 
@@ -51,15 +47,15 @@ public:
     bool RedisReConnect();
     bool Ping();
 
-    redisContext* getCtx() const { return mCtx; }
-    uint32_t getdbindex() const { return mDbindex; }
+    redisContext* GetCtx() const { return mCtx; }
+    uint32_t GetdbIndex() const { return mSliceIndex; }
     uint32_t GetType() const { return mType; }
     uint32_t GetRole() const { return mRole; }
     uint32_t GetSlaveIdx() const { return mSlaveIdx; }
     bool GetConnstatus() const { return mConnStatus; }
 
 private:
-    bool auth();
+    bool Auth();
     redisContext* ConnectWithTimeout();
 
 private:
@@ -71,41 +67,41 @@ private:
     uint32_t mTimeout; // connect timeout second
     uint32_t mPoolsize; // connect pool size for each redis DB
     uint32_t mType; // redis cache pool type
-    uint32_t mDbindex; // redis DB index
+    uint32_t mSliceIndex; // redis DB index
     uint32_t mRole; // redis role
     uint32_t mSlaveIdx; // the index in the slave group
     bool mConnStatus; // redis connection status
 };
 
-typedef std::list<RedisConn*> RedisConnPool;
-typedef std::list<RedisConn*>::iterator RedisConnIter;
+typedef std::list<RedisConnection*> RedisConnectionPool;
+typedef std::list<RedisConnection*>::iterator RedisConnectionIter;
 
-typedef std::vector<RedisConnPool*> RedisSlaveGroup;
-typedef std::vector<RedisConnPool*>::iterator RedisSlaveGroupIter;
+typedef std::vector<RedisConnectionPool*> RedisSlaveGroup;
+typedef std::vector<RedisConnectionPool*>::iterator RedisSlaveGroupIter;
 
-typedef struct _RedisDBSlice_Conn_ {
-    RedisConnPool RedisMasterConn;
-    RedisSlaveGroup RedisSlaveConn;
+typedef struct _RedisSliceConn_ {
+    RedisConnectionPool RedisMasterConnection;
+    RedisSlaveGroup RedisSlaveConnection;
     xLock MasterLock;
     xLock SlaveLock;
 } RedisSliceConn;
 
-class RedisDBSlice {
+class RedisSlice {
 public:
-    RedisDBSlice();
-    ~RedisDBSlice();
+    RedisSlice();
+    ~RedisSlice();
 
-    void Init(uint32_t cachetype, uint32_t dbindex);
+    void Init(uint32_t cahcetype, uint32_t dbindex);
     // 连到到一个REDIS服务节点
-    bool ConnectRedisNodes(uint32_t cachetype, uint32_t dbindex,
+    bool ConnectRedisSlice(uint32_t cahcetype, uint32_t dbindex,
         const std::string& host, uint32_t port,
         const std::string& passwd, uint32_t poolsize,
         uint32_t timeout, int32_t role);
 
-    RedisConn* GetMasterConn();
-    RedisConn* GetSlaveConn();
-    RedisConn* GetConn(int32_t ioRole);
-    void FreeConn(RedisConn* redisconn);
+    RedisConnection* GetMasterConn();
+    RedisConnection* GetSlaveConn();
+    RedisConnection* GetConn(int32_t ioRole);
+    void FreeConn(RedisConnection* redisconn);
     void CloseConnPool();
     void ConnPoolPing();
     uint32_t GetStatus() const;
@@ -113,31 +109,31 @@ public:
 private:
     RedisSliceConn mSliceConn;
     bool mHaveSlave;
-    uint32_t mType; // redis cache pool type
-    uint32_t mDbindex; // redis slice index
-    uint32_t mStatus; // redis DB status
+    uint32_t mType;     // redis cache pool type
+    uint32_t mSliceindex;  // redis slice index
+    uint32_t mStatus;   // redis slice status
 };
 
-class RedisCache {
+class RedisGroup {
 public:
-    RedisCache();
-    virtual ~RedisCache();
+    RedisGroup();
+    virtual ~RedisGroup();
 
     bool InitDB(uint32_t cachetype, uint32_t hashbase);
-    bool ConnectRedisDB(uint32_t cachetype, uint32_t dbindex,
+    bool ConnectRedisGroup(uint32_t cahcetype, uint32_t dbindex,
         const std::string& host, uint32_t port,
         const std::string& passwd, uint32_t poolsize,
         uint32_t timeout, uint32_t role);
 
-    RedisConn* GetConn(uint32_t dbindex, uint32_t ioRole);
-    void FreeConn(RedisConn* redisconn);
+    RedisConnection* GetConn(uint32_t dbindex, uint32_t ioRole);
+    void FreeConn(RedisConnection* redisconn);
     void ClosePool();
     void KeepAlive();
     uint32_t GetDBStatus(uint32_t dbindex);
     uint32_t GetHashBase() const;
 
 private:
-    RedisDBSlice* mDBList;
+    RedisSlice* mSliceList;
     uint32_t mCachetype;
     uint32_t mHashbase;
 };
@@ -148,24 +144,24 @@ public:
     ~RedisPool();
 
     bool Init(uint32_t typesize);
-    bool setHashBase(uint32_t cachetype, uint32_t hashbase);
-    uint32_t getHashBase(uint32_t cachetype);
-    bool ConnectRedisDB(uint32_t cachetype, uint32_t dbindex,
+    bool SetHashBase(uint32_t cachetype, uint32_t hashbase);
+    uint32_t GetHashBase(uint32_t cachetype);
+    bool ConnectRedisGroup(uint32_t cachetype, uint32_t sliceindex,
         const std::string& host, uint32_t port,
         const std::string& passwd, uint32_t poolsize,
         uint32_t timeout, uint32_t role);
     static bool CheckReply(const redisReply* reply);
     static void FreeReply(const redisReply* reply);
 
-    RedisConn* GetConnection(uint32_t cachetype, uint32_t index,
+    RedisConnection* GetConnection(uint32_t cachetype, uint32_t index,
         uint32_t ioType = MASTER);
-    void FreeConnection(RedisConn* redisconn);
+    void FreeConnection(RedisConnection* redisconn);
 
     void Keepalive();
     void Release();
 
 private:
-    RedisCache* mRedisCacheList;
+    RedisGroup* mRedisGroupList;
     uint32_t mTypeSize;
 };
 

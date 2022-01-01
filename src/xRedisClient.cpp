@@ -10,7 +10,7 @@
 #include "xRedisLog.h"
 #include "xRedisPool.h"
 
-namespace xrc {
+using namespace xrc;
 
 SliceIndex::SliceIndex()
 {
@@ -41,7 +41,7 @@ SliceIndex::~SliceIndex()
 
 bool SliceIndex::Create(const char* key, HASHFUN fun)
 {
-    uint32_t hashbase = mClient->GetRedisPool()->getHashBase(mType);
+    uint32_t hashbase = mClient->GetRedisPool()->GetHashBase(mType);
     if ((NULL != fun) && (hashbase > 0)) {
         mIndex = fun(key) % hashbase;
         return true;
@@ -51,7 +51,7 @@ bool SliceIndex::Create(const char* key, HASHFUN fun)
 
 bool SliceIndex::CreateByID(int64_t id)
 {
-    uint32_t hashbase = mClient->GetRedisPool()->getHashBase(mType);
+    uint32_t hashbase = mClient->GetRedisPool()->GetHashBase(mType);
     if (hashbase > 0) {
         mIndex = id % hashbase;
         return true;
@@ -64,12 +64,6 @@ void SliceIndex::IOtype(uint32_t iotype) { mIOtype = iotype; }
 void SliceIndex::SetIOMaster()
 {
     mIOtype = MASTER;
-    mIOFlag = true;
-}
-
-void SliceIndex::SetIOSlave()
-{
-    mIOtype = SLAVE;
     mIOFlag = true;
 }
 
@@ -103,10 +97,7 @@ unsigned int SliceIndex::APHash(const char* str)
     return (hash & 0x7FFFFFFF);
 }
 
-xRedisClient::xRedisClient()
-{
-    mRedisPool = NULL;
-}
+xRedisClient::xRedisClient() { mRedisPool = NULL; }
 
 xRedisClient::~xRedisClient() { Release(); }
 
@@ -136,8 +127,6 @@ void xRedisClient::Keepalive()
 {
     if (NULL != mRedisPool) {
         mRedisPool->Keepalive();
-    } else {
-        xredis_error("Keepalive mRedisPoolis NULL");
     }
 }
 
@@ -162,7 +151,7 @@ bool xRedisClient::ConnectRedisCache(const RedisNode* redisnodelist,
         return false;
     }
 
-    if (!mRedisPool->setHashBase(cachetype, hashbase)) {
+    if (!mRedisPool->SetHashBase(cachetype, hashbase)) {
         xredis_error("setHashBase error");
         return false;
     }
@@ -173,7 +162,7 @@ bool xRedisClient::ConnectRedisCache(const RedisNode* redisnodelist,
             return false;
         }
 
-        bool bRet = mRedisPool->ConnectRedisDB(
+        bool bRet = mRedisPool->ConnectRedisGroup(
             cachetype, pNode->dbindex, pNode->host, pNode->port, pNode->passwd,
             pNode->poolsize, pNode->timeout, pNode->role);
         if (!bRet) {
@@ -222,13 +211,13 @@ void xRedisClient::SetErrMessage(const SliceIndex& index, const char* fmt,
 
 rReply* xRedisClient::command(const SliceIndex& index, const char* cmd)
 {
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
         return NULL;
     }
-    rReply* reply = static_cast<rReply*>(redisCommand(pRedisConn->getCtx(), cmd));
+    rReply* reply = static_cast<rReply*>(redisCommand(pRedisConn->GetCtx(), cmd));
 
     mRedisPool->FreeConnection(pRedisConn);
     return reply;
@@ -237,7 +226,7 @@ rReply* xRedisClient::command(const SliceIndex& index, const char* cmd)
 bool xRedisClient::command_bool(const SliceIndex& index, const char* cmd, ...)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
@@ -246,7 +235,7 @@ bool xRedisClient::command_bool(const SliceIndex& index, const char* cmd, ...)
 
     va_list args;
     va_start(args, cmd);
-    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->getCtx(), cmd, args));
+    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->GetCtx(), cmd, args));
     va_end(args);
 
     if (RedisPool::CheckReply(reply)) {
@@ -269,7 +258,7 @@ bool xRedisClient::command_status(const SliceIndex& index, const char* cmd,
     ...)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
@@ -278,7 +267,7 @@ bool xRedisClient::command_status(const SliceIndex& index, const char* cmd,
 
     va_list args;
     va_start(args, cmd);
-    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->getCtx(), cmd, args));
+    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->GetCtx(), cmd, args));
     va_end(args);
 
     if (RedisPool::CheckReply(reply)) {
@@ -303,7 +292,7 @@ bool xRedisClient::command_integer(const SliceIndex& index, int64_t& retval,
     const char* cmd, ...)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
@@ -312,7 +301,7 @@ bool xRedisClient::command_integer(const SliceIndex& index, int64_t& retval,
 
     va_list args;
     va_start(args, cmd);
-    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->getCtx(), cmd, args));
+    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->GetCtx(), cmd, args));
     va_end(args);
     if (RedisPool::CheckReply(reply)) {
         retval = reply->integer;
@@ -331,7 +320,7 @@ bool xRedisClient::command_string(const SliceIndex& index, std::string& data,
     const char* cmd, ...)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
@@ -340,7 +329,7 @@ bool xRedisClient::command_string(const SliceIndex& index, std::string& data,
 
     va_list args;
     va_start(args, cmd);
-    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->getCtx(), cmd, args));
+    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->GetCtx(), cmd, args));
     va_end(args);
     if (RedisPool::CheckReply(reply)) {
         data.assign(reply->str, reply->len);
@@ -359,7 +348,7 @@ bool xRedisClient::command_list(const SliceIndex& index, VALUES& vValue,
     const char* cmd, ...)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
@@ -368,7 +357,7 @@ bool xRedisClient::command_list(const SliceIndex& index, VALUES& vValue,
 
     va_list args;
     va_start(args, cmd);
-    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->getCtx(), cmd, args));
+    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->GetCtx(), cmd, args));
     va_end(args);
     if (RedisPool::CheckReply(reply)) {
         for (size_t i = 0; i < reply->elements; i++) {
@@ -390,7 +379,7 @@ bool xRedisClient::command_array(const SliceIndex& index, ArrayReply& array,
     const char* cmd, ...)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " %s\r\n", cmd);
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
@@ -399,7 +388,7 @@ bool xRedisClient::command_array(const SliceIndex& index, ArrayReply& array,
 
     va_list args;
     va_start(args, cmd);
-    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->getCtx(), cmd, args));
+    redisReply* reply = static_cast<redisReply*>(redisvCommand(pRedisConn->GetCtx(), cmd, args));
     va_end(args);
     if (RedisPool::CheckReply(reply)) {
         for (size_t i = 0; i < reply->elements; i++) {
@@ -423,7 +412,7 @@ bool xRedisClient::commandargv_array_ex(const SliceIndex& index,
     xRedisContext& ctx)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " type:%u index:%u IOtype:%u \r\n",
             index.mType, index.mIndex, index.mIOtype);
@@ -440,7 +429,7 @@ bool xRedisClient::commandargv_array_ex(const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         bRet = true;
     } else {
@@ -454,9 +443,10 @@ bool xRedisClient::commandargv_array_ex(const SliceIndex& index,
 
 int32_t xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
 {
-    redisReply* reply;
-    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx->conn);
-    int32_t ret = redisGetReply(pRedisConn->getCtx(), (void**)&reply);
+    redisReply *reply = NULL;
+    RedisConnection* pRedisConn = static_cast<RedisConnection*>(ctx->conn);
+
+    int32_t ret = redisGetReply(pRedisConn->GetCtx(), (void**)&reply);
     if (0 == ret) {
         for (size_t i = 0; i < reply->elements; i++) {
             DataItem item;
@@ -472,7 +462,7 @@ int32_t xRedisClient::GetReply(xRedisContext* ctx, ReplyData& vData)
 bool xRedisClient::GetxRedisContext(const SliceIndex& index,
     xRedisContext* ctx)
 {
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         return false;
     }
@@ -482,18 +472,18 @@ bool xRedisClient::GetxRedisContext(const SliceIndex& index,
 
 void xRedisClient::FreexRedisContext(xRedisContext* ctx)
 {
-    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx->conn);
+    RedisConnection* pRedisConn = static_cast<RedisConnection*>(ctx->conn);
     redisReply* reply = static_cast<redisReply*>(
-        redisCommand(pRedisConn->getCtx(), "unsubscribe"));
+        redisCommand(pRedisConn->GetCtx(), "unsubscribe"));
     RedisPool::FreeReply(reply);
-    mRedisPool->FreeConnection((RedisConn*)ctx->conn);
+    mRedisPool->FreeConnection((RedisConnection*)ctx->conn);
 }
 
 bool xRedisClient::commandargv_bool(const SliceIndex& index,
     const VDATA& vData)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " type:%u index:%u IOtype:%u \r\n",
             index.mType, index.mIndex, index.mIOtype);
@@ -509,7 +499,7 @@ bool xRedisClient::commandargv_bool(const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         bRet = (reply->integer == 1) ? true : false;
     } else {
@@ -526,7 +516,7 @@ bool xRedisClient::commandargv_status(const SliceIndex& index,
     const VDATA& vData)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " type:%u index:%u IOtype:%u \r\n",
             index.mType, index.mIndex, index.mIOtype);
@@ -542,7 +532,7 @@ bool xRedisClient::commandargv_status(const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         // Assume good reply until further inspection
         bRet = true;
@@ -566,7 +556,7 @@ bool xRedisClient::commandargv_array(const SliceIndex& index,
     const VDATA& vDataIn, ArrayReply& array)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         //SetErrString(index, GET_CONNECT_ERROR, ::strlen(GET_CONNECT_ERROR));
         SetErrMessage(index, GET_CONNECT_ERROR " type:%u index:%u IOtype:%u \r\n",
@@ -583,7 +573,7 @@ bool xRedisClient::commandargv_array(const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         for (size_t i = 0; i < reply->elements; i++) {
             DataItem item;
@@ -605,7 +595,7 @@ bool xRedisClient::commandargv_array(const SliceIndex& index,
     const VDATA& vDataIn, VALUES& array)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " type:%u index:%u IOtype:%u \r\n",
             index.mType, index.mIndex, index.mIOtype);
@@ -622,7 +612,7 @@ bool xRedisClient::commandargv_array(const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         for (size_t i = 0; i < reply->elements; i++) {
             std::string str(reply->element[i]->str, reply->element[i]->len);
@@ -642,7 +632,7 @@ bool xRedisClient::commandargv_integer(const SliceIndex& index,
     const VDATA& vDataIn, int64_t& retval)
 {
     bool bRet = false;
-    RedisConn* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
+    RedisConnection* pRedisConn = mRedisPool->GetConnection(index.mType, index.mIndex, index.mIOtype);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " type:%u index:%u IOtype:%u \r\n",
             index.mType, index.mIndex, index.mIOtype);
@@ -659,7 +649,7 @@ bool xRedisClient::commandargv_integer(const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         retval = reply->integer;
         bRet = true;
@@ -697,7 +687,7 @@ bool xRedisClient::ScanFun(const char* cmd, const SliceIndex& index,
     }
 
     bool bRet = false;
-    RedisConn* pRedisConn = static_cast<RedisConn*>(ctx.conn);
+    RedisConnection* pRedisConn = static_cast<RedisConnection*>(ctx.conn);
     if (NULL == pRedisConn) {
         SetErrMessage(index, GET_CONNECT_ERROR " key:%s type:%u index:%u IOtype:%u \r\n", key->c_str(),
             index.mType, index.mIndex, index.mIOtype);
@@ -714,7 +704,7 @@ bool xRedisClient::ScanFun(const char* cmd, const SliceIndex& index,
     }
 
     redisReply* reply = static_cast<redisReply*>(redisCommandArgv(
-        pRedisConn->getCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
+        pRedisConn->GetCtx(), argv.size(), &(argv[0]), &(argvlen[0])));
     if (RedisPool::CheckReply(reply)) {
         if (0 == reply->elements) {
             cursor = 0;
@@ -735,5 +725,3 @@ bool xRedisClient::ScanFun(const char* cmd, const SliceIndex& index,
     RedisPool::FreeReply(reply);
     return bRet;
 }
-
-} // namespace xrc

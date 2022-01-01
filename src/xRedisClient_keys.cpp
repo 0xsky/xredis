@@ -8,7 +8,7 @@
 
 #include "xRedisClient.h"
 
-namespace xrc {
+using namespace xrc;
 
 bool xRedisClient::del(const SliceIndex& index, const std::string& key)
 {
@@ -177,5 +177,3 @@ bool xRedisClient::sort(const SliceIndex& index, ArrayReply& array, const std::s
     SETDEFAULTIOTYPE(MASTER);
     return commandargv_array(index, vCmdData, array);
 }
-
-} // namespace xrc
