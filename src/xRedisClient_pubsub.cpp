@@ -8,7 +8,7 @@
 
 #include "xRedisClient.h"
 #include "xRedisPool.h"
-using namespace xrc;
+namespace xrc {
 
 bool xRedisClient::psubscribe(const SliceIndex& index, const KEYS& patterns,
     xRedisContext& ctx)
@@ -137,3 +137,5 @@ bool xRedisClient::unsubscribe(const SliceIndex& index, const KEYS& channels,
     RedisPool::FreeReply(reply);
     return bRet;
 }
+
+} // namespace xrc

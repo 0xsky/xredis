@@ -28,6 +28,8 @@ namespace xrc {
 #ifdef WIN32
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
+#define usleep(us)        Sleep((us)/1000)
+#define pthread_self()    GetCurrentThreadId()
 #endif
 
 enum { REDISDB_UNCONN,

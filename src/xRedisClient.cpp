@@ -10,7 +10,7 @@
 #include "xRedisLog.h"
 #include "xRedisPool.h"
 
-using namespace xrc;
+namespace xrc {
 
 SliceIndex::SliceIndex()
 {
@@ -67,6 +67,12 @@ void SliceIndex::SetIOMaster()
     mIOFlag = true;
 }
 
+void SliceIndex::SetIOSlave()
+{
+    mIOtype = SLAVE;
+    mIOFlag = true;
+}
+
 bool SliceIndex::SetErrInfo(const char* info, int32_t len)
 {
     if (NULL == info) {
@@ -97,7 +103,10 @@ unsigned int SliceIndex::APHash(const char* str)
     return (hash & 0x7FFFFFFF);
 }
 
-xRedisClient::xRedisClient() { mRedisPool = NULL; }
+xRedisClient::xRedisClient()
+{
+    mRedisPool = NULL;
+}
 
 xRedisClient::~xRedisClient() { Release(); }
 
@@ -127,6 +136,8 @@ void xRedisClient::Keepalive()
 {
     if (NULL != mRedisPool) {
         mRedisPool->Keepalive();
+    } else {
+        xredis_error("Keepalive mRedisPoolis NULL");
     }
 }
 
@@ -725,3 +736,5 @@ bool xRedisClient::ScanFun(const char* cmd, const SliceIndex& index,
     RedisPool::FreeReply(reply);
     return bRet;
 }
+
+} // namespace xrc

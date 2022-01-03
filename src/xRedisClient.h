@@ -21,6 +21,13 @@
 
 namespace xrc {
 
+
+#define LOG_LEVEL_ERROR 0
+#define LOG_LEVEL_WARN 1
+#define LOG_LEVEL_INFO 2
+#define LOG_LEVEL_DEBUG 3
+
+
 #define REDIS_REPLY_STRING 1
 #define REDIS_REPLY_ARRAY 2
 #define REDIS_REPLY_INTEGER 3
@@ -74,7 +81,8 @@ public:
     bool CreateByID(int64_t id);
     char *GetErrInfo() {return mStrerr;}
     void SetIOMaster();
-
+    void SetIOSlave();
+    
 private:
     static unsigned int APHash(const char *str);
     bool SetErrInfo(const char *info, int32_t len);

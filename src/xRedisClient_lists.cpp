@@ -7,8 +7,8 @@
  */
 
 #include "xRedisClient.h"
-#include <stdio.h>
-using namespace xrc;
+
+namespace xrc {
 
 bool xRedisClient::lindex(const SliceIndex& index, const std::string& key, int64_t idx, VALUE& value)
 {
@@ -162,3 +162,5 @@ bool xRedisClient::rpushx(const SliceIndex& index, const std::string& key, const
     SETDEFAULTIOTYPE(MASTER);
     return command_integer(index, length, "RPUSHX %s %s", key.c_str(), value.c_str());
 }
+
+} // namespace xrc
