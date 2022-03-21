@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------
  */
 
-/** \example demo_multi_cluster.cpp
+/** \example demo_multi_slice.cpp
  * This is an example of how to use the xRedis.
  * <br>connect to multi redis clusters
  * <br>every redis cluster have multi redis server nodes

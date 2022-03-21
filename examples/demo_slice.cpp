@@ -6,7 +6,7 @@
  * ----------------------------------------------------------------------------
  */
 
-/** \example demo_cluster.cpp
+/** \example demo_slice.cpp
  * This is an example of how to use the xRedis.
  * <br>Connect to a redis cluster which contains three redis node
  * <br>More details about this example.

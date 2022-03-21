@@ -6,6 +6,12 @@
  * ----------------------------------------------------------------------------
  */
 
+/** \example xredis-example.cpp
+ * This is an example of how to use the xRedis.
+ * <br>This demo connect to single redis server with connection pool
+ * <br>More details about this example.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
