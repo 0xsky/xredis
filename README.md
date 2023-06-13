@@ -89,5 +89,3 @@ int main(int argc, char **argv) {
 <img src='https://www.0xsky.com/images/donate.png' alt='捐赠作者' height='120px'>
 Donate with PayPal guozhw@gmail.com 
 
-Support xRedis: 
-BTC: bc1q2c0fqc6c5h36t46n2cgz4kel4dutvjpzvta5ru
