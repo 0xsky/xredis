@@ -96,5 +96,3 @@ cluster-cli.cpp      使用 xRedisClusterClient 实现的连接redis集群的cli
 <p><p>作者: xSky        
 <p>博客: <a href="http://www.0xsky.com/">xSky's Blog</a>
 <p>xRedis QQ 群: 190107312 
-<p>支持作者:
-<img src='https://www.0xsky.com/images/donate.png' alt='捐赠作者' height='120px'>
