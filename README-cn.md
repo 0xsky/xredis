@@ -90,10 +90,10 @@ cluster-cli.cpp      使用 xRedisClusterClient 实现的连接redis集群的cli
 ##### xRedis 分片存储架构图
 ![xredis](doc/xredis_0.png)
 
-[xRedis API](http://xredis.0xsky.com/)
-使用示例 [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
-xRedis开源社区QQ群: 190107312
+[xRedis API](http://xredis.0xsky.com/)<br>
+使用示例 [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples<br>
+xRedis开源社区QQ群: 190107312<br>
 
-作者: xSky        
-博客: [xSky's Blog](https://0xsky.com/)
-xRedis QQ 群: 190107312 
+作者: xSky<br>
+博客: [xSky's Blog](https://0xsky.com/)<br>
+xRedis QQ 群: 190107312

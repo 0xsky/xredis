@@ -81,9 +81,9 @@ int main(int argc, char **argv) {
 ### Documentation
 ![xredis](doc/xredis_0.png)
 
-[xRedis API Site](http://xredis.0xsky.com/) 
-See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples
+[xRedis API Site](http://xredis.0xsky.com/)<br>
+See [examples](https://github.com/0xsky/xredis/blob/master/examples) directory for some examples<br>
 
-blog: [xSky's Blog](https://0xsky.com/)
-xRedis QQ Group: 190107312 
+blog: [xSky's Blog](https://0xsky.com/)<br>
+xRedis QQ Group: 190107312  
 
